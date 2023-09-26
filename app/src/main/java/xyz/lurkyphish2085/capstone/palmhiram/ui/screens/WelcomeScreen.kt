@@ -123,7 +123,8 @@ fun WelcomeScreen(
 @Composable
 fun EmailField(
     onValueChange: (String) -> Unit = {},
-    isError: Boolean = false
+    isError: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
     var emailText by rememberSaveable {
         mutableStateOf("")
@@ -133,37 +134,43 @@ fun EmailField(
         mutableStateOf(isError)
     }
 
-    // Once the checkmark button clicked on the soft keeb, it will validate email
-    OutlinedTextField(
-        value = emailText,
-        onValueChange = {
-            emailText = it
-            onValueChange(emailText)
+    Column(modifier) {
+        // Once the checkmark button clicked on the soft keeb, it will validate email
+        OutlinedTextField(
+            value = emailText,
+            onValueChange = {
+                emailText = it
+                onValueChange(emailText)
 
-            emailNotValid = !InputValidationUtil.validateEmail(emailText)
-        },
-        label = { Text(text = "Email")},
-        trailingIcon = {
-            if (emailNotValid) {
-                Icon(imageVector = Icons.Default.Info, contentDescription = "Notifies invalid input")
-            }
-       },
-        singleLine = true,
-        isError = emailNotValid,
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Email
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
                 emailNotValid = !InputValidationUtil.validateEmail(emailText)
-            }
+            },
+            label = { Text(text = "Email")},
+            trailingIcon = {
+                if (emailNotValid) {
+                    Icon(imageVector = Icons.Default.Info, contentDescription = "Notifies invalid input")
+                }
+            },
+            singleLine = true,
+            isError = emailNotValid,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Email
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    emailNotValid = !InputValidationUtil.validateEmail(emailText)
+                }
+            )
         )
-    )
 
-    // Display the error Text under the textfield if its not valid
-    if (emailNotValid) {
-        Text(text = "Not a valid email address", color = MaterialTheme.colorScheme.error)
+        // Display the error Text under the textfield if its not valid
+        if (emailNotValid) {
+            Text(
+                text = "Not a valid email address",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
     }
 }
 
@@ -171,7 +178,8 @@ fun EmailField(
 @Composable
 fun PasswordField(
     onValueChange: (String) -> Unit = {},
-    isError: Boolean = false
+    isError: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
     var passwordText by rememberSaveable {
         mutableStateOf("")
@@ -185,41 +193,47 @@ fun PasswordField(
         mutableStateOf(false)
     }
 
-    // Once the checkmark button clicked on the soft keeb, it will validate email
-    OutlinedTextField(
-        value = passwordText,
-        onValueChange = {
-            passwordText = it
-            onValueChange(passwordText)
+    Column(modifier) {
+        // Once the checkmark button clicked on the soft keeb, it will validate email
+        OutlinedTextField(
+            value = passwordText,
+            onValueChange = {
+                passwordText = it
+                onValueChange(passwordText)
 
-            passwordNotValid = !InputValidationUtil.validatePassword(passwordText)
-        },
-        label = { Text(text = "Password")},
-        visualTransformation = if (!showPassword) PasswordVisualTransformation() else VisualTransformation.None,
-        trailingIcon = {
+                passwordNotValid = !InputValidationUtil.validatePassword(passwordText)
+            },
+            label = { Text(text = "Password")},
+            visualTransformation = if (!showPassword) PasswordVisualTransformation() else VisualTransformation.None,
+            trailingIcon = {
                 IconButton(onClick = { showPassword = !showPassword }) {
                     Icon(
                         imageVector = if (showPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                         contentDescription = if (showPassword) "Hide Password" else "Show Password"
                     )
                 }
-        },
-        singleLine = true,
-        isError = passwordNotValid,
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Password
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                passwordNotValid = !InputValidationUtil.validatePassword(passwordText)
-            }
+            },
+            singleLine = true,
+            isError = passwordNotValid,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    passwordNotValid = !InputValidationUtil.validatePassword(passwordText)
+                }
+            )
         )
-    )
 
-    // Display the error Text under the textfield if its not valid
-    if (passwordNotValid) {
-        Text(text = "Not a valid password", color = MaterialTheme.colorScheme.error)
+        // Display the error Text under the textfield if its not valid
+        if (passwordNotValid) {
+            Text(
+                text = "Not a valid password",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
     }
 }
 
