@@ -1,6 +1,8 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +59,30 @@ fun WelcomeScreen(
 ) {
     // TODO: Add a background for the whole screen
     // TODO: Extract the the whole login/register form into a separate component
+
+    var registrationMode by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var pageModeName by rememberSaveable {
+        mutableStateOf(if (registrationMode) "REGISTER" else "LOGIN")
+    }
+
+    var pageModeChangerLabelText by rememberSaveable {
+        mutableStateOf(if (registrationMode) "Already have an account?" else "Don't have an account yet?")
+    }
+
+    var pageModeChangerButtonText by rememberSaveable {
+        mutableStateOf(if (registrationMode) "Login here" else "Register here")
+    }
+
+    val onPageModeChange = {
+        registrationMode = !registrationMode
+        pageModeName = if (registrationMode) "REGISTER" else "LOGIN"
+        pageModeChangerLabelText = if (registrationMode) "Already have an account?" else "Don't have an account yet?"
+        pageModeChangerButtonText = if (registrationMode) "Login here" else "Register here"
+    }
+
     Box(
         modifier = modifier,
     ) {
@@ -66,7 +92,9 @@ fun WelcomeScreen(
                 .align(Alignment.TopStart)
                 .fillMaxWidth()
         ) {
-            Text(text = "Login", style = MaterialTheme.typography.headlineLarge)
+            Crossfade(targetState = pageModeName) {
+                Text(text = it, style = MaterialTheme.typography.headlineLarge)
+            }
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,7 +110,7 @@ fun WelcomeScreen(
             EmailField(onValueChange = {/*TODO*/})
             // TODO: Create this as a separate component, and create its state holder also
             // TODO: PasswordField, where it has validation and can display red text underneath. Has Re type password too
-            PasswordField()
+            PasswordField(enableReTypeField = registrationMode)
 
             Spacer(modifier = Modifier.height(128.dp))
             Column(
@@ -90,18 +118,20 @@ fun WelcomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Don't have an account yet?",
+                    text = pageModeChangerLabelText,
                     style = MaterialTheme.typography.labelSmall,
                 )
                 ClickableText(
                     text = AnnotatedString(
-                        text = "Register here",
+                        text = pageModeChangerButtonText,
                         spanStyle = SpanStyle(
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary,
                         )
                     ),
-                    onClick = {}
+                    onClick = {
+                        onPageModeChange()
+                    }
                 )
             }
             }
@@ -112,10 +142,10 @@ fun WelcomeScreen(
         ) {
             // TODO: This button should change from Login to Register
             AcceptButton(
-                onclick = { /*TODO*/ },
+                onclick = {},
                 modifier = Modifier.weight(1f, true)
             ) {
-                Text(text = "LOGIN")
+                Text(text = pageModeName)
             }
         }
     }
@@ -181,6 +211,7 @@ fun EmailField(
 fun PasswordField(
     onValueChange: (String) -> Unit = {},
     isError: Boolean = false,
+    enableReTypeField: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var passwordText by rememberSaveable {
@@ -192,6 +223,18 @@ fun PasswordField(
     }
 
     var showPassword by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var showPasswordReType by rememberSaveable {
+        mutableStateOf(enableReTypeField)
+    }
+
+    var passwordReTypeText by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var passwordMatched by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -232,6 +275,48 @@ fun PasswordField(
         if (passwordNotValid) {
             Text(
                 text = "Not a valid password",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+
+        AnimatedVisibility(visible = enableReTypeField) {
+            OutlinedTextField(
+                value = passwordReTypeText,
+                onValueChange = {
+                    passwordReTypeText = it
+                    onValueChange(passwordReTypeText)
+
+                    passwordMatched = passwordText.equals(passwordReTypeText)
+                },
+                label = { Text(text = "Retype Password")},
+                visualTransformation = if (!showPasswordReType) PasswordVisualTransformation() else VisualTransformation.None,
+                trailingIcon = {
+                    IconButton(onClick = { showPasswordReType = !showPasswordReType }) {
+                        Icon(
+                            imageVector = if (showPasswordReType) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            contentDescription = if (showPasswordReType) "Hide Password" else "Show Password"
+                        )
+                    }
+                },
+                singleLine = true,
+                isError = !passwordMatched,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Password
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        passwordMatched = passwordText.equals(passwordReTypeText)
+                    }
+                )
+            )
+        }
+
+        // Display error if retyped password didn't matched with the original
+        if (!passwordMatched && enableReTypeField && passwordText.isNotBlank()) {
+            Text(
+                text = "Password didn't matched",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.labelSmall
             )
