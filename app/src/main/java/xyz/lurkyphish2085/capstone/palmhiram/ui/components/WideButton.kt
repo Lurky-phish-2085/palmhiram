@@ -12,13 +12,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AcceptButton(
+fun WideButton(
     onclick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Button(
         onClick = {},
+        enabled = enabled,
         shape = MaterialTheme.shapes.large,
         modifier = Modifier
             .heightIn(53.dp)
@@ -30,9 +32,9 @@ fun AcceptButton(
 
 @Preview
 @Composable
-fun AcceptButtonPreview() {
+fun WideButtonPreview() {
     Row {
-        AcceptButton(onclick = {}) {
+        WideButton(onclick = {}) {
             Text(text = "BUTTON")
         }
     }
