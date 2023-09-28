@@ -175,12 +175,11 @@ fun WelcomeScreen(
         ) {
             // TODO: This button should change from Login to Register
             WideButton(
+                text = pageModeName,
                 onclick = {},
                 enabled = isConfirmButtonEnabled,
                 modifier = Modifier.weight(1f, true)
-            ) {
-                Text(text = pageModeName)
-            }
+            )
         }
     }
 }

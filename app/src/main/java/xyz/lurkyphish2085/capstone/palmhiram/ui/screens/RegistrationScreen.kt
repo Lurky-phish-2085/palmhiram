@@ -33,9 +33,11 @@ fun RegistrationScreen(
     Scaffold(
         topBar = { ScreenTitleBar(text = "PERSONAL INFO", modifier = Modifier.padding(all = 16.dp)) },
         bottomBar = {
-            WideButton(onclick = { /*TODO*/ }, modifier = Modifier.padding(all = 16.dp)) {
-                Text(text = "REGISTER")
-            }
+            WideButton(
+                text = "REGISTER",
+                onclick = { /*TODO*/ },
+                modifier = Modifier.padding(all = 16.dp)
+            )
         },
     ) { padding ->
         SignUpContent(Modifier.padding(padding))
