@@ -22,7 +22,7 @@ fun WideButton(
         onClick = {},
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
-        modifier = Modifier
+        modifier = modifier
             .heightIn(53.dp)
             .fillMaxWidth()
     ) {

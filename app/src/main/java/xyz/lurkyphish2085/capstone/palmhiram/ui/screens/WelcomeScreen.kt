@@ -270,7 +270,6 @@ fun PasswordField(
     var passwordMatched by rememberSaveable {
         mutableStateOf(false)
     }
-
     Column(modifier) {
         // Once the checkmark button clicked on the soft keeb, it will validate email
         OutlinedTextField(
