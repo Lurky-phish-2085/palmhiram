@@ -38,7 +38,6 @@ fun OTPScreen(
                 modifier = Modifier.padding(all = 16.dp)
             )
         }
-
     ) { paddingValues ->
         OTPInputContent(modifier.padding(paddingValues))
     }
@@ -59,16 +58,20 @@ fun OTPInputContent(
                 .verticalScroll(rememberScrollState())
         ) {
             TextFieldWithError(
-                passingCondition = { true },
-                label = "OTP Code"
+                passingCondition = { text ->
+                    text.isNotBlank()
+                },
+                label = "OTP Code",
+                errorText = "Field is empty"
             )
 
             Spacer(modifier = Modifier.heightIn(128.dp))
 
             ClickableTextWithLabel(
-                label = "Didn't get it?",
+                label = "Didn't received the code?",
                 text = "Resend code",
-                onClick =  {}
+                isEnabled = true,
+                onClick =  {/* TODO */}
             )
         }
     }
