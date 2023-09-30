@@ -41,6 +41,8 @@ fun NameField(
             onValueChange = {
                 text = it
                 isNotValid = !InputValidationUtil.validateName(it)
+
+                onValueChange(text, !isNotValid)
             },
             label = { Text(text = label) },
             singleLine = true,
@@ -51,6 +53,8 @@ fun NameField(
             keyboardActions = KeyboardActions(
                 onDone = {
                     isNotValid = InputValidationUtil.validateName(text)
+
+                    onValueChange(text, !isNotValid)
                 }
             )
         )

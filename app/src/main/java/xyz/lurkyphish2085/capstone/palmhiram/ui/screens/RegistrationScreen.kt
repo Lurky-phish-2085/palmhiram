@@ -15,6 +15,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,25 +34,47 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 fun RegistrationScreen(
     modifier: Modifier = Modifier
 ) {
+
+    var isConfirmButtonEnabled by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = { ScreenTitleBar(text = "PERSONAL INFO", modifier = Modifier.padding(all = 16.dp)) },
         bottomBar = {
             WideButton(
+                enabled = isConfirmButtonEnabled,
                 text = "REGISTER",
                 onclick = { /*TODO*/ },
                 modifier = Modifier.padding(all = 16.dp)
             )
         },
     ) { padding ->
-        SignUpContent(Modifier.padding(padding))
+        SignUpContent(
+            onFieldChange = { fieldsValid ->
+                isConfirmButtonEnabled = fieldsValid
+            },
+            Modifier.padding(padding)
+        )
     }
 }
 
 @ExperimentalMaterial3Api
 @Composable
 fun SignUpContent(
+    onFieldChange: (areFieldsValid: Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var firstNameValid by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var lastNameValid by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var phoneValid by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Box(
         modifier = modifier
     ) {
@@ -60,12 +86,28 @@ fun SignUpContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            NameField( label = "First Name"
+            Spacer(modifier = Modifier.weight(1f, true))
+
+            NameField(
+                label = "First Name",
+                onValueChange = { text, isValid ->
+                    firstNameValid = isValid
+                    onFieldChange(firstNameValid && lastNameValid && phoneValid)
+                }
             )
             NameField(
-                label = "Last Name"
+                label = "Last Name",
+                onValueChange = { text, isValid ->
+                    lastNameValid = isValid
+                    onFieldChange(firstNameValid && lastNameValid && phoneValid)
+                }
             )
-            PhoneField()
+            PhoneField(
+                onValueChange = { text, isValid ->
+                    phoneValid = isValid
+                    onFieldChange(firstNameValid && lastNameValid && phoneValid)
+                }
+            )
 
             Spacer(modifier = Modifier.height(128.dp))
         }

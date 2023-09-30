@@ -15,6 +15,7 @@ class InputValidationUtil {
 
         // https://stackoverflow.com/questions/15805555/java-regex-to-validate-full-name-allow-only-spaces-and-letters
         const val NAME_REGEX = "^[\\p{L}\\p{M} .'-]+\$"
+        const val  PHILIPPINE_PHONE_NUMBER_REGEX = "^(\\+?63|0)?[9]\\d{9}$|^\\+?63[2-9]\\d{8}$"
 
         fun validateEmail(email: String): Boolean {
             val pattern = Pattern.compile(EMAIL_VALIDATION_REGEX)
@@ -33,6 +34,13 @@ class InputValidationUtil {
         fun validateName(name: String): Boolean {
             val pattern = Pattern.compile(NAME_REGEX)
             val matcher = pattern.matcher(name)
+
+            return matcher.matches()
+        }
+
+        fun validatePhoneNumber(phoneNumber: String): Boolean {
+            val pattern = Pattern.compile(PHILIPPINE_PHONE_NUMBER_REGEX)
+            val matcher = pattern.matcher(phoneNumber)
 
             return matcher.matches()
         }

@@ -40,7 +40,10 @@ fun PhoneField(
         OutlinedTextField(
             value = phoneNumber,
             onValueChange = {
-                phoneNumber = it
+                phoneNumber = it.trim()
+                isNotValid = !InputValidationUtil.validatePhoneNumber(phoneNumber)
+
+                onValueChange(phoneNumber, !isNotValid)
             },
             label = { Text(text = label) },
             singleLine = true,
@@ -51,6 +54,9 @@ fun PhoneField(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
+                    isNotValid = !InputValidationUtil.validatePhoneNumber(phoneNumber)
+
+                    onValueChange(phoneNumber, !isNotValid)
                 }
             )
         )
