@@ -29,7 +29,7 @@ fun WideButton(
         modifier = modifier,
     ) {
         Text(
-            text = text,
+            text = text.uppercase(),
             fontWeight = FontWeight.ExtraBold
         )
     }
