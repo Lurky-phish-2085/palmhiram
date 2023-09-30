@@ -14,6 +14,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,23 +33,34 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 fun OTPScreen(
     modifier: Modifier = Modifier
 ) {
+    var isConfirmButtonEnabled by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = { ScreenTitleBar("OTP", modifier = Modifier.padding(all = 16.dp)) },
         bottomBar = { 
             WideButton(
-                onclick = { /*TODO*/ },
+                enabled = isConfirmButtonEnabled,
                 text = "CONFIRM",
+                onclick = { /*TODO*/ },
                 modifier = Modifier.padding(all = 16.dp)
             )
         }
     ) { paddingValues ->
-        OTPInputContent(modifier.padding(paddingValues))
+        OTPInputContent(
+            onFieldChange = { fieldsValid ->
+                isConfirmButtonEnabled = fieldsValid
+            },
+            modifier.padding(paddingValues)
+        )
     }
 }
 
 @ExperimentalMaterial3Api
 @Composable
 fun OTPInputContent(
+    onFieldChange: (areFieldsValid: Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
@@ -62,7 +77,10 @@ fun OTPInputContent(
                     text.isNotBlank()
                 },
                 label = "OTP Code",
-                errorText = "Field is empty"
+                errorText = "Field is empty",
+                onValueChange = {
+                    onFieldChange(it.isNotBlank())
+                }
             )
 
             Spacer(modifier = Modifier.heightIn(128.dp))
