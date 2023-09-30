@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +45,12 @@ fun WideButton(
         onClick = {},
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.secondary,
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+        ),
         modifier = modifier
             .heightIn(53.dp)
             .fillMaxWidth()
