@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtil
@@ -35,6 +36,7 @@ fun TextFieldWithError(
     label: String,
     isError: Boolean = false,
     errorText: String = "Not a valid value",
+    keyboardType: KeyboardType = KeyboardType.Text,
     modifier: Modifier = Modifier
 ) {
     var text by rememberSaveable {
@@ -60,6 +62,7 @@ fun TextFieldWithError(
                 onValueChange(text)
             },
             keyboardOptions = KeyboardOptions().copy(
+                keyboardType = keyboardType,
                 imeAction = ImeAction.Done,
             ),
             keyboardActions = KeyboardActions(

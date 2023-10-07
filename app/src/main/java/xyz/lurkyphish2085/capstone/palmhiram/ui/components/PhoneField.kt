@@ -48,7 +48,8 @@ fun PhoneField(
                 number.trim(),
                 InputValidationUtil.validatePhoneNumber(number.trim())
             )
-        }
+        },
+        keyboardType = KeyboardType.Phone
     )
 }
 
