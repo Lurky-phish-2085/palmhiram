@@ -35,38 +35,16 @@ fun NameField(
         mutableStateOf(isError)
     }
 
-    Column(modifier) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = {
-                text = it
-                isNotValid = !InputValidationUtil.validateName(it)
-
-                onValueChange(text, !isNotValid)
-            },
-            label = { Text(text = label) },
-            singleLine = true,
-            isError = isNotValid,
-            keyboardOptions = KeyboardOptions().copy(
-                imeAction = ImeAction.Done,
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    isNotValid = InputValidationUtil.validateName(text)
-
-                    onValueChange(text, !isNotValid)
-                }
-            )
-        )
-
-        if (isNotValid) {
-            Text(
-                text = "Not a valid name",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.labelSmall,
-            )
+    TextFieldWithError(
+        passingCondition = { name ->
+            InputValidationUtil.validateName(name)
+        },
+        label = label,
+        errorText = "Not a valid name",
+        onValueChange = { name ->
+            onValueChange(name, InputValidationUtil.validateName(name))
         }
-    }
+    )
 }
 
 @ExperimentalMaterial3Api

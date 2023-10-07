@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,39 +37,19 @@ fun PhoneField(
         mutableStateOf(isError)
     }
 
-    Column(modifier) {
-        OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = {
-                phoneNumber = it.trim()
-                isNotValid = !InputValidationUtil.validatePhoneNumber(phoneNumber)
-
-                onValueChange(phoneNumber, !isNotValid)
-            },
-            label = { Text(text = label) },
-            singleLine = true,
-            isError = isNotValid,
-            keyboardOptions = KeyboardOptions().copy(
-                imeAction = ImeAction.Done,
-                keyboardType = KeyboardType.Phone
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    isNotValid = !InputValidationUtil.validatePhoneNumber(phoneNumber)
-
-                    onValueChange(phoneNumber, !isNotValid)
-                }
-            )
-        )
-
-        if (isNotValid) {
-            Text(
-                text = "Not a valid phone number",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.labelSmall,
+    TextFieldWithError(
+        passingCondition = { number ->
+            InputValidationUtil.validatePhoneNumber(number.trim())
+        },
+        label = "Phone Number",
+        errorText = "Not a valid phone number",
+        onValueChange = { number ->
+            onValueChange(
+                number.trim(),
+                InputValidationUtil.validatePhoneNumber(number.trim())
             )
         }
-    }
+    )
 }
 
 @ExperimentalMaterial3Api
@@ -77,7 +58,7 @@ fun PhoneField(
 fun PhoneFieldPreview() {
     PalmHiramTheme {
         Surface {
-            PhoneField(label = "Phone Number")
+                PhoneField(label = "Phone Number")
         }
     }
 }
