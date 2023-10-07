@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ClickableTextWithLabel
@@ -80,7 +81,8 @@ fun OTPInputContent(
                 errorText = "Field is empty",
                 onValueChange = {
                     onFieldChange(it.isNotBlank())
-                }
+                },
+                keyboardType = KeyboardType.Number
             )
 
             Spacer(modifier = Modifier.heightIn(128.dp))
