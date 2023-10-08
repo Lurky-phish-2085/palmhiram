@@ -31,6 +31,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -211,11 +212,6 @@ fun EmailField(
                 onValueChange(emailText, !emailNotValid)
             },
             label = { Text(text = "Email")},
-            trailingIcon = {
-                if (emailNotValid) {
-                    Icon(imageVector = Icons.Default.Info, contentDescription = "Notifies invalid input")
-                }
-            },
             singleLine = true,
             isError = emailNotValid,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -226,11 +222,15 @@ fun EmailField(
                 onDone = {
                     emailNotValid = !InputValidationUtil.validateEmail(emailText)
                 }
-            )
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
+            ),
         )
 
         // Display the error Text under the textfield if its not valid
-        if (emailNotValid) {
+        AnimatedVisibility(emailNotValid) {
             Text(
                 text = "Not a valid email address",
                 color = MaterialTheme.colorScheme.error,
@@ -300,11 +300,15 @@ fun PasswordField(
                 onDone = {
                     passwordNotValid = !InputValidationUtil.validatePassword(passwordText)
                 }
-            )
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
+            ),
         )
 
         // Display the error Text under the textfield if its not valid
-        if (passwordNotValid) {
+        AnimatedVisibility(passwordNotValid) {
             Text(
                 text = "Not a valid password",
                 color = MaterialTheme.colorScheme.error,
@@ -340,12 +344,16 @@ fun PasswordField(
                     onDone = {
                         passwordMatched = passwordText.equals(passwordReTypeText)
                     }
-                )
+                ),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary
+                ),
             )
         }
 
         // Display error if retyped password didn't matched with the original
-        if (!passwordMatched && enableReTypeField && passwordText.isNotBlank()) {
+        AnimatedVisibility(!passwordMatched && enableReTypeField && passwordText.isNotBlank()) {
             Text(
                 text = "Password didn't matched",
                 color = MaterialTheme.colorScheme.error,
