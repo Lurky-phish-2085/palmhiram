@@ -1,7 +1,6 @@
-package xyz.lurkyphish2085.capstone.palmhiram.ui.screens
+package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
 import android.content.res.Configuration
-import android.provider.CalendarContract.Colors
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +19,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,6 +52,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtil
 @ExperimentalMaterial3Api
 @Composable
 fun WelcomeScreen(
+    onLogin: () -> Unit,
+    onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // TODO: Add a background for the whole screen
@@ -179,7 +178,12 @@ fun WelcomeScreen(
             // TODO: This button should change from Login to Register
             WideButton(
                 text = pageModeName,
-                onclick = {},
+                onclick = {
+                          when(pageModeName) {
+                              "REGISTER" -> { onRegister() }
+                              "LOGIN" -> { onLogin() }
+                          }
+                },
                 enabled = isConfirmButtonEnabled,
                 modifier = Modifier.weight(1f, true)
             )
@@ -447,6 +451,8 @@ fun WelcomeScreenPreview() {
             modifier = Modifier.fillMaxSize(),
         ) {
             WelcomeScreen(
+                onLogin = {},
+                onRegister = {},
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(all = 16.dp)

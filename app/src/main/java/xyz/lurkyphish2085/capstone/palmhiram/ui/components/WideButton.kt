@@ -24,7 +24,7 @@ fun WideButton(
     modifier: Modifier = Modifier,
 ) {
     WideButton(
-        onclick = onclick,
+        onclick = { onclick() },
         enabled = enabled,
         modifier = modifier,
     ) {
@@ -42,7 +42,7 @@ fun WideButton(
     content: @Composable () -> Unit
 ) {
     Button(
-        onClick = {},
+        onClick = { onclick() },
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.outlinedButtonColors(

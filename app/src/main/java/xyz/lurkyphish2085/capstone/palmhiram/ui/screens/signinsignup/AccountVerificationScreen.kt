@@ -1,4 +1,4 @@
-package xyz.lurkyphish2085.capstone.palmhiram.ui.screens
+package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ClickableTextWithLabel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
@@ -31,6 +30,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @ExperimentalMaterial3Api
 @Composable
 fun AccountVerificationScreen(
+    onSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isConfirmButtonEnabled by rememberSaveable {
@@ -43,7 +43,7 @@ fun AccountVerificationScreen(
             WideButton(
                 enabled = isConfirmButtonEnabled,
                 text = "Get Verified",
-                onclick = { /*TODO*/ },
+                onclick = { onSubmit() },
                 modifier = Modifier.padding(all = 16.dp)
             )
         }
@@ -95,7 +95,7 @@ fun AccountVerificationInputContent(
 fun AccountVerificationScreenPreview() {
     PalmHiramTheme {
         Surface {
-            AccountVerificationScreen()
+            AccountVerificationScreen( onSubmit = {})
         }
     }
 }
