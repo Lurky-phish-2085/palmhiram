@@ -7,19 +7,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import xyz.lurkyphish2085.capstone.palmhiram.PalmHiramNavHost
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
-fun PalmHiramApp(/* TODO: PUT VIEWMIODEL HERE */) {
+fun PalmHiramApp(
+    authViewModel: AuthViewModel
+) {
     @OptIn(ExperimentalMaterial3Api::class)
     PalmHiramTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
         ) {
             // TODO: Insert NavHost here
-            PalmHiramNavHost()
+            PalmHiramNavHost(
+                authViewModel = authViewModel
+            )
         }
     }
 }

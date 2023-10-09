@@ -11,11 +11,13 @@ import androidx.compose.ui.unit.dp
 @ExperimentalMaterial3Api
 @Composable
 fun WelcomeRoute(
+    viewModel: AuthViewModel,
     onLogin: () -> Unit,
     onRegister: () -> Unit,
 ) {
     WelcomeScreen(
-        onLogin = onLogin,
+        viewModel = viewModel,
+        onLoginSuccess = onLogin,
         onRegister = onRegister,
         modifier = Modifier
             .fillMaxSize()

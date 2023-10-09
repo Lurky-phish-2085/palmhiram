@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.RegistrationRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.VerificationRoute
@@ -26,8 +27,8 @@ object Destinations {
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
-// VIEWMODEL HERE,
 fun PalmHiramNavHost(
+    authViewModel: AuthViewModel,
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier
 ) {
@@ -39,7 +40,12 @@ fun PalmHiramNavHost(
         // TODO: INSERT SCREENS HERE
         composable(Destinations.WELCOME_ROUTE) {
             WelcomeRoute(
-                onLogin = { navController.navigate(Destinations.DASHBOARD_ROUTE) },
+                viewModel = authViewModel,
+                onLogin = {
+                    navController.navigate(Destinations.DASHBOARD_ROUTE) {
+                        popUpTo(Destinations.DASHBOARD_ROUTE) { inclusive = true }
+                    }
+                },
                 onRegister = { navController.navigate(Destinations.REGISTRATION_ROUTE) }
             )
         }
@@ -59,7 +65,7 @@ fun PalmHiramNavHost(
             )
         }
         composable(Destinations.DASHBOARD_ROUTE) {
-
+            authViewModel?.logout()
         }
     }
 }

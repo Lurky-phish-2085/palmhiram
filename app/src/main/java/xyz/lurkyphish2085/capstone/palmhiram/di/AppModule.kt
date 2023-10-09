@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepositoryImpl
 
 @InstallIn(SingletonComponent::class)
@@ -15,5 +16,5 @@ class AppModule {
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Provides
-    fun provideAuthRepository(impl: AuthRepositoryImpl) = impl
+    fun provideAuthRepository(impl: AuthRepositoryImpl): AuthRepository = impl
 }

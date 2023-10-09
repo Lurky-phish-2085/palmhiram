@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,12 +33,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +51,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
@@ -54,12 +60,27 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtil
 @ExperimentalMaterial3Api
 @Composable
 fun WelcomeScreen(
-    onLogin: () -> Unit,
+    viewModel: AuthViewModel?,
+    onLoginSuccess: () -> Unit,
     onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // TODO: Add a background for the whole screen
     // TODO: Extract the the whole login/register form into a separate component
+
+    var email by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var password by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    val loginFlow = viewModel?.loginFlow?.collectAsState()
+
+    var enableComponents by rememberSaveable {
+        mutableStateOf(true)
+    }
 
     var registrationMode by rememberSaveable {
         mutableStateOf(false)
@@ -117,11 +138,15 @@ fun WelcomeScreen(
                 text = pageModeName,
                 onclick = {
                     when(pageModeName) {
-                        "REGISTER" -> { onRegister() }
-                        "LOGIN" -> { onLogin() }
+                        "REGISTER" -> {
+                            onRegister()
+                        }
+                        "LOGIN" -> {
+                            viewModel?.login(email, password)
+                        }
                     }
                 },
-                enabled = isConfirmButtonEnabled,
+                enabled = isConfirmButtonEnabled && enableComponents,
             )
         },
         modifier = modifier
@@ -129,6 +154,33 @@ fun WelcomeScreen(
         Box(
             modifier = Modifier.padding(paddingValues),
         ) {
+            if (pageModeName == "LOGIN") {
+                loginFlow?.value?.let {
+                    when(it) {
+                        is Resource.Failure -> {
+                            val context = LocalContext.current
+                            Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                            enableComponents = true
+                        }
+                        Resource.Loading -> {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                            enableComponents = false
+                        }
+                        is Resource.Success -> {
+                            val context = LocalContext.current
+
+                            LaunchedEffect(Unit) {
+                                Toast.makeText(context, "Welcome, ${it.result.displayName}!", Toast.LENGTH_LONG).show()
+                                onLoginSuccess()
+                                enableComponents = true
+                            }
+                        }
+                    }
+                }
+            } else {
+                // TODO: For signupFlow
+            }
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -140,13 +192,17 @@ fun WelcomeScreen(
             ) {
                 // TODO: Create this as a separate component, and create its state holder also
                 // TODO: EmailField, validates email string if valid
-                EmailField(onValueChange = {text, isValid ->
+                EmailField(
+                    enabled = enableComponents,
+                    onValueChange = {text, isValid ->
                     emailIsValid = isValid
                     isConfirmButtonEnabled = emailIsValid && passwordIsValid
+                    email = text
                 })
                 // TODO: Create this as a separate component, and create its state holder also
                 // TODO: PasswordField, where it has validation and can display red text underneath. Has Re type password too
                 PasswordField(
+                    enabled = enableComponents,
                     enableReTypeField = registrationMode,
                     onValueChange = { text, isValid, retypeValid ->
                         passwordIsValid = isValid
@@ -156,6 +212,8 @@ fun WelcomeScreen(
                                 registrationMode -> emailIsValid && passwordIsValid && passwordRetypeMatched
                                 else -> emailIsValid && passwordIsValid
                             }
+
+                        password = text
                     }
                 )
 
@@ -166,18 +224,20 @@ fun WelcomeScreen(
                 ) {
                     Text(
                         text = pageModeChangerLabelText,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = if (enableComponents) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)),
                     )
                     ClickableText(
                         text = AnnotatedString(
                             text = pageModeChangerButtonText,
                             spanStyle = SpanStyle(
                                 fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.primary,
+                                color = if (enableComponents) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                             )
                         ),
                         onClick = {
-                            onPageModeChange()
+                            if (enableComponents) {
+                                onPageModeChange()
+                            }
                         }
                     )
                 }
@@ -332,6 +392,7 @@ fun WelcomeScreenSignUpSignInContent(
 @ExperimentalMaterial3Api
 @Composable
 fun EmailField(
+    enabled: Boolean = true,
     onValueChange: (text: String, isValid: Boolean) -> Unit = { s: String, b: Boolean -> },
     isError: Boolean = false,
     modifier: Modifier = Modifier
@@ -347,6 +408,7 @@ fun EmailField(
     Column(modifier) {
         // Once the checkmark button clicked on the soft keeb, it will validate email
         OutlinedTextField(
+            enabled = enabled,
             value = emailText,
             onValueChange = {
                 emailText = it
@@ -385,6 +447,7 @@ fun EmailField(
 @ExperimentalMaterial3Api
 @Composable
 fun PasswordField(
+    enabled: Boolean = true,
     onValueChange: (text: String, isValid: Boolean, retypeIsValid: Boolean) -> Unit = { s: String, b: Boolean, c: Boolean -> },
     isError: Boolean = false,
     enableReTypeField: Boolean = false,
@@ -416,6 +479,7 @@ fun PasswordField(
     Column(modifier) {
         // Once the checkmark button clicked on the soft keeb, it will validate email
         OutlinedTextField(
+            enabled = enabled,
             value = passwordText,
             onValueChange = {
                 passwordText = it
@@ -589,7 +653,8 @@ fun WelcomeScreenPreview() {
             modifier = Modifier.fillMaxSize(),
         ) {
             WelcomeScreen(
-                onLogin = {},
+                viewModel = null,
+                onLoginSuccess = {},
                 onRegister = {},
                 modifier = Modifier
                     .fillMaxSize()
