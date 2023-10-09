@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "515516409540",
+    "project_id": "palmhiram",
+    "storage_bucket": "palmhiram.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515516409540:android:a2a9bc216893c81b054b91",
+        "android_client_info": {
+          "package_name": "xyz.lurkyphish2085.capstone.palmhiram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQLq9qY8vRRngxIKAb0st063K70yydhH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
