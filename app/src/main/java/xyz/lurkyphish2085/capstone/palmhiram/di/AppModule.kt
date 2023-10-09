@@ -13,6 +13,7 @@ class AppModule {
 
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
     @Provides
     fun provideAuthRepository(impl: AuthRepositoryImpl) = impl
 }
