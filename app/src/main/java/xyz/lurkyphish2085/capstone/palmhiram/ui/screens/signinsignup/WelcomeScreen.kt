@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtil
@@ -56,6 +58,142 @@ fun WelcomeScreen(
     onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // TODO: Add a background for the whole screen
+    // TODO: Extract the the whole login/register form into a separate component
+
+    var registrationMode by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var pageModeName by rememberSaveable {
+        mutableStateOf(if (registrationMode) "REGISTER" else "LOGIN")
+    }
+
+    var pageModeChangerLabelText by rememberSaveable {
+        mutableStateOf(if (registrationMode) "Already have an account?" else "Don't have an account yet?")
+    }
+
+    var pageModeChangerButtonText by rememberSaveable {
+        mutableStateOf(if (registrationMode) "Login here" else "Register here")
+    }
+
+    var emailIsValid by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var passwordIsValid by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var passwordRetypeMatched by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var isConfirmButtonEnabled by rememberSaveable {
+        mutableStateOf(emailIsValid && passwordIsValid)
+    }
+
+    val onPageModeChange = {
+        registrationMode = !registrationMode
+        pageModeName = if (registrationMode) "REGISTER" else "LOGIN"
+        pageModeChangerLabelText = if (registrationMode) "Already have an account?" else "Don't have an account yet?"
+        pageModeChangerButtonText = if (registrationMode) "Login here" else "Register here"
+
+        isConfirmButtonEnabled =
+            when {
+                registrationMode -> emailIsValid && passwordIsValid && passwordRetypeMatched
+                else -> emailIsValid && passwordIsValid
+            }
+    }
+
+    Scaffold(
+        topBar = {
+            Crossfade(targetState = pageModeName) { name ->
+                ScreenTitleBar(name, modifier = Modifier.padding(all = 16.dp))
+            }
+         },
+        bottomBar = {
+            WideButton(
+                text = pageModeName,
+                onclick = {
+                    when(pageModeName) {
+                        "REGISTER" -> { onRegister() }
+                        "LOGIN" -> { onLogin() }
+                    }
+                },
+                enabled = isConfirmButtonEnabled,
+            )
+        },
+        modifier = modifier
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier.padding(paddingValues),
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // TODO: Create this as a separate component, and create its state holder also
+                // TODO: EmailField, validates email string if valid
+                EmailField(onValueChange = {text, isValid ->
+                    emailIsValid = isValid
+                    isConfirmButtonEnabled = emailIsValid && passwordIsValid
+                })
+                // TODO: Create this as a separate component, and create its state holder also
+                // TODO: PasswordField, where it has validation and can display red text underneath. Has Re type password too
+                PasswordField(
+                    enableReTypeField = registrationMode,
+                    onValueChange = { text, isValid, retypeValid ->
+                        passwordIsValid = isValid
+                        passwordRetypeMatched = retypeValid
+                        isConfirmButtonEnabled =
+                            when {
+                                registrationMode -> emailIsValid && passwordIsValid && passwordRetypeMatched
+                                else -> emailIsValid && passwordIsValid
+                            }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = pageModeChangerLabelText,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                    ClickableText(
+                        text = AnnotatedString(
+                            text = pageModeChangerButtonText,
+                            spanStyle = SpanStyle(
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        ),
+                        onClick = {
+                            onPageModeChange()
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@ExperimentalMaterial3Api
+@Composable
+fun WelcomeScreenSignUpSignInContent(
+    onLogin: () -> Unit,
+    onRegister: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
     // TODO: Add a background for the whole screen
     // TODO: Extract the the whole login/register form into a separate component
 
@@ -147,7 +285,7 @@ fun WelcomeScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(128.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Column(
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -169,7 +307,7 @@ fun WelcomeScreen(
                     }
                 )
             }
-            }
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -179,10 +317,10 @@ fun WelcomeScreen(
             WideButton(
                 text = pageModeName,
                 onclick = {
-                          when(pageModeName) {
-                              "REGISTER" -> { onRegister() }
-                              "LOGIN" -> { onLogin() }
-                          }
+                    when(pageModeName) {
+                        "REGISTER" -> { onRegister() }
+                        "LOGIN" -> { onLogin() }
+                    }
                 },
                 enabled = isConfirmButtonEnabled,
                 modifier = Modifier.weight(1f, true)
