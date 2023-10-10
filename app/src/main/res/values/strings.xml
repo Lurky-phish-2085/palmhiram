@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Palm Hiram</string>
+    <string name="firebase_emulator_host">localhost</string>
 </resources>
