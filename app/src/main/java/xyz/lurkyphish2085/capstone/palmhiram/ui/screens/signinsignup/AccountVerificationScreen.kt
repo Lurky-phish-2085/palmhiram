@@ -38,21 +38,21 @@ fun AccountVerificationScreen(
     }
 
     Scaffold(
-        topBar = { ScreenTitleBar("Verification", modifier = Modifier.padding(all = 16.dp)) },
+        topBar = { ScreenTitleBar("Verification") },
         bottomBar = { 
             WideButton(
                 enabled = isConfirmButtonEnabled,
                 text = "Get Verified",
                 onclick = { onSubmit() },
-                modifier = Modifier.padding(all = 16.dp)
             )
-        }
+        },
+        modifier = modifier
     ) { paddingValues ->
         AccountVerificationInputContent(
             onFieldChange = { fieldsValid ->
                 isConfirmButtonEnabled = fieldsValid
             },
-            modifier.padding(paddingValues)
+            Modifier.padding(paddingValues)
         )
     }
 }

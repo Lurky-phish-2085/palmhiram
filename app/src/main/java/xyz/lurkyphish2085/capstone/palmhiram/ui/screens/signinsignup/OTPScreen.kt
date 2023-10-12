@@ -42,21 +42,21 @@ fun OTPScreen(
     }
 
     Scaffold(
-        topBar = { ScreenTitleBar("OTP", modifier = Modifier.padding(all = 16.dp)) },
+        topBar = { ScreenTitleBar("OTP") },
         bottomBar = {
             WideButton(
                 enabled = isConfirmButtonEnabled,
                 text = "CONFIRM",
                 onclick = { onSubmit() },
-                modifier = Modifier.padding(all = 16.dp)
             )
-        }
+        },
+        modifier = modifier
     ) { paddingValues ->
         OTPInputContent(
             onFieldChange = { fieldsValid ->
                 isConfirmButtonEnabled = fieldsValid
             },
-            modifier.padding(paddingValues)
+            Modifier.padding(paddingValues)
         )
     }
 }

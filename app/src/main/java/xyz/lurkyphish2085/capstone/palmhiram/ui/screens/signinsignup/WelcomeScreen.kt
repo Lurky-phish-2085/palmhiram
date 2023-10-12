@@ -131,7 +131,7 @@ fun WelcomeScreen(
     Scaffold(
         topBar = {
             Crossfade(targetState = pageModeName) { name ->
-                ScreenTitleBar(name, enable = enableComponents, modifier = Modifier.padding(all = 16.dp))
+                ScreenTitleBar(name, enable = enableComponents)
             }
          },
         bottomBar = {
@@ -176,6 +176,7 @@ fun WelcomeScreen(
                                 enableComponents = true
                             }
                         }
+                        else -> null
                     }
                 }
             } else {

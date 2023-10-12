@@ -40,15 +40,15 @@ fun RegistrationScreen(
     }
 
     Scaffold(
-        topBar = { ScreenTitleBar(text = "PERSONAL INFO", modifier = Modifier.padding(all = 16.dp)) },
+        topBar = { ScreenTitleBar(text = "PERSONAL INFO") },
         bottomBar = {
             WideButton(
                 enabled = isConfirmButtonEnabled,
                 text = "REGISTER",
                 onclick = { onSubmit() },
-                modifier = Modifier.padding(all = 16.dp)
             )
         },
+        modifier = modifier
     ) { padding ->
         SignUpContent(
             onFieldChange = { fieldsValid ->
