@@ -52,6 +52,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
+import xyz.lurkyphish2085.capstone.palmhiram.ui.common.CommonColors
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
@@ -130,7 +131,7 @@ fun WelcomeScreen(
     Scaffold(
         topBar = {
             Crossfade(targetState = pageModeName) { name ->
-                ScreenTitleBar(name, modifier = Modifier.padding(all = 16.dp))
+                ScreenTitleBar(name, enable = enableComponents, modifier = Modifier.padding(all = 16.dp))
             }
          },
         bottomBar = {
@@ -224,14 +225,14 @@ fun WelcomeScreen(
                 ) {
                     Text(
                         text = pageModeChangerLabelText,
-                        style = if (enableComponents) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)),
+                        style = if (enableComponents) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onBackground.copy(alpha = CommonColors.DISABLED_COMPONENT_ALPHA)),
                     )
                     ClickableText(
                         text = AnnotatedString(
                             text = pageModeChangerButtonText,
                             spanStyle = SpanStyle(
                                 fontWeight = FontWeight.SemiBold,
-                                color = if (enableComponents) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                color = if (enableComponents) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = CommonColors.DISABLED_COMPONENT_ALPHA),
                             )
                         ),
                         onClick = {

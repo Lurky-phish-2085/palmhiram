@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.common.CommonColors
 
 @Composable
 fun WideButton(
@@ -49,7 +50,7 @@ fun WideButton(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.secondary,
-            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = CommonColors.DISABLED_BUTTON_ALPHA),
         ),
         modifier = modifier
             .heightIn(53.dp)

@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.common.CommonColors
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @Composable
 fun ScreenTitleBar(
     text: String,
+    enable: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -28,7 +30,15 @@ fun ScreenTitleBar(
             .fillMaxWidth()
     ) {
         Crossfade(targetState = text) {
-            Text(text = it.uppercase(), style = MaterialTheme.typography.headlineLarge)
+            Text(
+                text = it.uppercase(),
+                style = MaterialTheme.typography.headlineLarge,
+                color = if (!enable) {
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = CommonColors.DISABLED_COMPONENT_ALPHA)
+                } else {
+                    MaterialTheme.colorScheme.onBackground
+                }
+            )
         }
     }
 }
