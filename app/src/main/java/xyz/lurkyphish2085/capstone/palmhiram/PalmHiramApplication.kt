@@ -11,23 +11,4 @@ import io.grpc.android.BuildConfig
 
 @HiltAndroidApp
 class PalmHiramApplication: Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-
-        if (BuildConfig.DEBUG) {
-            Firebase.auth
-                .useEmulator("localhost", 9099)
-
-            Firebase.firestore
-                .useEmulator("localhost", 8080)
-
-            Firebase.firestore.firestoreSettings = FirebaseFirestoreSettings.Builder()
-                .setSslEnabled(false)
-                .build()
-
-            Firebase.functions
-                .useEmulator("localhost", 5001)
-        }
-    }
 }
