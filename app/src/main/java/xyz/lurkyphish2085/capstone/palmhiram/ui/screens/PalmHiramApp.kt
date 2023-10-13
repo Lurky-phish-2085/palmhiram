@@ -13,18 +13,14 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
-fun PalmHiramApp(
-    authViewModel: AuthViewModel
-) {
+fun PalmHiramApp() {
     @OptIn(ExperimentalMaterial3Api::class)
     PalmHiramTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
         ) {
             // TODO: Insert NavHost here
-            PalmHiramNavHost(
-                authViewModel = authViewModel
-            )
+            PalmHiramNavHost()
         }
     }
 }
