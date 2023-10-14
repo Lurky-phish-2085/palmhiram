@@ -1,6 +1,11 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
 import android.content.res.Configuration
+import android.net.http.HttpException
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,20 +19,28 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import xyz.lurkyphish2085.capstone.palmhiram.data.RetrofitInstance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NameField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.PhoneField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import java.io.IOException
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @ExperimentalMaterial3Api
 @Composable
 fun RegistrationScreen(
@@ -37,6 +50,28 @@ fun RegistrationScreen(
 
     var isConfirmButtonEnabled by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    val TAG = "MainActivity"
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        scope.launch {
+            val response = try {
+                RetrofitInstance.api.getPing()
+            } catch (e: IOException) {
+                Log.e(TAG, "No internet connection for response")
+                return@launch
+            } catch (e: HttpException) {
+                Log.e(TAG, "Unexpected response")
+                return@launch
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+                val message = response.body()!!
+                Toast.makeText(context,  message.message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     Scaffold(
@@ -114,6 +149,7 @@ fun SignUpContent(
     }
 }
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @ExperimentalMaterial3Api
 @Preview(name = "light", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "dark", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
