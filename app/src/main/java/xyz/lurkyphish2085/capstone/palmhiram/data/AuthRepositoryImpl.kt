@@ -58,4 +58,14 @@ class AuthRepositoryImpl @Inject constructor(
             Resource.Failure(e)
         }
     }
+
+    override suspend fun sendOtpEmail(name: String, email: String): Resource<OTPResponse> {
+        return try {
+            val response = RetrofitInstance.api.generateOtp(OTPRequest(name, email))
+            Resource.Success(response.body()!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
 }

@@ -11,6 +11,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +29,9 @@ class AuthViewModel @Inject constructor(
 
     private val _pingMessageFlow = MutableStateFlow<Resource<Message>?>(null)
     val pingMessageFlow: StateFlow<Resource<Message>?> = _pingMessageFlow
+
+    private val _otpResponseFlow = MutableStateFlow<Resource<OTPResponse>?>(null)
+    val otpResponseFlow: StateFlow<Resource<OTPResponse>?> = _otpResponseFlow
 
     val currentUser: FirebaseUser?
         get() = repository.currentUser
@@ -60,5 +64,11 @@ class AuthViewModel @Inject constructor(
         _pingMessageFlow.value = Resource.Loading
         val result = repository.pingServer()
         _pingMessageFlow.value = result
+    }
+
+    fun sendOtpEmail() = viewModelScope.launch {
+        _otpResponseFlow.value = Resource.Loading
+        val result = repository.sendOtpEmail(fields.displayName, fields.email)
+        _otpResponseFlow.value = result
     }
 }

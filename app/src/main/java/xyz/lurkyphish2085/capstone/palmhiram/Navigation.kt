@@ -77,6 +77,7 @@ fun PalmHiramNavHost(
             }
             composable(Destinations.OTP_ROUTE) {
                 OTPRoute(
+                    viewModel = it.sharedViewModel(navController),
                     onSubmit = { navController.navigate(Destinations.VERIFICATION_ROUTE) }
                 )
             }

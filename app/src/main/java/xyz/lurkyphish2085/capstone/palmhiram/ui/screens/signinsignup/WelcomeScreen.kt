@@ -141,6 +141,7 @@ fun WelcomeScreen(
                     when(pageModeName) {
                         "REGISTER" -> {
                             onRegister()
+                            viewModel?.fields?.email = email
                         }
                         "LOGIN" -> {
                             viewModel?.login(email, password)

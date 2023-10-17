@@ -133,7 +133,7 @@ fun SignUpContent(
                     firstName = text
                     onFieldChange(
                         firstNameValid && lastNameValid && phoneValid,
-                        firstName + lastName,
+                        "$firstName $lastName",
                         "$phone"
                     )
                 }
@@ -145,7 +145,7 @@ fun SignUpContent(
                     lastName = text
                     onFieldChange(
                         firstNameValid && lastNameValid && phoneValid,
-                        firstName + lastName,
+                        "$firstName $lastName",
                         "$phone"
                     )
                 }
@@ -156,7 +156,7 @@ fun SignUpContent(
                     phone = text
                     onFieldChange(
                         firstNameValid && lastNameValid && phoneValid,
-                        firstName + lastName,
+                        "$firstName $lastName",
                         "$phone"
                     )
                 }
