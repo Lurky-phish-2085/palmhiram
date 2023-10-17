@@ -1,5 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ object Destinations {
                 const val REPORTS_ROUTE = "${HOME_NAV_ROUTE}/${DASHBOARD_NAV_ROUTE}/reports"
 }
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
@@ -68,6 +71,7 @@ fun PalmHiramNavHost(
             }
             composable(Destinations.REGISTRATION_ROUTE) {
                 RegistrationRoute(
+                    viewModel = it.sharedViewModel(navController),
                     onSubmit = { navController.navigate(Destinations.OTP_ROUTE) }
                 )
             }

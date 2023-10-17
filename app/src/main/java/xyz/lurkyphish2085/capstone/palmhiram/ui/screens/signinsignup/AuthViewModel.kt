@@ -9,14 +9,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
-import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPRequest
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository
 ): ViewModel() {
+
+    val fields = UserCredentials("","", "", "")
 
     private val _loginFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val loginFlow: StateFlow<Resource<FirebaseUser>?> = _loginFlow
