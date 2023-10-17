@@ -52,27 +52,27 @@ fun RegistrationScreen(
         mutableStateOf(false)
     }
 
-    val TAG = "MainActivity"
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
-        scope.launch {
-            val response = try {
-                RetrofitInstance.api.getPing()
-            } catch (e: IOException) {
-                Log.e(TAG, "No internet connection for response")
-                return@launch
-            } catch (e: HttpException) {
-                Log.e(TAG, "Unexpected response")
-                return@launch
-            }
-
-            if (response.isSuccessful && response.body() != null) {
-                val message = response.body()!!
-                Toast.makeText(context,  message.message, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+//    val TAG = "MainActivity"
+//    val context = LocalContext.current
+//    val scope = rememberCoroutineScope()
+//    LaunchedEffect(Unit) {
+//        scope.launch {
+//            val response = try {
+//                RetrofitInstance.api.getPing()
+//            } catch (e: IOException) {
+//                Log.e(TAG, "No internet connection for response")
+//                return@launch
+//            } catch (e: HttpException) {
+//                Log.e(TAG, "Unexpected response")
+//                return@launch
+//            }
+//
+//            if (response.isSuccessful && response.body() != null) {
+//                val message = response.body()!!
+//                Toast.makeText(context,  message.message, Toast.LENGTH_LONG).show()
+//            }
+//        }
+//    }
 
     Scaffold(
         topBar = { ScreenTitleBar(text = "PERSONAL INFO") },

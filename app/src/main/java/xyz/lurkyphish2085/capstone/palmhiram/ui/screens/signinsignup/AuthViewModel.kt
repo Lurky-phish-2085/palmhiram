@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPRequest
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +23,9 @@ class AuthViewModel @Inject constructor(
 
     private val _signupFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val signupFlow: StateFlow<Resource<FirebaseUser>?> = _signupFlow
+
+    private val _pingMessageFlow = MutableStateFlow<Resource<Message>?>(null)
+    val pingMessageFlow: StateFlow<Resource<Message>?> = _pingMessageFlow
 
     val currentUser: FirebaseUser?
         get() = repository.currentUser
@@ -47,5 +52,11 @@ class AuthViewModel @Inject constructor(
         repository.logout()
         _loginFlow.value = null
         _signupFlow.value = null
+    }
+
+    fun pingServer() = viewModelScope.launch {
+        _pingMessageFlow.value = Resource.Loading
+        val result = repository.pingServer()
+        _pingMessageFlow.value = result
     }
 }
