@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,11 +12,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
@@ -78,20 +82,47 @@ fun OTPScreen(
         }
     }
 
+    var otpInput by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var retrivedOtpFlow = viewModel?.retrievedOtpFlow?.collectAsState()
+    // TODO: sum scary stuff, im telling you
     Scaffold(
         topBar = { ScreenTitleBar("OTP") },
         bottomBar = {
             WideButton(
                 enabled = isConfirmButtonEnabled,
                 text = "CONFIRM",
-                onclick = { onSubmit() },
+                onclick = {
+                    viewModel?.retrieveValidOtp()
+                },
             )
         },
         modifier = modifier
     ) { paddingValues ->
         OTPInputContent(
-            onFieldChange = { fieldsValid ->
+            retrivedOtpFlow = retrivedOtpFlow,
+            onSuccess = {
+                val retrievedOtp: OTP? = retrivedOtpFlow?.value?.let {
+                    when(it) {
+                        is Resource.Failure -> null
+                        Resource.Loading -> null
+                        is Resource.Success -> it.result
+                        else -> null
+                    }
+                }
+
+                val email = viewModel?.fields?.email
+                val ourOtp = OTP(otpInput, email!!)
+
+                if (ourOtp.code == retrievedOtp?.code) {
+                    onSubmit()
+                }
+            },
+            onFieldChange = { fieldsValid, otpCode ->
                 isConfirmButtonEnabled = fieldsValid
+                otpInput = otpCode
             },
             Modifier.padding(paddingValues)
         )
@@ -101,10 +132,33 @@ fun OTPScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun OTPInputContent(
-    onFieldChange: (areFieldsValid: Boolean) -> Unit = {},
+    retrivedOtpFlow: State<Resource<OTP>?>?,
+    onSuccess: () -> Unit,
+    onFieldChange: (areFieldsValid: Boolean, otpCode: String) -> Unit = { b: Boolean, s: String -> },
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Box(modifier) {
+        retrivedOtpFlow?.value?.let {
+            when(it) {
+                is Resource.Failure -> {
+                    Toast.makeText(context, "${it.exception}", Toast.LENGTH_LONG)
+                        .show()
+                }
+                Resource.Loading -> {
+                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                }
+                is Resource.Success -> {
+                    Toast.makeText(context, "YESSS ${it.result.toString()}", Toast.LENGTH_LONG)
+                        .show()
+
+                    onSuccess()
+                }
+
+                else -> null
+            }
+        }
+
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -119,8 +173,8 @@ fun OTPInputContent(
                 },
                 label = "OTP Code",
                 errorText = "Field is empty",
-                onValueChange = {
-                    onFieldChange(it.isNotBlank())
+                onValueChange = { text ->
+                    onFieldChange(text.isNotBlank(), text)
                 },
                 keyboardType = KeyboardType.Number
             )

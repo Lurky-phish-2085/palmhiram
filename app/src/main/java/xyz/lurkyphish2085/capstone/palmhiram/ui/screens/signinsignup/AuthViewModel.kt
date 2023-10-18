@@ -20,7 +20,7 @@ class AuthViewModel @Inject constructor(
     private val repository: AuthRepository
 ): ViewModel() {
 
-    val fields = UserCredentials("","", "", "")
+    val fields = UserCredentials("", "", "", "")
 
     private val _loginFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val loginFlow: StateFlow<Resource<FirebaseUser>?> = _loginFlow
@@ -36,6 +36,9 @@ class AuthViewModel @Inject constructor(
 
     private val _otpFlow = MutableStateFlow<Resource<OTP>?>(null)
     val otpFlow: StateFlow<Resource<OTP>?> = _otpFlow
+
+    private val _retrievedOtpFlow = MutableStateFlow<Resource<OTP>?>(null)
+    val retrievedOtpFlow: StateFlow<Resource<OTP>?> = _retrievedOtpFlow
 
     val currentUser: FirebaseUser?
         get() = repository.currentUser
@@ -80,5 +83,11 @@ class AuthViewModel @Inject constructor(
         _otpFlow.value = Resource.Loading
         val result = repository.storeOtp(OTP(code, fields.email))
         _otpFlow.value = result
+    }
+
+    fun retrieveValidOtp() = viewModelScope.launch {
+        _retrievedOtpFlow.value = Resource.Loading
+        val result = repository.retrievedValidOtp(fields.email)
+        _retrievedOtpFlow.value = result
     }
 }

@@ -13,4 +13,5 @@ interface AuthRepository {
     suspend fun pingServer(): Resource<Message>
     suspend fun sendOtpEmail(name: String, email: String): Resource<OTPResponse>
     suspend fun storeOtp(otp: OTP): Resource<OTP>
+    suspend fun retrievedValidOtp(email: String): Resource<OTP>
 }

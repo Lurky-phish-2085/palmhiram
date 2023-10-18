@@ -4,6 +4,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.snapshots
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
@@ -82,6 +85,22 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseFirestore.collection(OTP_COLLECTIONS_PATH).add(otp).await()
             val retrievedItem = result.get().await()
             Resource.Success(retrievedItem.toObject(OTP::class.java)!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun retrievedValidOtp(email: String): Resource<OTP> {
+        return try {
+            val document = firebaseFirestore.collection(OTP_COLLECTIONS_PATH)
+                .whereEqualTo("email", email)
+                .orderBy("created", Query.Direction.DESCENDING)
+                .limit(1)
+                .get().await()
+
+            val result = document.documents.get(0).toObject(OTP::class.java)
+            Resource.Success(result!!)
         } catch (e: Exception) {
             e.printStackTrace()
             Resource.Failure(e)
