@@ -106,4 +106,15 @@ class AuthRepositoryImpl @Inject constructor(
             Resource.Failure(e)
         }
     }
+
+    override suspend fun clearAllOtp(email: String) {
+        val docuemets = firebaseFirestore.collection(OTP_COLLECTIONS_PATH)
+            .whereEqualTo("email", email)
+            .get().await()
+
+        docuemets.forEach {
+            firebaseFirestore.collection(OTP_COLLECTIONS_PATH)
+                .document(it.id).delete().await()
+        }
+    }
 }

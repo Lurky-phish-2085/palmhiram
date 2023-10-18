@@ -90,4 +90,10 @@ class AuthViewModel @Inject constructor(
         val result = repository.retrievedValidOtp(fields.email)
         _retrievedOtpFlow.value = result
     }
+
+    fun clearAllOtp(email: String) {
+        viewModelScope.launch {
+            repository.clearAllOtp(email)
+        }
+    }
 }

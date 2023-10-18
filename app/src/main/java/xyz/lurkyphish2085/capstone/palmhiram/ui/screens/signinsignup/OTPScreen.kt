@@ -117,6 +117,7 @@ fun OTPScreen(
                 val ourOtp = OTP(otpInput, email!!)
 
                 if (ourOtp.code == retrievedOtp?.code) {
+                    viewModel.clearAllOtp(email)
                     onSubmit()
                 }
             },
