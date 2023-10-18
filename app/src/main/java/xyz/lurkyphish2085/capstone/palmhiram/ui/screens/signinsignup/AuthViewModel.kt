@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
@@ -32,6 +33,9 @@ class AuthViewModel @Inject constructor(
 
     private val _otpResponseFlow = MutableStateFlow<Resource<OTPResponse>?>(null)
     val otpResponseFlow: StateFlow<Resource<OTPResponse>?> = _otpResponseFlow
+
+    private val _otpFlow = MutableStateFlow<Resource<OTP>?>(null)
+    val otpFlow: StateFlow<Resource<OTP>?> = _otpFlow
 
     val currentUser: FirebaseUser?
         get() = repository.currentUser
@@ -70,5 +74,11 @@ class AuthViewModel @Inject constructor(
         _otpResponseFlow.value = Resource.Loading
         val result = repository.sendOtpEmail(fields.displayName, fields.email)
         _otpResponseFlow.value = result
+    }
+
+    fun storeOtp(code: String) = viewModelScope.launch {
+        _otpFlow.value = Resource.Loading
+        val result = repository.storeOtp(OTP(code, fields.email))
+        _otpFlow.value = result
     }
 }

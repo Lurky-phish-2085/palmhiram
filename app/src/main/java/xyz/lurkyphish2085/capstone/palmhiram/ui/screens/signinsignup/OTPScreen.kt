@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ClickableTextWithLabel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
@@ -59,15 +61,21 @@ fun OTPScreen(
             }
             Resource.Loading -> null
             is Resource.Success -> {
-                Toast.makeText(context, "YESSS: ${it.result.otp}", Toast.LENGTH_SHORT).show()
+                LaunchedEffect(Unit) {
+                    //Toast.makeText(context, "YESSS: ${it.result.otp}", Toast.LENGTH_SHORT).show()
+                    viewModel?.storeOtp(it.result.otp)
+                    Toast.makeText(context, it.result.otp, Toast.LENGTH_SHORT).show()
+                }
             }
             else -> null
         }
     }
     // TODO: CREATES A LOT OF REQUEST THIS SHOULD ONLY BE CALLED OONCCEE!!!!
-    if (shouldSendOtpEmail) {
-        viewModel?.sendOtpEmail()
-        shouldSendOtpEmail = false
+    LaunchedEffect(shouldSendOtpEmail) {
+        if (shouldSendOtpEmail) {
+            viewModel?.sendOtpEmail()
+            shouldSendOtpEmail = false
+        }
     }
 
     Scaffold(
