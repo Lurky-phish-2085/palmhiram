@@ -168,24 +168,6 @@ fun OTPInputContent(
             }
         }
 
-        signupFlow?.value?.let {
-            when(it) {
-                is Resource.Failure -> {
-                    Toast.makeText(context, "${it.exception}", Toast.LENGTH_LONG)
-                        .show()
-                    Log.e("Signup Error", "${it.exception}")
-                }
-                Resource.Loading -> {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
-                }
-                is Resource.Success -> {
-                    Toast.makeText(context, "${it.result.toString()}", Toast.LENGTH_LONG)
-                        .show()
-                }
-                else -> null
-            }
-        }
-
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

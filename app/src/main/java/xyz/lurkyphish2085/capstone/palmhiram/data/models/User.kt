@@ -10,11 +10,12 @@ data class User(
     val name: String,
     val email: String,
     val phone: String,
+    val verified: Boolean,
 
     @ServerTimestamp
     val created: Timestamp? = null,
     @ServerTimestamp
     var modified: Timestamp? = null
 ) {
-    constructor(): this("", "", "", "", null, null)
+    constructor(): this("", "", "", "", false, null, null)
 }

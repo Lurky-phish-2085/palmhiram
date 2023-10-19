@@ -7,6 +7,8 @@ import retrofit2.http.POST
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPRequest
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailRequest
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailResponse
 
 interface PalmhiramAPI {
 
@@ -15,4 +17,7 @@ interface PalmhiramAPI {
 
     @POST("/v1/send-otp")
     suspend fun generateOtp(@Body request: OTPRequest): Response<OTPResponse>
+
+    @POST("/v1/send-verification")
+    suspend fun sendVerificationEmail(@Body request: SendEmailRequest): Response<SendEmailResponse>
 }

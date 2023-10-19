@@ -11,9 +11,11 @@ import androidx.compose.ui.unit.dp
 @ExperimentalMaterial3Api
 @Composable
 fun VerificationRoute(
+    viewModel: AuthViewModel,
     onSubmit: () -> Unit
 ) {
     AccountVerificationScreen(
+        viewModel = viewModel,
         onSubmit = onSubmit,
         modifier = Modifier
             .fillMaxSize()

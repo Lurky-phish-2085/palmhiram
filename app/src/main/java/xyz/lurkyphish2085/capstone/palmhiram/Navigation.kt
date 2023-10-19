@@ -83,6 +83,7 @@ fun PalmHiramNavHost(
             }
             composable(Destinations.VERIFICATION_ROUTE) {
                 VerificationRoute(
+                    viewModel = it.sharedViewModel(navController),
                     onSubmit = {
                         navController.navigate(Destinations.HOME_NAV_ROUTE) {
                             popUpTo(Destinations.AUTH_NAV_ROUTE) { inclusive = true }

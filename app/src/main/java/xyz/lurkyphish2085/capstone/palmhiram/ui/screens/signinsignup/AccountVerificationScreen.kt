@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,11 +31,25 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @ExperimentalMaterial3Api
 @Composable
 fun AccountVerificationScreen(
+    viewModel: AuthViewModel?,
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isConfirmButtonEnabled by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    var shouldSendEmail by rememberSaveable {
+        mutableStateOf(true)
+    }
+
+    //!\\ TODO: FOR SOME REASON THIS GET INVOKED 4-5 TIMES!!!
+    LaunchedEffect(shouldSendEmail) {
+        if (shouldSendEmail) {
+            viewModel?.sendVerificationEmail()
+
+            shouldSendEmail = false
+        }
     }
 
     Scaffold(
@@ -95,7 +110,7 @@ fun AccountVerificationInputContent(
 fun AccountVerificationScreenPreview() {
     PalmHiramTheme {
         Surface {
-            AccountVerificationScreen( onSubmit = {})
+            AccountVerificationScreen(viewModel = null, onSubmit = {})
         }
     }
 }

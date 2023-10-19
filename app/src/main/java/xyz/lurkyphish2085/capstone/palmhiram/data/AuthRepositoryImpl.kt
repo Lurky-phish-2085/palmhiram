@@ -5,13 +5,13 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.snapshots
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPRequest
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailRequest
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailResponse
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -73,6 +73,19 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun sendOtpEmail(name: String, email: String): Resource<OTPResponse> {
         return try {
             val response = RetrofitInstance.api.generateOtp(OTPRequest(name, email))
+            Resource.Success(response.body()!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun sendAccountVerificationEmail(
+        name: String,
+        email: String
+    ): Resource<SendEmailResponse> {
+        return try {
+            val response = RetrofitInstance.api.sendVerificationEmail(SendEmailRequest(name, email))
             Resource.Success(response.body()!!)
         } catch (e: Exception) {
             e.printStackTrace()

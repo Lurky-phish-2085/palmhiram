@@ -82,6 +82,10 @@ class AuthViewModel @Inject constructor(
         _otpResponseFlow.value = result
     }
 
+    fun sendVerificationEmail() = viewModelScope.launch {
+        repository.sendAccountVerificationEmail(fields.displayName, fields.email)
+    }
+
     fun storeOtp(code: String) = viewModelScope.launch {
         _otpFlow.value = Resource.Loading
         val result = repository.storeOtp(OTP(code, fields.email))
