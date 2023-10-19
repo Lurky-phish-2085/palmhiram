@@ -31,6 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
@@ -86,7 +88,9 @@ fun OTPScreen(
         mutableStateOf("")
     }
 
-    var retrivedOtpFlow = viewModel?.retrievedOtpFlow?.collectAsState()
+
+    val signupFlow = viewModel?.signupFlow?.collectAsState()
+    val retrivedOtpFlow = viewModel?.retrievedOtpFlow?.collectAsState()
     // TODO: sum scary stuff, im telling you
     Scaffold(
         topBar = { ScreenTitleBar("OTP") },
@@ -102,6 +106,7 @@ fun OTPScreen(
         modifier = modifier
     ) { paddingValues ->
         OTPInputContent(
+            signupFlow = signupFlow,
             retrivedOtpFlow = retrivedOtpFlow,
             onSuccess = {
                 val retrievedOtp: OTP? = retrivedOtpFlow?.value?.let {
@@ -118,6 +123,7 @@ fun OTPScreen(
 
                 if (ourOtp.code == retrievedOtp?.code) {
                     viewModel.clearAllOtp(email)
+                    viewModel.signup()
                     onSubmit()
                 }
             },
@@ -133,6 +139,7 @@ fun OTPScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun OTPInputContent(
+    signupFlow: State<Resource<FirebaseUser>?>?,
     retrivedOtpFlow: State<Resource<OTP>?>?,
     onSuccess: () -> Unit,
     onFieldChange: (areFieldsValid: Boolean, otpCode: String) -> Unit = { b: Boolean, s: String -> },
@@ -145,6 +152,7 @@ fun OTPInputContent(
                 is Resource.Failure -> {
                     Toast.makeText(context, "${it.exception}", Toast.LENGTH_LONG)
                         .show()
+                    Log.e("Retrived OTP Flow Failure", "${it.exception}")
                 }
                 Resource.Loading -> {
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -156,6 +164,24 @@ fun OTPInputContent(
                     onSuccess()
                 }
 
+                else -> null
+            }
+        }
+
+        signupFlow?.value?.let {
+            when(it) {
+                is Resource.Failure -> {
+                    Toast.makeText(context, "${it.exception}", Toast.LENGTH_LONG)
+                        .show()
+                    Log.e("Signup Error", "${it.exception}")
+                }
+                Resource.Loading -> {
+                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                }
+                is Resource.Success -> {
+                    Toast.makeText(context, "${it.result.toString()}", Toast.LENGTH_LONG)
+                        .show()
+                }
                 else -> null
             }
         }

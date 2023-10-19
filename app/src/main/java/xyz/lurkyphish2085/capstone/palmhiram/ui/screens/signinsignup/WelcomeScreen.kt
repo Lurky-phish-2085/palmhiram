@@ -142,6 +142,7 @@ fun WelcomeScreen(
                         "REGISTER" -> {
                             onRegister()
                             viewModel?.fields?.email = email
+                            viewModel?.fields?.pass = password
                         }
                         "LOGIN" -> {
                             viewModel?.login(email, password)

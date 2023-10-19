@@ -60,6 +60,9 @@ class AuthViewModel @Inject constructor(
         val result = repository.signup(username, email, password)
         _signupFlow.value = result
     }
+    fun signup() {
+        signup(fields.displayName, fields.email, fields.pass)
+    }
 
     fun logout() {
         repository.logout()
