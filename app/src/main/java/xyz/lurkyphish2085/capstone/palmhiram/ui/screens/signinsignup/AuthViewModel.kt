@@ -1,5 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
@@ -84,6 +85,7 @@ class AuthViewModel @Inject constructor(
 
     fun sendVerificationEmail() = viewModelScope.launch {
         repository.sendAccountVerificationEmail(fields.displayName, fields.email)
+        Log.e("AAAAAAAAAAa", "sendVerificationEmail: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ")
     }
 
     fun storeOtp(code: String) = viewModelScope.launch {

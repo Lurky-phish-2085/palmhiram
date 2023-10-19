@@ -158,10 +158,12 @@ fun OTPInputContent(
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
                 is Resource.Success -> {
-                    Toast.makeText(context, "YESSS ${it.result.toString()}", Toast.LENGTH_LONG)
-                        .show()
+                    LaunchedEffect(key1 = Unit) {
+                        Toast.makeText(context, "YESSS ${it.result.toString()}", Toast.LENGTH_LONG)
+                            .show()
 
-                    onSuccess()
+                        onSuccess()
+                    }
                 }
 
                 else -> null

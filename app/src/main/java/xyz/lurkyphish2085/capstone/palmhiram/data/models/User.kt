@@ -7,6 +7,8 @@ import com.google.firebase.firestore.ServerTimestamp
 data class User(
     @DocumentId
     val id: String,
+
+    val userId: String,
     val name: String,
     val email: String,
     val phone: String,
@@ -17,5 +19,5 @@ data class User(
     @ServerTimestamp
     var modified: Timestamp? = null
 ) {
-    constructor(): this("", "", "", "", false, null, null)
+    constructor(): this("", "", "", "", "", false, null, null)
 }

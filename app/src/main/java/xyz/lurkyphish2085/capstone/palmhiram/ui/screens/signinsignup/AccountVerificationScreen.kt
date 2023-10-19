@@ -43,8 +43,7 @@ fun AccountVerificationScreen(
         mutableStateOf(true)
     }
 
-    //!\\ TODO: FOR SOME REASON THIS GET INVOKED 4-5 TIMES!!!
-    LaunchedEffect(shouldSendEmail) {
+    LaunchedEffect(Unit) {
         if (shouldSendEmail) {
             viewModel?.sendVerificationEmail()
 
