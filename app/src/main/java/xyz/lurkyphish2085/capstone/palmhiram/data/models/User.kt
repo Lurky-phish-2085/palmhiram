@@ -6,18 +6,16 @@ import com.google.firebase.firestore.ServerTimestamp
 
 data class User(
     @DocumentId
-    val id: String,
+    val id: String = "",
 
-    val userId: String,
-    val name: String,
-    val email: String,
-    val phone: String,
-    val verified: Boolean,
+    var userId: String = "",
+    var name: String = "",
+    var email: String = "",
+    var phone: String = "",
+    var verified: Boolean = false,
 
     @ServerTimestamp
     val created: Timestamp? = null,
     @ServerTimestamp
     var modified: Timestamp? = null
-) {
-    constructor(): this("", "", "", "", "", false, null, null)
-}
+)

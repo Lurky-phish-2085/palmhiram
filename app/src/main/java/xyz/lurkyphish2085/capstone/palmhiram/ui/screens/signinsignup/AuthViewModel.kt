@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
@@ -103,6 +104,19 @@ class AuthViewModel @Inject constructor(
     fun clearAllOtp(email: String) {
         viewModelScope.launch {
             repository.clearAllOtp(email)
+        }
+    }
+
+    fun registerUserToDB(user: FirebaseUser) {
+        viewModelScope.launch {
+            repository.registerUserToDB(
+                User(
+                    userId = user.uid,
+                    name = fields.displayName,
+                    email = fields.email,
+                    phone = fields.phone
+                )
+            )
         }
     }
 }

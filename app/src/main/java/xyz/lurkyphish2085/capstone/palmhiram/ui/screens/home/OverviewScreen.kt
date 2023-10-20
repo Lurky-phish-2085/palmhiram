@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -42,7 +40,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @ExperimentalMaterial3Api
 @Composable
-fun DashboardScreen(
+fun OverviewScreen(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -50,7 +48,7 @@ fun DashboardScreen(
         bottomBar = {},
         modifier = modifier
     ) { paddingValues ->
-        DashboardScreenContent(
+        OverviewScreenContent(
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -58,7 +56,7 @@ fun DashboardScreen(
 
 @ExperimentalMaterial3Api
 @Composable
-fun DashboardScreenContent(
+fun OverviewScreenContent(
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
@@ -162,7 +160,7 @@ fun TransactionList(
 }
 
 @Composable
-fun DashboardSection(
+fun OverviewSection(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -183,14 +181,14 @@ fun DashboardSection(
 
 @Composable
 fun BalanceSection() {
-    DashboardSection {
+    OverviewSection {
         Balance()
     }
 }
 
 @Composable
 fun TransactionListSection() {
-    DashboardSection {
+    OverviewSection {
         TransactionList()
     }
 }
@@ -201,7 +199,7 @@ fun BalanceSectionPreview() {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        DashboardSection {
+        OverviewSection {
             Balance()
         }
     }
@@ -221,10 +219,10 @@ fun TransactionListSectionPreview() {
 @Preview(name = "dark", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @ExperimentalMaterial3Api
 @Composable
-fun DashboardScreenPreview() {
+fun OverviewScreenPreview() {
     PalmHiramTheme {
         Surface {
-            DashboardScreen(
+            OverviewScreen(
                 modifier = Modifier.padding(all = 16.dp)
             )
         }

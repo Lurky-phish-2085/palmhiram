@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPRequest
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
@@ -21,6 +22,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     companion object {
         const val OTP_COLLECTIONS_PATH = "otp"
+        const val USERS_COLLECTIONS_PATH = "users"
     }
 
     override val currentUser: FirebaseUser?
@@ -128,6 +130,21 @@ class AuthRepositoryImpl @Inject constructor(
         docuemets.forEach {
             firebaseFirestore.collection(OTP_COLLECTIONS_PATH)
                 .document(it.id).delete().await()
+        }
+    }
+
+    override suspend fun registerUserToDB(user: User): Resource<User> {
+        return try {
+            val document = firebaseFirestore.collection(USERS_COLLECTIONS_PATH)
+                .add(user)
+                .await()
+
+            val result = document.get().await()
+
+            Resource.Success(result.toObject(User::class.java)!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
         }
     }
 }

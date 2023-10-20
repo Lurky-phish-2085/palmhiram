@@ -91,6 +91,12 @@ fun OTPScreen(
 
     val signupFlow = viewModel?.signupFlow?.collectAsState()
     val retrivedOtpFlow = viewModel?.retrievedOtpFlow?.collectAsState()
+
+    val onUserRegistered: (FirebaseUser) -> Unit = { user ->
+        viewModel?.registerUserToDB(user)
+        onSubmit()
+    }
+
     // TODO: sum scary stuff, im telling you
     Scaffold(
         topBar = { ScreenTitleBar("OTP") },
@@ -108,6 +114,7 @@ fun OTPScreen(
         OTPInputContent(
             signupFlow = signupFlow,
             retrivedOtpFlow = retrivedOtpFlow,
+            onUserRegistered = onUserRegistered,
             onSuccess = {
                 val retrievedOtp: OTP? = retrivedOtpFlow?.value?.let {
                     when(it) {
@@ -124,7 +131,6 @@ fun OTPScreen(
                 if (ourOtp.code == retrievedOtp?.code) {
                     viewModel.clearAllOtp(email)
                     viewModel.signup()
-                    onSubmit()
                 }
             },
             onFieldChange = { fieldsValid, otpCode ->
@@ -141,6 +147,7 @@ fun OTPScreen(
 fun OTPInputContent(
     signupFlow: State<Resource<FirebaseUser>?>?,
     retrivedOtpFlow: State<Resource<OTP>?>?,
+    onUserRegistered: (FirebaseUser) -> Unit,
     onSuccess: () -> Unit,
     onFieldChange: (areFieldsValid: Boolean, otpCode: String) -> Unit = { b: Boolean, s: String -> },
     modifier: Modifier = Modifier
@@ -166,6 +173,28 @@ fun OTPInputContent(
                     }
                 }
 
+                else -> null
+            }
+        }
+
+        signupFlow?.value?.let {
+            when(it) {
+                is Resource.Failure -> {
+                    LaunchedEffect(Unit) {
+                        Toast.makeText(context, "${it.exception}", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+                Resource.Loading -> {
+                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                }
+                is Resource.Success -> {
+                    LaunchedEffect(Unit) {
+                        onUserRegistered(it.result)
+                        Toast.makeText(context, "User added to DB: ${it.result.displayName}", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
                 else -> null
             }
         }
