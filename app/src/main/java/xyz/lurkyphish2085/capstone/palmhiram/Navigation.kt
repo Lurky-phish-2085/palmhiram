@@ -1,15 +1,16 @@
 package xyz.lurkyphish2085.capstone.palmhiram
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -18,7 +19,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import dagger.hilt.android.lifecycle.HiltViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.RegistrationRoute
@@ -30,6 +30,7 @@ object Destinations {
         const val WELCOME_ROUTE = "${AUTH_NAV_ROUTE}/welcome"
         const val REGISTRATION_ROUTE = "${AUTH_NAV_ROUTE}/registration"
         const val OTP_ROUTE = "${AUTH_NAV_ROUTE}/otp"
+
         const val VERIFICATION_ROUTE = "${AUTH_NAV_ROUTE}/verification"
 
     const val HOME_NAV_ROUTE = "home"
@@ -63,7 +64,7 @@ fun PalmHiramNavHost(
                     viewModel = it.sharedViewModel(navController),
                     onLogin = {
                         navController.navigate(Destinations.HOME_NAV_ROUTE) {
-                            popUpTo(Destinations.AUTH_NAV_ROUTE) { inclusive = true }
+                            popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
                         }
                     },
                     onRegister = { navController.navigate(Destinations.REGISTRATION_ROUTE) }
@@ -78,7 +79,11 @@ fun PalmHiramNavHost(
             composable(Destinations.OTP_ROUTE) {
                 OTPRoute(
                     viewModel = it.sharedViewModel(navController),
-                    onSubmit = { navController.navigate(Destinations.VERIFICATION_ROUTE) }
+                    onSubmit = {
+                        navController.navigate(Destinations.VERIFICATION_ROUTE) {
+                            popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
+                        }
+                    }
                 )
             }
             composable(Destinations.VERIFICATION_ROUTE) {
@@ -99,6 +104,11 @@ fun PalmHiramNavHost(
             composable(Destinations.DASHBOARD_ROUTE) {
                 val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
                 authViewModel?.logout()
+
+                // DEBUG TO CHECK IF AUTHVIEWMODEL STUFF STILL REMAINS HERE - NEGATIVE
+                val context = LocalContext.current
+                Toast.makeText(context, "${authViewModel.currentUser?.displayName}", Toast.LENGTH_LONG)
+                    .show()
 
                 navigation(
                     route = Destinations.DASHBOARD_NAV_ROUTE,
