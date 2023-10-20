@@ -39,18 +39,6 @@ fun AccountVerificationScreen(
         mutableStateOf(false)
     }
 
-    var shouldSendEmail by rememberSaveable {
-        mutableStateOf(true)
-    }
-
-    LaunchedEffect(Unit) {
-        if (shouldSendEmail) {
-            viewModel?.sendVerificationEmail()
-
-            shouldSendEmail = false
-        }
-    }
-
     Scaffold(
         topBar = { ScreenTitleBar("Verification") },
         bottomBar = { 

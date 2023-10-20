@@ -54,9 +54,6 @@ fun OTPScreen(
         mutableStateOf(false)
     }
 
-    var shouldSendOtpEmail by rememberSaveable {
-        mutableStateOf(true)
-    }
     // TODO: DANGER!!! PREVENT THIS FROM GETTING CALLED EVERY RECOMPOSITION
     val context = LocalContext.current
     var otpResponseFlow = viewModel?.otpResponseFlow?.collectAsState()
@@ -76,6 +73,10 @@ fun OTPScreen(
             else -> null
         }
     }
+    
+    var shouldSendOtpEmail by rememberSaveable {
+        mutableStateOf(true)
+    }
     // TODO: CREATES A LOT OF REQUEST THIS SHOULD ONLY BE CALLED OONCCEE!!!!
     LaunchedEffect(shouldSendOtpEmail) {
         if (shouldSendOtpEmail) {
@@ -94,6 +95,7 @@ fun OTPScreen(
 
     val onUserRegistered: (FirebaseUser) -> Unit = { user ->
         viewModel?.registerUserToDB(user)
+        viewModel?.sendVerificationEmail()
         onSubmit()
     }
 
