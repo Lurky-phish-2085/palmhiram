@@ -128,6 +128,12 @@ fun WelcomeScreen(
             }
     }
 
+    val checkEmailInUse = viewModel?.emailInUseFlow?.collectAsState()
+    var proceedToNextScreen by rememberSaveable {
+        mutableStateOf(true)
+    }
+
+
     Scaffold(
         topBar = {
             Crossfade(targetState = pageModeName) { name ->
@@ -140,9 +146,10 @@ fun WelcomeScreen(
                 onclick = {
                     when(pageModeName) {
                         "REGISTER" -> {
-                            onRegister()
                             viewModel?.fields?.email = email
                             viewModel?.fields?.pass = password
+                            viewModel?.checkIfEmailInUse()
+                            proceedToNextScreen = true
                         }
                         "LOGIN" -> {
                             viewModel?.login(email, password)
@@ -154,6 +161,8 @@ fun WelcomeScreen(
         },
         modifier = modifier
     ) { paddingValues ->
+        val context = LocalContext.current
+
         Box(
             modifier = Modifier.padding(paddingValues),
         ) {
@@ -161,8 +170,10 @@ fun WelcomeScreen(
                 loginFlow?.value?.let {
                     when(it) {
                         is Resource.Failure -> {
-                            val context = LocalContext.current
-                            Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                            LaunchedEffect(Unit) {
+                                Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                            }
+
                             enableComponents = true
                         }
                         Resource.Loading -> {
@@ -170,8 +181,6 @@ fun WelcomeScreen(
                             enableComponents = false
                         }
                         is Resource.Success -> {
-                            val context = LocalContext.current
-
                             LaunchedEffect(Unit) {
                                 Toast.makeText(context, "Welcome, ${it.result.displayName}!", Toast.LENGTH_LONG).show()
                                 onLoginSuccess()
@@ -182,7 +191,33 @@ fun WelcomeScreen(
                     }
                 }
             } else {
-                // TODO: For signupFlow
+                checkEmailInUse?.value?.let {
+                    when(it) {
+                        // IF THIS FAILS THEN WE GOOD NEXT SCREEN
+                        is Resource.Failure -> {
+                            LaunchedEffect(Unit) {
+                                if (proceedToNextScreen) {
+                                    onRegister()
+                                    proceedToNextScreen = false
+                                }
+                            }
+                            enableComponents = true
+                        }
+                        Resource.Loading -> {
+                            CircularProgressIndicator(Modifier.align(Alignment.Center))
+                            enableComponents = false
+                        }
+                        is Resource.Success -> {
+                            LaunchedEffect(Unit) {
+                                Toast.makeText(context, "This email is already in use", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+
+                            enableComponents = true
+                        }
+                        else -> null
+                    }
+                }
             }
 
             Column(
@@ -528,6 +563,7 @@ fun PasswordField(
 
         AnimatedVisibility(visible = enableReTypeField) {
             OutlinedTextField(
+                enabled = enabled,
                 value = passwordReTypeText,
                 onValueChange = {
                     passwordReTypeText = it

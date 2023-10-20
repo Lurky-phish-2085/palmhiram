@@ -147,4 +147,19 @@ class AuthRepositoryImpl @Inject constructor(
             Resource.Failure(e)
         }
     }
+
+    override suspend fun checkExistingAccount(email: String): Resource<User> {
+        return try {
+            val document = firebaseFirestore.collection(USERS_COLLECTIONS_PATH)
+                .whereEqualTo("email", email)
+                .get()
+                .await()
+
+            val result = document.documents.get(0)
+
+            Resource.Success(result.toObject(User::class.java)!!)
+        } catch (e: Exception) {
+            Resource.Failure(e)
+        }
+    }
 }
