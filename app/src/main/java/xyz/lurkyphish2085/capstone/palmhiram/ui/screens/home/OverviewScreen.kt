@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -94,15 +97,18 @@ fun Balance(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(
-                onClick = { /*TODO*/ },
-            ) {
-                Text(text = "Apply Loan")
-            }
-            Spacer(modifier = Modifier.weight(1f, true))
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "Pay Loan")
-            }
+            TwoRowButtonsWithIcon(
+                onClickLeft = { /*TODO*/ },
+                onClickRight = { /*TODO*/ },
+                leftIcon = Icons.Default.ArrowDownward,
+                rightIcon = Icons.Default.ArrowOutward,
+                leftContent = {
+                    Text(text = "Apply Loan")
+                },
+                rightContent = {
+                    Text(text = "Pay Loan")
+                }
+            )
         }
     }
 }
