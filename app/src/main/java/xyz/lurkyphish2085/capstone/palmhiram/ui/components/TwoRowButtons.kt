@@ -36,6 +36,7 @@ fun TwoRowButtons(
     ) {
         OutlinedButton(
             onClick = onClickLeft,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             modifier = Modifier.weight(1f)
         ) {
             leftContent()
@@ -45,6 +46,7 @@ fun TwoRowButtons(
 
         OutlinedButton(
             onClick = onClickRight,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             modifier = Modifier.weight(1f)
         ) {
             rightContent()
