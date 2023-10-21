@@ -1,4 +1,4 @@
-package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
+package xyz.lurkyphish2085.capstone.palmhiram.ui.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES

@@ -1,6 +1,5 @@
-package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
+package xyz.lurkyphish2085.capstone.palmhiram.ui.components
 
-import android.content.res.Configuration
 import android.content.res.Configuration.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowOutward
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton

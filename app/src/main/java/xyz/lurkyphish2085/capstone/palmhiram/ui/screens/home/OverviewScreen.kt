@@ -17,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowOutward
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +33,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 // TODO: ADD ACTION SECTION
@@ -71,45 +72,78 @@ fun OverviewScreenContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            BalanceSection()
+            BalanceSection(
+                currencySymbol = '₱',
+                amount = "69420",
+                balanceName = "Total amount to pay",
+                leftButtonName = "Apply Loan",
+                rightButtonName = "Pay Loan",
+                onLeftButtonClick = { /*TODO*/ },
+                onRightButtonClick = { /*TODO*/ })
             TransactionListSection()
         }
     }
 }
 
 @Composable
-fun Balance(
+fun BalanceSection(
+    currencySymbol: Char,
+    amount: String,
+    balanceName: String,
+    leftButtonName: String,
+    rightButtonName: String,
+    onLeftButtonClick: () -> Unit,
+    onRightButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OverviewSection {
+        BalanceSectionContent(
+            onLeftButtonClick = onLeftButtonClick,
+            onRightButtonClick = onRightButtonClick,
+            leftButtonName = leftButtonName,
+            rightButtonName = rightButtonName,
+            currencySymbol = currencySymbol,
+            amount = amount,
+            balanceName = balanceName
+        )
+    }
+}
+
+@Composable
+fun BalanceSectionContent(
+    onLeftButtonClick: () -> Unit,
+    onRightButtonClick: () -> Unit,
+    currencySymbol: Char,
+    amount: String,
+    balanceName: String,
+    leftButtonName: String,
+    rightButtonName: String,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text(
-            text = "P 69420.00",
-            style = MaterialTheme.typography.displayMedium
+        Balance(
+            amount = amount,
+            currencySymbol = currencySymbol
         )
         Text(
-            text = "Wallet Balance",
+            text = balanceName,
             style = MaterialTheme.typography.labelLarge
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            TwoRowButtonsWithIcon(
-                onClickLeft = { /*TODO*/ },
-                onClickRight = { /*TODO*/ },
-                leftIcon = Icons.Default.ArrowDownward,
-                rightIcon = Icons.Default.ArrowOutward,
-                leftContent = {
-                    Text(text = "Apply Loan")
-                },
-                rightContent = {
-                    Text(text = "Pay Loan")
-                }
-            )
-        }
+        TwoRowButtonsWithIcon(
+            onClickLeft = onLeftButtonClick,
+            onClickRight = onRightButtonClick,
+            leftIcon = Icons.Default.ArrowDownward,
+            rightIcon = Icons.Default.ArrowOutward,
+            leftContent = {
+                Text(text = leftButtonName)
+            },
+            rightContent = {
+                Text(text = rightButtonName)
+            }
+        )
     }
 }
 
@@ -186,38 +220,9 @@ fun OverviewSection(
 }
 
 @Composable
-fun BalanceSection() {
-    OverviewSection {
-        Balance()
-    }
-}
-
-@Composable
 fun TransactionListSection() {
     OverviewSection {
         TransactionList()
-    }
-}
-
-@Preview
-@Composable
-fun BalanceSectionPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        OverviewSection {
-            Balance()
-        }
-    }
-}
-
-@Preview
-@Composable
-fun TransactionListSectionPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        TransactionListSection()
     }
 }
 
