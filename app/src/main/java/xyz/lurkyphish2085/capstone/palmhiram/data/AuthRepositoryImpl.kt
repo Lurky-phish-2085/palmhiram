@@ -159,6 +159,23 @@ class AuthRepositoryImpl @Inject constructor(
 
             Resource.Success(result.toObject(User::class.java)!!)
         } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun getUser(userId: String): Resource<User> {
+        return try {
+            val document = firebaseFirestore.collection(USERS_COLLECTIONS_PATH)
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            val result = document.documents.get(0)
+
+            Resource.Success(result.toObject(User::class.java)!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
             Resource.Failure(e)
         }
     }

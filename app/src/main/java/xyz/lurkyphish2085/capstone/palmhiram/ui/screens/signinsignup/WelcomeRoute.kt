@@ -12,11 +12,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun WelcomeRoute(
     viewModel: AuthViewModel,
+    onLoginNotVerified: () -> Unit,
     onLogin: () -> Unit,
     onRegister: () -> Unit,
 ) {
     WelcomeScreen(
         viewModel = viewModel,
+        onLoginNotVerified = onLoginNotVerified,
         onLoginSuccess = onLogin,
         onRegister = onRegister,
         modifier = Modifier

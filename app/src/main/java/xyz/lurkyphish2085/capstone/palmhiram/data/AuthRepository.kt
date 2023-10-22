@@ -20,4 +20,5 @@ interface AuthRepository {
     suspend fun clearAllOtp(email: String)
     suspend fun registerUserToDB(user: User): Resource<User>
     suspend fun checkExistingAccount(email: String): Resource<User>
+    suspend fun getUser(userId: String): Resource<User>
 }

@@ -62,6 +62,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtil
 @Composable
 fun WelcomeScreen(
     viewModel: AuthViewModel?,
+    onLoginNotVerified: () -> Unit,
     onLoginSuccess: () -> Unit,
     onRegister: () -> Unit,
     modifier: Modifier = Modifier,
@@ -133,6 +134,7 @@ fun WelcomeScreen(
         mutableStateOf(true)
     }
 
+    val checkIfUserIsVerified = viewModel?.retrievingUserFlow?.collectAsState()
 
     Scaffold(
         topBar = {
@@ -171,7 +173,8 @@ fun WelcomeScreen(
                     when(it) {
                         is Resource.Failure -> {
                             LaunchedEffect(Unit) {
-                                Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
+                                    .show()
                             }
 
                             enableComponents = true
@@ -182,14 +185,14 @@ fun WelcomeScreen(
                         }
                         is Resource.Success -> {
                             LaunchedEffect(Unit) {
-                                Toast.makeText(context, "Welcome, ${it.result.displayName}!", Toast.LENGTH_LONG).show()
-                                onLoginSuccess()
+                                viewModel?.checkIfUserIsVerified()
                                 enableComponents = true
                             }
                         }
                         else -> null
                     }
                 }
+
             } else {
                 checkEmailInUse?.value?.let {
                     when(it) {
@@ -217,6 +220,39 @@ fun WelcomeScreen(
                         }
                         else -> null
                     }
+                }
+            }
+
+            checkIfUserIsVerified?.value?.let {
+                when(it) {
+                    is Resource.Failure -> {
+                        LaunchedEffect(Unit) {
+                            Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
+                                .show()
+                        }
+                        enableComponents = true
+                    }
+                    Resource.Loading -> {
+                        CircularProgressIndicator(Modifier.align(Alignment.Center))
+                        enableComponents = false
+                    }
+                    is Resource.Success -> {
+                        val user = it.result
+                        LaunchedEffect(Unit) {
+                            if (user.verified) {
+                                Toast.makeText(context, "Welcome, ${it.result.name}!", Toast.LENGTH_LONG)
+                                    .show()
+                                onLoginSuccess()
+                                enableComponents = true
+                            } else {
+                                Toast.makeText(context, "Sorry, please get verified first", Toast.LENGTH_LONG)
+                                    .show()
+                                onLoginNotVerified()
+                                enableComponents = true
+                            }
+                        }
+                    }
+                    else -> null
                 }
             }
 
@@ -694,6 +730,7 @@ fun WelcomeScreenPreview() {
         ) {
             WelcomeScreen(
                 viewModel = null,
+                onLoginNotVerified = {},
                 onLoginSuccess = {},
                 onRegister = {},
                 modifier = Modifier

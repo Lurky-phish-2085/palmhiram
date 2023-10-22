@@ -45,6 +45,9 @@ class AuthViewModel @Inject constructor(
     private val _emailInUseFlow = MutableStateFlow<Resource<User>?>(null)
     val emailInUseFlow: StateFlow<Resource<User>?> = _emailInUseFlow
 
+    private val _retrievingUserFlow = MutableStateFlow<Resource<User>?>(null)
+    val retrievingUserFlow: StateFlow<Resource<User>?> = _retrievingUserFlow
+
     val currentUser: FirebaseUser?
         get() = repository.currentUser
 
@@ -127,5 +130,11 @@ class AuthViewModel @Inject constructor(
         _emailInUseFlow.value = Resource.Loading
         val result = repository.checkExistingAccount(fields.email)
         _emailInUseFlow.value = result
+    }
+
+    fun checkIfUserIsVerified() = viewModelScope.launch {
+        _retrievingUserFlow.value = Resource.Loading
+        val result = repository.getUser(currentUser?.uid!!)
+        _retrievingUserFlow.value = result
     }
 }

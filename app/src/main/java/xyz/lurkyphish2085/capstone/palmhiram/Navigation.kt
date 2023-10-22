@@ -73,8 +73,14 @@ fun PalmHiramNavHost(
             composable(Destinations.WELCOME_ROUTE) {
                 WelcomeRoute(
                     viewModel = it.sharedViewModel(navController),
+                    onLoginNotVerified = {
+                         navController.navigate(Destinations.VERIFICATION_ROUTE) {
+                             popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
+                         }
+                    },
                     onLogin = {
-                        navController.navigate(Destinations.HOME_NAV_ROUTE) {
+//                        navController.navigate(Destinations.HOME_NAV_ROUTE) {
+                        navController.navigate("test") {
                             popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
                         }
                     },
@@ -109,6 +115,8 @@ fun PalmHiramNavHost(
             }
         }
         composable("test") {
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+            authViewModel?.logout()
             DashboardScreen(
                 modifier = Modifier.padding(all = 16.dp)
             )
