@@ -4,11 +4,18 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
@@ -19,6 +26,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardScreen
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.HomeNavigation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.RegistrationRoute
@@ -52,6 +62,7 @@ fun PalmHiramNavHost(
     NavHost(
         navController = navController,
         startDestination = Destinations.AUTH_NAV_ROUTE,
+//        startDestination = "test",
         modifier = modifier
     ) {
         // TODO: INSERT SCREENS HERE
@@ -96,6 +107,11 @@ fun PalmHiramNavHost(
                     }
                 )
             }
+        }
+        composable("test") {
+            DashboardScreen(
+                modifier = Modifier.padding(all = 16.dp)
+            )
         }
         navigation(
             route = Destinations.HOME_NAV_ROUTE,
