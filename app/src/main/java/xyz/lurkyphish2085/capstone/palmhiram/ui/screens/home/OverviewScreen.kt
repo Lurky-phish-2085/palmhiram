@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -75,7 +74,7 @@ fun OverviewScreenContent(
         ) {
             BalanceSection(
                 currencySymbol = '₱',
-                amount = "69420",
+                amount = "69420.00",
                 balanceName = "Total amount to pay",
                 leftButtonName = "Apply Loan",
                 rightButtonName = "Pay Loan",
@@ -128,7 +127,7 @@ fun BalanceSectionContent(
         )
         Text(
             text = balanceName,
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -155,31 +154,42 @@ fun BalanceSectionContent(
 }
 
 @Composable
-fun TransactionItemElement(
+fun PendingTransactionItemElement(
+    amount: String,
+    currencySymbol: Char,
+    status: String,
+    dueDate: String,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Row {
-            Text(text = "Paid Loan")
+            Text(
+                text = "Amount",
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+            )
             Spacer(modifier = Modifier.weight(1f, true))
-            Text(text = "22 Apr 2023")
+            Text(
+                text = "Due on",
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+            )
         }
         Row {
-            Text(text = "Lender")
+            Text(text = "$currencySymbol $amount")
             Spacer(modifier = Modifier.weight(1f, true))
-            Text(text = "P 69420.00")
+            Text(text = dueDate)
         }
     }
 }
 
 @Composable
-fun TransactionList(
+fun PendingTransactionList(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Row() {
             Text(
                 text = "Transactions",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.weight(1f, true))
             ClickableText(
@@ -200,7 +210,12 @@ fun TransactionList(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             for (item in fakeTransactionItemData) {
-                TransactionItemElement()
+                PendingTransactionItemElement(
+                    currencySymbol = '₱',
+                    amount = item.amount,
+                    dueDate = item.dueDate,
+                    status = item.status,
+                )
             }
         }
     }
@@ -229,7 +244,7 @@ fun OverviewSection(
 @Composable
 fun TransactionListSection() {
     OverviewSection {
-        TransactionList()
+        PendingTransactionList()
     }
 }
 
@@ -248,35 +263,35 @@ fun OverviewScreenPreview() {
 }
 
 data class FakeTransactionItem(
-    val activity: String,
-    val recipient: String,
     val amount: String,
+    val dueDate: String,
+    val status: String,
 )
 
 private val fakeTransactionItemData = listOf(
     FakeTransactionItem(
-        "Gaming",
-        "GBoy",
-        "69420.00"
+        "69420.00",
+        "22 Apr 2023",
+        "Pending",
     ),
     FakeTransactionItem(
-        "Gaming",
-        "GBoy",
-        "69420.00"
+        "69420.00",
+        "22 Apr 2023",
+        "Pending",
     ),
     FakeTransactionItem(
-        "Gaming",
-        "GBoy",
-        "69420.00"
+        "69.00",
+        "22 Jan 2023",
+        "Paid",
     ),
     FakeTransactionItem(
-        "Gaming",
-        "GBoy",
-        "69420.00"
+        "420.00",
+        "22 Apr 2023",
+        "Paid",
     ),
     FakeTransactionItem(
-        "Gaming",
-        "GBoy",
-        "69420.00"
-    ),
+        "69420.00",
+        "22 Apr 2023",
+        "Pending",
+    )
 )
