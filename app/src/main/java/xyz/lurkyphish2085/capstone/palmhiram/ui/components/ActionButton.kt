@@ -2,6 +2,8 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.AddBox
@@ -19,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @Composable
@@ -38,14 +41,16 @@ fun ActionButton(
             colors = IconButtonDefaults.filledTonalIconButtonColors(
                 containerColor = MaterialTheme.colorScheme.outlineVariant
             ),
-            shape = MaterialTheme.shapes.extraSmall,
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier
+                .size(64.dp)
         ) {
-            Icon(imageVector = icon, contentDescription = null)
+            Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(48.dp))
         }
 
         Text(
             text = actionName,
-            style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray, fontWeight = FontWeight.Black)
+            style = MaterialTheme.typography.labelMedium.copy(color = Color.Gray, fontWeight = FontWeight.Black,)
         )
     }
 }

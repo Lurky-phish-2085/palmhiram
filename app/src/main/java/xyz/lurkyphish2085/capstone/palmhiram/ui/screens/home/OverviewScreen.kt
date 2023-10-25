@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -24,6 +25,12 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.AddBox
+import androidx.compose.material.icons.outlined.AddBusiness
+import androidx.compose.material.icons.outlined.AddHomeWork
+import androidx.compose.material.icons.outlined.AirplanemodeActive
+import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.Man
+import androidx.compose.material.icons.outlined.Woman2
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -170,12 +177,10 @@ fun ActionListGrid(
     actions: List<ActionItem>,
     modifier: Modifier = Modifier
 ) {
-    LazyHorizontalGrid(
-        userScrollEnabled = false,
-        rows = GridCells.Fixed(2),
-        contentPadding = PaddingValues(horizontal = 16.dp),
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 64.dp),
         horizontalArrangement = Arrangement.spacedBy(32.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
             .height(180.dp)
     ) {
@@ -190,9 +195,16 @@ fun ActionListGrid(
 }
 
 @Composable
-fun ActionSection() {
+fun ActionSection(
+    modifier: Modifier = Modifier
+) {
     OverviewSection {
-        ActionListGrid(fakeActionItems)
+        ActionListGrid(
+            actions = fakeActionItems,
+            modifier = modifier
+                .fillMaxWidth()
+
+        )
     }
 }
 
@@ -316,32 +328,24 @@ private val fakeActionItems = listOf(
         actionName = "Add"
     ),
     ActionItem(
-        icon = Icons.Outlined.AddBox,
-        actionName = "Add"
+        icon = Icons.Outlined.AddHomeWork,
+        actionName = "Transactions"
     ),
     ActionItem(
-        icon = Icons.Outlined.AddBox,
-        actionName = "Add"
+        icon = Icons.Outlined.AirplanemodeActive,
+        actionName = "Airplane"
     ),
     ActionItem(
-        icon = Icons.Outlined.AddBox,
-        actionName = "Add"
+        icon = Icons.Outlined.Inbox,
+        actionName = "Inbox"
     ),
     ActionItem(
-        icon = Icons.Outlined.AddBox,
-        actionName = "Add"
+        icon = Icons.Outlined.Man,
+        actionName = "Man"
     ),
     ActionItem(
-        icon = Icons.Outlined.AddBox,
-        actionName = "Add"
-    ),
-    ActionItem(
-        icon = Icons.Outlined.AddBox,
-        actionName = "Add"
-    ),
-    ActionItem(
-        icon = Icons.Outlined.AddBox,
-        actionName = "Add"
+        icon = Icons.Outlined.Woman2,
+        actionName = "Woman"
     ),
 )
 
