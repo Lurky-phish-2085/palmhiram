@@ -3,6 +3,14 @@ package xyz.lurkyphish2085.capstone.palmhiram
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresExtension
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -87,13 +95,53 @@ fun PalmHiramNavHost(
                     onRegister = { navController.navigate(Destinations.REGISTRATION_ROUTE) }
                 )
             }
-            composable(Destinations.REGISTRATION_ROUTE) {
+            composable(
+                route = Destinations.REGISTRATION_ROUTE,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(450, easing = LinearEasing)
+                    ) + slideIntoContainer(
+                        animationSpec = tween(450, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            450, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(450, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
+            ) {
                 RegistrationRoute(
                     viewModel = it.sharedViewModel(navController),
                     onSubmit = { navController.navigate(Destinations.OTP_ROUTE) }
                 )
             }
-            composable(Destinations.OTP_ROUTE) {
+            composable(
+                route = Destinations.OTP_ROUTE,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(450, easing = LinearEasing)
+                    ) + slideIntoContainer(
+                        animationSpec = tween(450, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            450, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(450, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
+            ) {
                 OTPRoute(
                     viewModel = it.sharedViewModel(navController),
                     onSubmit = {
@@ -103,7 +151,27 @@ fun PalmHiramNavHost(
                     }
                 )
             }
-            composable(Destinations.VERIFICATION_ROUTE) {
+            composable(
+                route = Destinations.VERIFICATION_ROUTE,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(450, easing = LinearEasing)
+                    ) + slideIntoContainer(
+                        animationSpec = tween(450, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            450, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(450, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
+            ) {
                 VerificationRoute(
                     viewModel = it.sharedViewModel(navController),
                     onSubmit = {
