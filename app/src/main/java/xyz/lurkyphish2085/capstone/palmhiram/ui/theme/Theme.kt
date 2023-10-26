@@ -31,6 +31,9 @@ private val LightColorScheme = lightColorScheme(
     secondary = GreenGrey40,
     tertiary = Cyan40,
 
+    secondaryContainer = LightGreen,
+    onSecondaryContainer = DarkGreen,
+
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),

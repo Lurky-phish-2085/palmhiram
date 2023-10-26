@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -39,28 +40,32 @@ fun TwoRowButtons(
         horizontalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
-        OutlinedButton(
+        FilledTonalButton(
             onClick = onClickLeft,
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             shape = MaterialTheme.shapes.large,
-            border = BorderStroke(2.dp, Color.LightGray),
+//            border = BorderStroke(2.dp, Color.LightGray),
+            colors = ButtonDefaults.filledTonalButtonColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            ),
             modifier = Modifier
                 .weight(1f)
-                .heightIn(min = 56.dp, max = 56.dp)
+                .heightIn(min = 56.dp)
         ) {
             leftContent()
         }
 
         Spacer(modifier = Modifier.width(10.dp))
 
-        OutlinedButton(
+        FilledTonalButton(
             onClick = onClickRight,
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             shape = MaterialTheme.shapes.large,
-            border = BorderStroke(2.dp, Color.LightGray),
+//            border = BorderStroke(2.dp, Color.LightGray),
             modifier = Modifier
                 .weight(1f)
-                .heightIn(min = 56.dp, max = 56.dp)
+                .heightIn(min = 56.dp)
         ) {
             rightContent()
         }
