@@ -73,7 +73,6 @@ fun DashboardScreen(
                         Text(text = "Reports")
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
             }
         },
         modifier = modifier

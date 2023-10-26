@@ -46,7 +46,7 @@ fun TwoRowButtons(
             border = BorderStroke(2.dp, Color.LightGray),
             modifier = Modifier
                 .weight(1f)
-                .heightIn(min = 56.dp)
+                .heightIn(min = 56.dp, max = 56.dp)
         ) {
             leftContent()
         }
@@ -60,7 +60,7 @@ fun TwoRowButtons(
             border = BorderStroke(2.dp, Color.LightGray),
             modifier = Modifier
                 .weight(1f)
-                .heightIn(min = 56.dp)
+                .heightIn(min = 56.dp, max = 56.dp)
         ) {
             rightContent()
         }
