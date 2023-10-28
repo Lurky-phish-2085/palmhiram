@@ -90,7 +90,6 @@ fun OverviewScreenContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(modifier = Modifier.height(4.dp))
             BalanceSection(
                 currencySymbol = '₱',
                 amount = "69420.00",
@@ -101,6 +100,7 @@ fun OverviewScreenContent(
                 onRightButtonClick = { /*TODO*/ })
             ActionSection()
             TransactionListSection()
+            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }
@@ -245,7 +245,7 @@ fun PendingTransactionList(
         Row() {
             Text(
                 text = "Transactions",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
             )
             Spacer(modifier = Modifier.weight(1f, true))
             ClickableText(
