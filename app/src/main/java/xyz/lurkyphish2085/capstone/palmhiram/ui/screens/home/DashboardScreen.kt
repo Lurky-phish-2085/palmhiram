@@ -9,13 +9,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -40,9 +46,9 @@ fun DashboardScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row {
-                    Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null, modifier = Modifier.size(40.dp))
                     Spacer(modifier = Modifier.weight(1f, true))
-                    Icon(imageVector = Icons.Default.Notifications, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.Notifications, contentDescription = null, modifier = Modifier.size(40.dp))
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
