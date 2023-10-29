@@ -25,25 +25,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.BriefUserProfileInformation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.DrawerTopBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.MenuButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @ExperimentalMaterial3Api
 @Composable
 fun DashboardSideProfileScreen(
+    viewModel: AuthViewModel?,
+    userCredentials: UserCredentials?,
+    onLogOutClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onQuickHelpClick: () -> Unit,
+    onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
-            DrawerTopBar(text = "Acccount", onClose = { /*TODO*/ })
+            DrawerTopBar(
+                text = "Acccount",
+                onClose = { /*TODO*/ }
+            )
         },
         modifier = modifier
     ) { padding ->
         DashboardSideProfileScreenContent(
-            modifier = Modifier.padding(padding)
+            userCredentials = userCredentials,
+            onLogOutClick = onLogOutClick,
+            onSettingsClick = onSettingsClick,
+            onQuickHelpClick = onQuickHelpClick,
+            onAboutClick = onAboutClick,
+            modifier = Modifier
+                .padding(padding)
+                .padding(top = 16.dp)
         )
     }
 }
@@ -51,11 +70,23 @@ fun DashboardSideProfileScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun DashboardSideProfileScreenContent(
+    userCredentials: UserCredentials?,
+    onLogOutClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onQuickHelpClick: () -> Unit,
+    onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
+        BriefUserProfileInformation(
+            username = userCredentials?.displayName!!,
+            email = userCredentials.email,
+            phone = userCredentials.phone,
+        )
         ContentSection {
             Column() {
                 Row(
@@ -108,13 +139,26 @@ fun DashboardSideProfileScreenContent(
 @Preview(name = "light", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "dark", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun ProfileScreenSideMenuPreview() {
+fun DashboardSideProfielScreenPreview() {
     PalmHiramTheme {
         Surface {
             DashboardSideProfileScreen(
+                viewModel = null,
+                userCredentials = userCredentialSample,
+                onLogOutClick = { /*TODO*/ },
+                onSettingsClick = { /*TODO*/ },
+                onQuickHelpClick = { /*TODO*/ },
+                onAboutClick = { /*TODO*/ },
                 modifier = Modifier
                     .padding(all = 16.dp)
             )
         }
     }
 }
+
+private val userCredentialSample = UserCredentials(
+    displayName = "Juan De La Cruz",
+    email = "juandelacruz@gmail.com",
+    phone = "09988776655",
+    pass = ""
+)
