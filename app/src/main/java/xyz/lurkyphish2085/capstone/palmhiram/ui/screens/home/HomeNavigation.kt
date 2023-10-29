@@ -1,19 +1,17 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.CALENDAR_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.OVERVIEW_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.REPORTS_ROUTE
-import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 object DashboardRouteDestinations {
 
@@ -39,14 +37,14 @@ fun HomeNavigation(
             OverviewScreen()
         }
         composable(CALENDAR_ROUTE) {
-            OverviewSection {
+            ContentSection {
                 Text(text = "HELLO A")
                 Text(text = "HELLO")
                 Text(text = "HELLO")
             }
         }
         composable(REPORTS_ROUTE) {
-            OverviewSection {
+            ContentSection {
                 Text(text = "HELLO B")
                 Text(text = "HELLO")
                 Text(text = "HELLO")
