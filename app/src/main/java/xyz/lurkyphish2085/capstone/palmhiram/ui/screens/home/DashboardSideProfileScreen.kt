@@ -19,13 +19,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
+import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.BriefUserProfileInformation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.DrawerTopBar
@@ -38,24 +45,39 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @Composable
 fun DashboardSideProfileScreen(
     viewModel: AuthViewModel?,
-    userCredentials: UserCredentials?,
+    name: String,
+    email: String,
+    phone: String,
+    onCloseClick: () -> Unit,
     onLogOutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onQuickHelpClick: () -> Unit,
     onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var name by rememberSaveable {
+        mutableStateOf(name)
+    }
+    var email by rememberSaveable {
+        mutableStateOf(email)
+    }
+    var phone by rememberSaveable {
+        mutableStateOf(phone)
+    }
+
     Scaffold(
         topBar = {
             DrawerTopBar(
-                text = "Acccount",
-                onClose = { /*TODO*/ }
+                text = "Account",
+                onClose = onCloseClick
             )
         },
         modifier = modifier
     ) { padding ->
         DashboardSideProfileScreenContent(
-            userCredentials = userCredentials,
+            userName = name,
+            userEmail = email,
+            userPhone = phone,
             onLogOutClick = onLogOutClick,
             onSettingsClick = onSettingsClick,
             onQuickHelpClick = onQuickHelpClick,
@@ -70,7 +92,9 @@ fun DashboardSideProfileScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun DashboardSideProfileScreenContent(
-    userCredentials: UserCredentials?,
+    userName: String?,
+    userEmail: String?,
+    userPhone: String?,
     onLogOutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onQuickHelpClick: () -> Unit,
@@ -83,9 +107,9 @@ fun DashboardSideProfileScreenContent(
         modifier = modifier
     ) {
         BriefUserProfileInformation(
-            username = userCredentials?.displayName!!,
-            email = userCredentials.email,
-            phone = userCredentials.phone,
+            username = userName.toString(),
+            email = userEmail.toString(),
+            phone = userPhone.toString(),
         )
         ContentSection {
             Column() {
@@ -124,7 +148,7 @@ fun DashboardSideProfileScreenContent(
                 Spacer(modifier = Modifier.height(8.dp))
                 WideButton(
                     text = "LOG OUT",
-                    onclick = { /*TODO*/ },
+                    onclick = onLogOutClick,
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = MaterialTheme.colorScheme.outlineVariant,
                         contentColor = MaterialTheme.colorScheme.outline,
@@ -139,12 +163,15 @@ fun DashboardSideProfileScreenContent(
 @Preview(name = "light", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "dark", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun DashboardSideProfielScreenPreview() {
+fun DashboardSideProfileScreenPreview() {
     PalmHiramTheme {
         Surface {
             DashboardSideProfileScreen(
                 viewModel = null,
-                userCredentials = userCredentialSample,
+                name = "Juan De La Cruz",
+                email = "juandelacruz@gmail.com",
+                phone = "09988776655",
+                onCloseClick = { /*TODO*/ },
                 onLogOutClick = { /*TODO*/ },
                 onSettingsClick = { /*TODO*/ },
                 onQuickHelpClick = { /*TODO*/ },
@@ -156,9 +183,8 @@ fun DashboardSideProfielScreenPreview() {
     }
 }
 
-private val userCredentialSample = UserCredentials(
-    displayName = "Juan De La Cruz",
+private val userCredentialSample = User(
+    name = "Juan De La Cruz",
     email = "juandelacruz@gmail.com",
     phone = "09988776655",
-    pass = ""
 )

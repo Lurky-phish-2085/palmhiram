@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -52,6 +53,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @Composable
 fun DashboardScreen(
     viewModel: AuthViewModel?,
+    onProfileClick: () -> Unit,
+    onNotificationsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
@@ -60,15 +63,31 @@ fun DashboardScreen(
         mutableStateOf(OVERVIEW_ROUTE)
     }
 
+    LaunchedEffect(Unit) {
+        viewModel?.retrieveUserDetails()
+    }
+
     Scaffold(
         topBar = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row {
-                    Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null, modifier = Modifier.size(36.dp))
+                    IconButton(onClick = onProfileClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.AccountCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                     Spacer(modifier = Modifier.weight(1f, true))
-                    Icon(imageVector = Icons.Outlined.Notifications, contentDescription = null, modifier = Modifier.size(36.dp))
+                    IconButton(onClick = onNotificationsClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.Notifications,
+                            contentDescription = null,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
                 DashBoardScreenTabRow(
                     onHomeClick = {
@@ -94,8 +113,6 @@ fun DashboardScreen(
             navController = navController,
             modifier = Modifier.padding(padding)
         )
-
-        viewModel?.logout()
     }
 }
 
@@ -151,6 +168,8 @@ fun DashboardScreenPreview() {
     PalmHiramTheme {
         Surface {
             DashboardScreen(
+                onProfileClick = {},
+                onNotificationsClick = {},
                 viewModel = null,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)

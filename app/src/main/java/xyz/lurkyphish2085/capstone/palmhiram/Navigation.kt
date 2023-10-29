@@ -28,6 +28,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardScreen
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreen
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.RegistrationRoute
@@ -42,6 +44,7 @@ private object Destinations {
         const val VERIFICATION_ROUTE = "${AUTH_NAV_ROUTE}/verification"
 
         const val DASHBOARD_ROUTE = "dashboard"
+        const val PROFILE_DRAWER_ROUTE = "profile-drawer"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -168,10 +171,29 @@ fun PalmHiramNavHost(
         }
         composable(Destinations.DASHBOARD_ROUTE) {
             DashboardRoute(
+                onProfileClick = {
+                     navController.navigate(Destinations.PROFILE_DRAWER_ROUTE)
+                },
+                onNotificationsClick = { /*TODO*/ },
                 viewModel = it.sharedViewModel(navController)
-                // TODO: Implement this soon
-                //onProfileClick = ,
-                //onNotificationsClick = ,
+            )
+        }
+        composable(Destinations.PROFILE_DRAWER_ROUTE) {
+            DashboardSideProfileScreenRoute(
+                onCloseClick = {
+                   navController.navigate(Destinations.DASHBOARD_ROUTE) {
+                       popUpTo(Destinations.PROFILE_DRAWER_ROUTE) { inclusive = true }
+                   }
+                },
+                onLogOutClick = {
+                    navController.navigate(Destinations.WELCOME_ROUTE) {
+                        popUpTo(Destinations.DASHBOARD_ROUTE) { inclusive = true }
+                    }
+                },
+                onSettingsClick = { /*TODO*/ },
+                onQuickHelpClick = { /*TODO*/ },
+                onAboutClick = { /*TODO*/ },
+                viewModel = it.sharedViewModel(navController)
             )
         }
     }

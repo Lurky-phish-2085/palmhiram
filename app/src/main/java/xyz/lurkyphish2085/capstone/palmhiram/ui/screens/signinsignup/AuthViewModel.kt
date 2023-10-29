@@ -137,4 +137,10 @@ class AuthViewModel @Inject constructor(
         val result = repository.getUser(currentUser?.uid!!)
         _retrievingUserFlow.value = result
     }
+
+    fun retrieveUserDetails() = viewModelScope.launch {
+        _retrievingUserFlow.value = Resource.Loading
+        val result = repository.getUser(currentUser?.uid!!)
+        _retrievingUserFlow.value = result
+    }
 }

@@ -11,9 +11,13 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewMod
 @ExperimentalMaterial3Api
 @Composable
 fun DashboardRoute(
+    onProfileClick: () -> Unit,
+    onNotificationsClick: () -> Unit,
     viewModel: AuthViewModel
 ) {
     DashboardScreen(
+        onProfileClick = onProfileClick,
+        onNotificationsClick = onNotificationsClick,
         viewModel = viewModel,
         modifier = Modifier
             .padding(top = 16.dp)
