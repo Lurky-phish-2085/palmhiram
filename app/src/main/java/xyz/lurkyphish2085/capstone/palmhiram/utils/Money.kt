@@ -7,17 +7,15 @@ class Money(amount: Double) {
         const val DIVISOR = 100.00
     }
 
-    private val amountInCents: Long = amount.times(DIVISOR).toLong()
-
-    fun toCents(): Long = amountInCents
-    fun toActualAmount(): Double = amountInCents / DIVISOR
+    val centValue: Long = amount.times(DIVISOR).toLong()
+    val value: Double = centValue / DIVISOR
 
     override fun toString(): String {
-        return toActualAmount().toString()
+        return String.format("%.2f", value)
     }
 
-    operator fun plus(other: Money): Money = Money(this.toActualAmount() + other.toActualAmount())
-    operator fun minus(other: Money): Money = Money(this.toActualAmount() - other.toActualAmount())
-    operator fun times(other: Money): Money = Money(this.toActualAmount() * other.toActualAmount())
-    operator fun div(other: Money): Money = Money(this.toActualAmount() / other.toActualAmount())
+    operator fun plus(other: Money): Money = Money(this.value + other.value)
+    operator fun minus(other: Money): Money = Money(this.value - other.value)
+    operator fun times(other: Money): Money = Money(this.value * other.value)
+    operator fun div(other: Money): Money = Money(this.value / other.value)
 }
