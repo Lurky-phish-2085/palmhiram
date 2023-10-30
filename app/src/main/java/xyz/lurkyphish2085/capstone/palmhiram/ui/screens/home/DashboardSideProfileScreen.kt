@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.BriefUserProfileInformation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.DrawerTopBar
@@ -40,14 +42,13 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.MenuButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import kotlin.math.log
 
 @ExperimentalMaterial3Api
 @Composable
 fun DashboardSideProfileScreen(
     viewModel: AuthViewModel?,
-    name: String,
-    email: String,
-    phone: String,
+    userDetails: User?,
     onCloseClick: () -> Unit,
     onLogOutClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -55,16 +56,6 @@ fun DashboardSideProfileScreen(
     onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var name by rememberSaveable {
-        mutableStateOf(name)
-    }
-    var email by rememberSaveable {
-        mutableStateOf(email)
-    }
-    var phone by rememberSaveable {
-        mutableStateOf(phone)
-    }
-
     Scaffold(
         topBar = {
             DrawerTopBar(
@@ -75,9 +66,7 @@ fun DashboardSideProfileScreen(
         modifier = modifier
     ) { padding ->
         DashboardSideProfileScreenContent(
-            userName = name,
-            userEmail = email,
-            userPhone = phone,
+            userDetails = userDetails,
             onLogOutClick = onLogOutClick,
             onSettingsClick = onSettingsClick,
             onQuickHelpClick = onQuickHelpClick,
@@ -92,9 +81,7 @@ fun DashboardSideProfileScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun DashboardSideProfileScreenContent(
-    userName: String?,
-    userEmail: String?,
-    userPhone: String?,
+    userDetails: User?,
     onLogOutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onQuickHelpClick: () -> Unit,
@@ -107,9 +94,9 @@ fun DashboardSideProfileScreenContent(
         modifier = modifier
     ) {
         BriefUserProfileInformation(
-            username = userName.toString(),
-            email = userEmail.toString(),
-            phone = userPhone.toString(),
+            username = userDetails?.name!!,
+            email = userDetails.email,
+            phone = userDetails.phone,
         )
         ContentSection {
             Column() {
@@ -168,9 +155,7 @@ fun DashboardSideProfileScreenPreview() {
         Surface {
             DashboardSideProfileScreen(
                 viewModel = null,
-                name = "Juan De La Cruz",
-                email = "juandelacruz@gmail.com",
-                phone = "09988776655",
+                userDetails = userCredentialSample,
                 onCloseClick = { /*TODO*/ },
                 onLogOutClick = { /*TODO*/ },
                 onSettingsClick = { /*TODO*/ },

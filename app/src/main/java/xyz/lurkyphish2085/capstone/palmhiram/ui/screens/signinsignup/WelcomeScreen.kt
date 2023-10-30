@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -243,11 +244,13 @@ fun WelcomeScreen(
                                 Toast.makeText(context, "Welcome, ${it.result.name}!", Toast.LENGTH_LONG)
                                     .show()
                                 onLoginSuccess()
+                                viewModel.userDetails = user
                                 enableComponents = true
                             } else {
                                 Toast.makeText(context, "Sorry, please get verified first", Toast.LENGTH_LONG)
                                     .show()
                                 onLoginNotVerified()
+                                viewModel.userDetails = user
                                 enableComponents = true
                             }
                         }

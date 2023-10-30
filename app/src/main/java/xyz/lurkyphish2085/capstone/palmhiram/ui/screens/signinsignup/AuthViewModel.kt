@@ -23,6 +23,7 @@ class AuthViewModel @Inject constructor(
 ): ViewModel() {
 
     val fields = UserCredentials("", "", "", "")
+    var userDetails = User()
 
     private val _loginFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val loginFlow: StateFlow<Resource<FirebaseUser>?> = _loginFlow
@@ -133,12 +134,6 @@ class AuthViewModel @Inject constructor(
     }
 
     fun checkIfUserIsVerified() = viewModelScope.launch {
-        _retrievingUserFlow.value = Resource.Loading
-        val result = repository.getUser(currentUser?.uid!!)
-        _retrievingUserFlow.value = result
-    }
-
-    fun retrieveUserDetails() = viewModelScope.launch {
         _retrievingUserFlow.value = Resource.Loading
         val result = repository.getUser(currentUser?.uid!!)
         _retrievingUserFlow.value = result

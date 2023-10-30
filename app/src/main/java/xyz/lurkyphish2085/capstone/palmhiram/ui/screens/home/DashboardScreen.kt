@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,10 +62,6 @@ fun DashboardScreen(
 
     var selectedTab by rememberSaveable {
         mutableStateOf(OVERVIEW_ROUTE)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel?.retrieveUserDetails()
     }
 
     Scaffold(

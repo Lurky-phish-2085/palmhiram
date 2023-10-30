@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -60,14 +61,18 @@ fun PalmHiramNavHost(
         startDestination = Destinations.AUTH_NAV_ROUTE,
         modifier = modifier
     ) {
+        var globalAuthViewModel: AuthViewModel? = null
+
         // TODO: INSERT SCREENS HERE
         navigation(
             route = Destinations.AUTH_NAV_ROUTE,
             startDestination = Destinations.WELCOME_ROUTE,
         ) {
             composable(Destinations.WELCOME_ROUTE) {
+                val viewModel = it.sharedViewModel<AuthViewModel>(navController)
                 WelcomeRoute(
-                    viewModel = it.sharedViewModel(navController),
+//                    viewModel = it.sharedViewModel(navController),
+                    viewModel = viewModel,
                     onLoginNotVerified = {
                          navController.navigate(Destinations.VERIFICATION_ROUTE) {
                              popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
@@ -77,6 +82,7 @@ fun PalmHiramNavHost(
 //                        navController.navigate(Destinations.HOME_NAV_ROUTE) {
                         navController.navigate(Destinations.DASHBOARD_ROUTE) {
                             popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
+                            globalAuthViewModel = viewModel
                         }
                     },
                     onRegister = { navController.navigate(Destinations.REGISTRATION_ROUTE) }
@@ -175,7 +181,7 @@ fun PalmHiramNavHost(
                      navController.navigate(Destinations.PROFILE_DRAWER_ROUTE)
                 },
                 onNotificationsClick = { /*TODO*/ },
-                viewModel = it.sharedViewModel(navController)
+                viewModel = globalAuthViewModel!!
             )
         }
         composable(Destinations.PROFILE_DRAWER_ROUTE) {
@@ -193,7 +199,7 @@ fun PalmHiramNavHost(
                 onSettingsClick = { /*TODO*/ },
                 onQuickHelpClick = { /*TODO*/ },
                 onAboutClick = { /*TODO*/ },
-                viewModel = it.sharedViewModel(navController)
+                viewModel = globalAuthViewModel!!
             )
         }
     }

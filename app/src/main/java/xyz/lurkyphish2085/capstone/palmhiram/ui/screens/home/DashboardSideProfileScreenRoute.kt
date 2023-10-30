@@ -24,36 +24,9 @@ fun DashboardSideProfileScreenRoute(
     onAboutClick: () -> Unit,
     viewModel: AuthViewModel,
 ) {
-    var userName by rememberSaveable {
-        mutableStateOf("")
-    }
-    var userEmail by rememberSaveable {
-        mutableStateOf("")
-    }
-    var userPhone by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    val retrivedUserFlow = viewModel?.retrievingUserFlow?.collectAsState()
-    retrivedUserFlow?.value?.let {
-        when(it) {
-            is Resource.Failure -> null
-            Resource.Loading -> null
-            is Resource.Success -> {
-                val details = it.result
-                userName = details.name
-                userEmail = details.email
-                userPhone = details.phone
-            }
-            else -> null
-        }
-    }
-
     DashboardSideProfileScreen(
         viewModel = viewModel,
-        name = userName,
-        email = userEmail,
-        phone = userPhone,
+        userDetails = viewModel.userDetails,
         onCloseClick = onCloseClick,
         onLogOutClick = {
             viewModel.logout()
