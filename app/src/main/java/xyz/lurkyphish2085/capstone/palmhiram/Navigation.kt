@@ -9,6 +9,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -90,24 +91,6 @@ fun PalmHiramNavHost(
             }
             composable(
                 route = Destinations.REGISTRATION_ROUTE,
-                enterTransition = {
-                    fadeIn(
-                        animationSpec = tween(450, easing = LinearEasing)
-                    ) + slideIntoContainer(
-                        animationSpec = tween(450, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            450, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(450, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                }
             ) {
                 RegistrationRoute(
                     viewModel = it.sharedViewModel(navController),
@@ -175,7 +158,19 @@ fun PalmHiramNavHost(
                 )
             }
         }
-        composable(Destinations.DASHBOARD_ROUTE) {
+        composable(
+            route = Destinations.DASHBOARD_ROUTE,
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(450, easing = LinearEasing)
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(450, easing = LinearEasing)
+                )
+            }
+        ) {
             DashboardRoute(
                 onProfileClick = {
                      navController.navigate(Destinations.PROFILE_DRAWER_ROUTE)
@@ -184,12 +179,24 @@ fun PalmHiramNavHost(
                 viewModel = globalAuthViewModel!!
             )
         }
-        composable(Destinations.PROFILE_DRAWER_ROUTE) {
+        composable(
+            route = Destinations.PROFILE_DRAWER_ROUTE,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(600, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(2000, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            }
+        ) {
             DashboardSideProfileScreenRoute(
                 onCloseClick = {
-                   navController.navigate(Destinations.DASHBOARD_ROUTE) {
-                       popUpTo(Destinations.PROFILE_DRAWER_ROUTE) { inclusive = true }
-                   }
+                    navController.navigateUp()
                 },
                 onLogOutClick = {
                     navController.navigate(Destinations.WELCOME_ROUTE) {
