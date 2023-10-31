@@ -123,7 +123,7 @@ class AuthViewModel @Inject constructor(
                     name = fields.displayName,
                     email = fields.email,
                     phone = fields.phone,
-                    role = Roles.BORROWER,
+                    role = Roles.BORROWER.toString(),
                 )
             )
         }

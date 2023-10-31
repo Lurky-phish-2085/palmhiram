@@ -59,7 +59,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreen(
-    role: String,
+    role: Roles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
     modifier: Modifier = Modifier
@@ -75,19 +75,16 @@ fun OverviewScreen(
             when(role) {
                 Roles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
                 Roles.LENDER -> lenderDashboardViewModel?.balanceName!!
-                else -> "HAHA"
             },
             leftButtonName =
             when(role) {
                 Roles.BORROWER -> borrowerDashboardViewModel?.leftButtonName!!
                 Roles.LENDER -> lenderDashboardViewModel?.leftButtonName!!
-                else -> "HAHA"
             },
             rightButtonName =
             when(role) {
                 Roles.BORROWER -> borrowerDashboardViewModel?.rightButtonName!!
                 Roles.LENDER -> lenderDashboardViewModel?.rightButtonName!!
-                else -> "HAHA"
             },
             onLeftButtonClick = { /*TODO*/ },
             onRightButtonClick = { /*TODO*/ },

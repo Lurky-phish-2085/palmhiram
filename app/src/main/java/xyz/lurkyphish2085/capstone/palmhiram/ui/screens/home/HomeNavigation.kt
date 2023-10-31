@@ -14,6 +14,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDesti
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.OVERVIEW_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.REPORTS_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
+import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
 
 object DashboardRouteDestinations {
 
@@ -28,7 +29,7 @@ object DashboardRouteDestinations {
 @Composable
 fun HomeNavigation(
     navController: NavHostController = rememberNavController(),
-    role: String,
+    role: Roles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
     modifier: Modifier = Modifier
