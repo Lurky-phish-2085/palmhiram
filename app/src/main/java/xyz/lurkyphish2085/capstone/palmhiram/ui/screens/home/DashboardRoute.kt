@@ -13,12 +13,16 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewMod
 fun DashboardRoute(
     onProfileClick: () -> Unit,
     onNotificationsClick: () -> Unit,
-    viewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    borrowerDashboardViewModel: BorrowerDashboardViewModel,
+    lenderDashboardViewModel: LenderDashboardViewModel,
 ) {
     DashboardScreen(
         onProfileClick = onProfileClick,
         onNotificationsClick = onNotificationsClick,
-        viewModel = viewModel,
+        authViewModel = authViewModel,
+        borrowerDashboardViewModel = borrowerDashboardViewModel,
+        lenderDashboardViewModel = lenderDashboardViewModel,
         modifier = Modifier
             .padding(top = 16.dp)
             .padding(horizontal = 16.dp)

@@ -9,17 +9,13 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -29,8 +25,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
-import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardScreen
-import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
@@ -176,7 +170,9 @@ fun PalmHiramNavHost(
                      navController.navigate(Destinations.PROFILE_DRAWER_ROUTE)
                 },
                 onNotificationsClick = { /*TODO*/ },
-                viewModel = globalAuthViewModel!!
+                authViewModel = globalAuthViewModel!!,
+                borrowerDashboardViewModel = it.sharedViewModel(navController),
+                lenderDashboardViewModel = it.sharedViewModel(navController)
             )
         }
         composable(

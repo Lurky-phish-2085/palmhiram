@@ -47,7 +47,9 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ActionButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
 
 // TODO: ADD ACTION SECTION
 // TODO: Create Composables for elements and style it
@@ -57,6 +59,9 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreen(
+    role: String,
+    borrowerDashboardViewModel: BorrowerDashboardViewModel?,
+    lenderDashboardViewModel: LenderDashboardViewModel?,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -65,7 +70,29 @@ fun OverviewScreen(
         modifier = modifier
     ) { paddingValues ->
         OverviewScreenContent(
-            modifier = Modifier.padding(paddingValues)
+            amount = "69420.00",
+            balanceName =
+            when(role) {
+                Roles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
+                Roles.LENDER -> lenderDashboardViewModel?.balanceName!!
+                else -> "HAHA"
+            },
+            leftButtonName =
+            when(role) {
+                Roles.BORROWER -> borrowerDashboardViewModel?.leftButtonName!!
+                Roles.LENDER -> lenderDashboardViewModel?.leftButtonName!!
+                else -> "HAHA"
+            },
+            rightButtonName =
+            when(role) {
+                Roles.BORROWER -> borrowerDashboardViewModel?.rightButtonName!!
+                Roles.LENDER -> lenderDashboardViewModel?.rightButtonName!!
+                else -> "HAHA"
+            },
+            onLeftButtonClick = { /*TODO*/ },
+            onRightButtonClick = { /*TODO*/ },
+            modifier = Modifier
+                .padding(paddingValues)
         )
     }
 }
@@ -73,6 +100,12 @@ fun OverviewScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreenContent(
+    amount: String,
+    balanceName: String,
+    leftButtonName: String,
+    rightButtonName: String,
+    onLeftButtonClick: () -> Unit,
+    onRightButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
@@ -87,10 +120,10 @@ fun OverviewScreenContent(
             Spacer(modifier = Modifier.height(4.dp))
             BalanceSection(
                 currencySymbol = '₱',
-                amount = "69420.00",
-                balanceName = "Total amount to pay",
-                leftButtonName = "Apply Loan",
-                rightButtonName = "Pay Loan",
+                amount = amount,
+                balanceName = balanceName,
+                leftButtonName = leftButtonName,
+                rightButtonName = rightButtonName,
                 onLeftButtonClick = { /*TODO*/ },
                 onRightButtonClick = { /*TODO*/ })
             ActionSection()
@@ -287,6 +320,9 @@ fun OverviewScreenPreview() {
     PalmHiramTheme {
         Surface {
             OverviewScreen(
+                role = Roles.BORROWER,
+                borrowerDashboardViewModel = BorrowerDashboardViewModel(),
+                lenderDashboardViewModel = LenderDashboardViewModel(),
                 modifier = Modifier.padding(all = 16.dp)
             )
         }
