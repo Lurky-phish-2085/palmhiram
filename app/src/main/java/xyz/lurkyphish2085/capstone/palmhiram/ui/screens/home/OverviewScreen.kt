@@ -84,6 +84,7 @@ fun OverviewScreenContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            Spacer(modifier = Modifier.height(4.dp))
             BalanceSection(
                 currencySymbol = '₱',
                 amount = "69420.00",

@@ -13,6 +13,7 @@ data class User(
     var email: String = "",
     var phone: String = "",
     var verified: Boolean = false,
+    var role: String = "",
 
     @ServerTimestamp
     val created: Timestamp? = null,
