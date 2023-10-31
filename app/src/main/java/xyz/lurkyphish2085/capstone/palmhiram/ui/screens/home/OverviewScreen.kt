@@ -59,6 +59,10 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreen(
+    onLeftButtonClickAsBorrower: () -> Unit,
+    onRightButtonClickAsBorrower: () -> Unit,
+    onLeftButtonClickAsLender: () -> Unit,
+    onRightButtonClickAsLender: () -> Unit,
     role: Roles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
@@ -86,8 +90,16 @@ fun OverviewScreen(
                 Roles.BORROWER -> borrowerDashboardViewModel?.rightButtonName!!
                 Roles.LENDER -> lenderDashboardViewModel?.rightButtonName!!
             },
-            onLeftButtonClick = { /*TODO*/ },
-            onRightButtonClick = { /*TODO*/ },
+            onLeftButtonClick =
+            when(role) {
+                Roles.BORROWER -> onLeftButtonClickAsBorrower
+                Roles.LENDER -> onLeftButtonClickAsLender
+            },
+            onRightButtonClick =
+            when(role) {
+                Roles.BORROWER -> onRightButtonClickAsBorrower
+                Roles.LENDER -> onRightButtonClickAsLender
+            },
             modifier = Modifier
                 .padding(paddingValues)
         )
@@ -121,8 +133,9 @@ fun OverviewScreenContent(
                 balanceName = balanceName,
                 leftButtonName = leftButtonName,
                 rightButtonName = rightButtonName,
-                onLeftButtonClick = { /*TODO*/ },
-                onRightButtonClick = { /*TODO*/ })
+                onLeftButtonClick = onLeftButtonClick,
+                onRightButtonClick = onRightButtonClick,
+            )
             ActionSection()
             TransactionListSection()
             Spacer(modifier = Modifier.height(4.dp))
@@ -320,6 +333,10 @@ fun OverviewScreenPreview() {
                 role = Roles.BORROWER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(),
                 lenderDashboardViewModel = LenderDashboardViewModel(),
+                onLeftButtonClickAsBorrower = {},
+                onLeftButtonClickAsLender = {},
+                onRightButtonClickAsBorrower = {},
+                onRightButtonClickAsLender = {},
                 modifier = Modifier.padding(all = 16.dp)
             )
         }

@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
@@ -24,6 +25,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
@@ -40,7 +43,10 @@ private object Destinations {
         const val VERIFICATION_ROUTE = "${AUTH_NAV_ROUTE}/verification"
 
         const val DASHBOARD_ROUTE = "dashboard"
-        const val PROFILE_DRAWER_ROUTE = "profile-drawer"
+            const val PROFILE_DRAWER_ROUTE = "${DASHBOARD_ROUTE}/profile-drawer"
+            const val NOTIFICATIONS_ROUTE = "${DASHBOARD_ROUTE}/notifications"
+
+            const val APPLY_LOAN_ROUTE = "${DASHBOARD_ROUTE}/apply-loan"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -170,9 +176,15 @@ fun PalmHiramNavHost(
                      navController.navigate(Destinations.PROFILE_DRAWER_ROUTE)
                 },
                 onNotificationsClick = { /*TODO*/ },
+                onBorrowerApplyLoanClick = {
+                    navController.navigate(Destinations.APPLY_LOAN_ROUTE)
+                },
+                onBorrowerPayLoanClick = {},
+                onLenderCollectLoanClick = {},
+                onLenderGiveLoanClick = {},
                 authViewModel = globalAuthViewModel!!,
                 borrowerDashboardViewModel = it.sharedViewModel(navController),
-                lenderDashboardViewModel = it.sharedViewModel(navController)
+                lenderDashboardViewModel = it.sharedViewModel(navController),
             )
         }
         composable(
@@ -203,6 +215,13 @@ fun PalmHiramNavHost(
                 onQuickHelpClick = { /*TODO*/ },
                 onAboutClick = { /*TODO*/ },
                 viewModel = globalAuthViewModel!!
+            )
+        }
+        composable(
+            route = Destinations.APPLY_LOAN_ROUTE,
+        ) {
+            ApplyLoanRoute(
+                onCloseClick = { navController.navigateUp() }
             )
         }
     }

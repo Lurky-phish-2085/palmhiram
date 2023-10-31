@@ -13,6 +13,10 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewMod
 fun DashboardRoute(
     onProfileClick: () -> Unit,
     onNotificationsClick: () -> Unit,
+    onBorrowerApplyLoanClick: () -> Unit,
+    onBorrowerPayLoanClick: () -> Unit,
+    onLenderCollectLoanClick: () -> Unit,
+    onLenderGiveLoanClick: () -> Unit,
     authViewModel: AuthViewModel,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
@@ -23,6 +27,10 @@ fun DashboardRoute(
         authViewModel = authViewModel,
         borrowerDashboardViewModel = borrowerDashboardViewModel,
         lenderDashboardViewModel = lenderDashboardViewModel,
+        onLeftButtonClickAsLender = onLenderCollectLoanClick,
+        onRightButtonClickAsLender = onLenderGiveLoanClick,
+        onLeftButtonClickAsBorrower = onBorrowerApplyLoanClick,
+        onRightButtonClickAsBorrower = onBorrowerPayLoanClick,
         modifier = Modifier
             .padding(top = 16.dp)
             .padding(horizontal = 16.dp)

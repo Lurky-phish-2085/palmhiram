@@ -29,6 +29,10 @@ object DashboardRouteDestinations {
 @Composable
 fun HomeNavigation(
     navController: NavHostController = rememberNavController(),
+    onLeftButtonClickAsBorrower: () -> Unit,
+    onRightButtonClickAsBorrower: () -> Unit,
+    onLeftButtonClickAsLender: () -> Unit,
+    onRightButtonClickAsLender: () -> Unit,
     role: Roles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
@@ -43,7 +47,11 @@ fun HomeNavigation(
             OverviewScreen(
                 role = role,
                 borrowerDashboardViewModel = borrowerDashboardViewModel,
-                lenderDashboardViewModel = lenderDashboardViewModel
+                lenderDashboardViewModel = lenderDashboardViewModel,
+                onLeftButtonClickAsLender = onLeftButtonClickAsLender,
+                onRightButtonClickAsLender = onRightButtonClickAsLender,
+                onLeftButtonClickAsBorrower = onLeftButtonClickAsBorrower,
+                onRightButtonClickAsBorrower = onRightButtonClickAsBorrower,
             )
         }
         composable(CALENDAR_ROUTE) {

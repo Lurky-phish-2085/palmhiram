@@ -43,6 +43,10 @@ fun DashboardScreen(
     lenderDashboardViewModel: LenderDashboardViewModel?,
     onProfileClick: () -> Unit,
     onNotificationsClick: () -> Unit,
+    onLeftButtonClickAsBorrower: () -> Unit,
+    onRightButtonClickAsBorrower: () -> Unit,
+    onLeftButtonClickAsLender: () -> Unit,
+    onRightButtonClickAsLender: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
@@ -98,6 +102,10 @@ fun DashboardScreen(
             role = Roles.valueOf(authViewModel?.userDetails?.role!!.uppercase()),
             borrowerDashboardViewModel = borrowerDashboardViewModel!!,
             lenderDashboardViewModel = lenderDashboardViewModel!!,
+            onLeftButtonClickAsLender = onLeftButtonClickAsLender,
+            onRightButtonClickAsLender = onRightButtonClickAsLender,
+            onLeftButtonClickAsBorrower = onLeftButtonClickAsBorrower,
+            onRightButtonClickAsBorrower = onRightButtonClickAsBorrower,
             modifier = Modifier.padding(padding)
         )
     }
@@ -160,6 +168,10 @@ fun DashboardScreenPreview() {
                 authViewModel = null,
                 borrowerDashboardViewModel = null,
                 lenderDashboardViewModel = null,
+                onRightButtonClickAsBorrower = {},
+                onLeftButtonClickAsBorrower = {},
+                onRightButtonClickAsLender = {},
+                onLeftButtonClickAsLender = {},
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)

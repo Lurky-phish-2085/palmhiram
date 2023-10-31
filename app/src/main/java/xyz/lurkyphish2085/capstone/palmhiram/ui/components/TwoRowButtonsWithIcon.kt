@@ -27,8 +27,8 @@ fun TwoRowButtonsWithIcon(
     modifier: Modifier = Modifier
 ) {
     TwoRowButtons(
-        onClickLeft = {},
-        onClickRight = {},
+        onClickLeft = onClickLeft,
+        onClickRight = onClickRight,
         leftContent = {
             Icon(
                 imageVector = leftIcon,
