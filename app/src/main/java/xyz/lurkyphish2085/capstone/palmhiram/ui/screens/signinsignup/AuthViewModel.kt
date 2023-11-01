@@ -15,7 +15,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
-import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
+import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 import javax.inject.Inject
 
 @HiltViewModel
@@ -123,7 +123,7 @@ class AuthViewModel @Inject constructor(
                     name = fields.displayName,
                     email = fields.email,
                     phone = fields.phone,
-                    role = Roles.BORROWER.toString(),
+                    role = UserRoles.BORROWER.toString(),
                 )
             )
         }

@@ -14,7 +14,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDesti
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.OVERVIEW_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.REPORTS_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
-import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
+import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
 object DashboardRouteDestinations {
 
@@ -33,7 +33,7 @@ fun HomeNavigation(
     onRightButtonClickAsBorrower: () -> Unit,
     onLeftButtonClickAsLender: () -> Unit,
     onRightButtonClickAsLender: () -> Unit,
-    role: Roles,
+    role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
     modifier: Modifier = Modifier

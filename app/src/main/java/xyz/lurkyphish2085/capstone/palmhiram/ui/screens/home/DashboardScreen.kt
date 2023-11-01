@@ -33,7 +33,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDesti
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.REPORTS_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
-import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
+import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,7 +99,7 @@ fun DashboardScreen(
     ) { padding ->
         HomeNavigation(
             navController = navController,
-            role = Roles.valueOf(authViewModel?.userDetails?.role!!.uppercase()),
+            role = UserRoles.valueOf(authViewModel?.userDetails?.role!!.uppercase()),
             borrowerDashboardViewModel = borrowerDashboardViewModel!!,
             lenderDashboardViewModel = lenderDashboardViewModel!!,
             onLeftButtonClickAsLender = onLeftButtonClickAsLender,

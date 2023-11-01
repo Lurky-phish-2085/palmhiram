@@ -49,7 +49,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
-import xyz.lurkyphish2085.capstone.palmhiram.utils.Roles
+import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
 // TODO: ADD ACTION SECTION
 // TODO: Create Composables for elements and style it
@@ -63,7 +63,7 @@ fun OverviewScreen(
     onRightButtonClickAsBorrower: () -> Unit,
     onLeftButtonClickAsLender: () -> Unit,
     onRightButtonClickAsLender: () -> Unit,
-    role: Roles,
+    role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
     modifier: Modifier = Modifier
@@ -77,28 +77,28 @@ fun OverviewScreen(
             amount = "69420.00",
             balanceName =
             when(role) {
-                Roles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
-                Roles.LENDER -> lenderDashboardViewModel?.balanceName!!
+                UserRoles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
+                UserRoles.LENDER -> lenderDashboardViewModel?.balanceName!!
             },
             leftButtonName =
             when(role) {
-                Roles.BORROWER -> borrowerDashboardViewModel?.leftButtonName!!
-                Roles.LENDER -> lenderDashboardViewModel?.leftButtonName!!
+                UserRoles.BORROWER -> borrowerDashboardViewModel?.leftButtonName!!
+                UserRoles.LENDER -> lenderDashboardViewModel?.leftButtonName!!
             },
             rightButtonName =
             when(role) {
-                Roles.BORROWER -> borrowerDashboardViewModel?.rightButtonName!!
-                Roles.LENDER -> lenderDashboardViewModel?.rightButtonName!!
+                UserRoles.BORROWER -> borrowerDashboardViewModel?.rightButtonName!!
+                UserRoles.LENDER -> lenderDashboardViewModel?.rightButtonName!!
             },
             onLeftButtonClick =
             when(role) {
-                Roles.BORROWER -> onLeftButtonClickAsBorrower
-                Roles.LENDER -> onLeftButtonClickAsLender
+                UserRoles.BORROWER -> onLeftButtonClickAsBorrower
+                UserRoles.LENDER -> onLeftButtonClickAsLender
             },
             onRightButtonClick =
             when(role) {
-                Roles.BORROWER -> onRightButtonClickAsBorrower
-                Roles.LENDER -> onRightButtonClickAsLender
+                UserRoles.BORROWER -> onRightButtonClickAsBorrower
+                UserRoles.LENDER -> onRightButtonClickAsLender
             },
             modifier = Modifier
                 .padding(paddingValues)
@@ -330,7 +330,7 @@ fun OverviewScreenPreview() {
     PalmHiramTheme {
         Surface {
             OverviewScreen(
-                role = Roles.BORROWER,
+                role = UserRoles.BORROWER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(),
                 lenderDashboardViewModel = LenderDashboardViewModel(),
                 onLeftButtonClickAsBorrower = {},
