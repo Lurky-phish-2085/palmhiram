@@ -9,10 +9,13 @@ data class LoanTransaction(
     val id: String = "",
     val borrowerId: String = "",
 
-    var totalPayment: Long = 0L,
+    var totalBalance: Long = 0L,
+    var totalPrincipalBalance: Long = 0L,
+    var totalInterestBalance: Long = 0L,
 
+    var totalPayment: Long = 0L,
     var principalAmount: Long = 0L,
-    var interestRate: Int = 0,
+    var interestRateInPercentage: Int = 0,
     var timePeriodInYears: Float = 0.0F,
     var startDate: Timestamp? = null,
     var EndDate: Timestamp? = null,
