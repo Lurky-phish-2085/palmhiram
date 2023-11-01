@@ -9,9 +9,13 @@ import androidx.compose.ui.unit.dp
 @ExperimentalMaterial3Api
 @Composable
 fun ApplyLoanRoute(
+    viewModel: BorrowerDashboardViewModel,
+    onSubmit: () -> Unit,
     onCloseClick: () -> Unit,
 ) {
     ApplyLoanScreen(
+        viewModel = viewModel,
+        onSubmit = onSubmit,
         onClose = onCloseClick,
         modifier = Modifier.padding(all = 16.dp)
     )

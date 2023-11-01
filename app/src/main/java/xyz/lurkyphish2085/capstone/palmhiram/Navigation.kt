@@ -221,6 +221,8 @@ fun PalmHiramNavHost(
             route = Destinations.APPLY_LOAN_ROUTE,
         ) {
             ApplyLoanRoute(
+                viewModel = it.sharedViewModel(navController),
+                onSubmit = { navController.navigateUp() },
                 onCloseClick = { navController.navigateUp() }
             )
         }

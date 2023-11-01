@@ -327,7 +327,7 @@ fun OverviewScreenPreview() {
         Surface {
             OverviewScreen(
                 role = UserRoles.BORROWER,
-                borrowerDashboardViewModel = BorrowerDashboardViewModel(),
+                borrowerDashboardViewModel = BorrowerDashboardViewModel(null, null),
                 lenderDashboardViewModel = LenderDashboardViewModel(),
                 onLeftButtonClickAsBorrower = {},
                 onLeftButtonClickAsLender = {},

@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BorrowerDashboardViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val loanTransactionRepository: LoanTransactionRepository,
+    private val authRepository: AuthRepository?,
+    private val loanTransactionRepository: LoanTransactionRepository?,
     // TODO: Add one for the notifications
 ): ViewModel() {
 
@@ -28,7 +28,7 @@ class BorrowerDashboardViewModel @Inject constructor(
     val rightButtonName = "Pay Loan"
 
     val currentUser: FirebaseUser?
-        get() = authRepository.currentUser
+        get() = authRepository?.currentUser
 
     private val _submissionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
     val submissionFlow: StateFlow<Resource<LoanTransaction>?> = _submissionFlow
@@ -43,7 +43,7 @@ class BorrowerDashboardViewModel @Inject constructor(
         )
 
         _submissionFlow.value = Resource.Loading
-        val result = loanTransactionRepository.addLoanTransaction(loanRequestDetails)
+        val result = loanTransactionRepository?.addLoanTransaction(loanRequestDetails)
         _submissionFlow.value = result
     }
 }

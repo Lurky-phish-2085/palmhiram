@@ -5,6 +5,14 @@ class Money(amount: Double) {
 
     companion object {
         const val DIVISOR = 100.00
+
+        fun valueOf(amount: String): Money {
+            if (amount.isBlank()) {
+                throw IllegalArgumentException("Value should not be blank")
+            }
+
+            return Money(amount.toDouble())
+        }
     }
 
     val centValue: Long = amount.times(DIVISOR).toLong()
