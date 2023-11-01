@@ -8,6 +8,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepositoryImpl
+import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepositoryImpl
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -17,8 +19,11 @@ class AppModule {
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Provides
+    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides
     fun provideAuthRepository(impl: AuthRepositoryImpl): AuthRepository = impl
 
     @Provides
-    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+    fun provideLoanTransactionRepository(impl: LoanTransactionRepositoryImpl): LoanTransactionRepository = impl
 }
