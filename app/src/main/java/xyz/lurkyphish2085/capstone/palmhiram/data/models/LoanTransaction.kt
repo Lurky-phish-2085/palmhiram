@@ -4,6 +4,8 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
 
+// NOTE: ALL MONETARY VALUES AER IN CENTS
+
 data class LoanTransaction(
     @DocumentId
     val id: String = "",
