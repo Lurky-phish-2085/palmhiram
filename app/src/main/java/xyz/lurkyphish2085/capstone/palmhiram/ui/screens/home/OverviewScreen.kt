@@ -31,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,11 +41,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.StateFlow
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ActionButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
 // TODO: ADD ACTION SECTION
@@ -64,38 +67,46 @@ fun OverviewScreen(
     lenderDashboardViewModel: LenderDashboardViewModel?,
     modifier: Modifier = Modifier
 ) {
+    val balanceAmountRef: StateFlow<Money> =
+        when(role) {
+            UserRoles.BORROWER -> borrowerDashboardViewModel?.totalPayablesBalanc!!
+            UserRoles.LENDER -> lenderDashboardViewModel?.totalCollectBalance!!
+        }
+
+    val balanceAmountFlow = balanceAmountRef.collectAsState()
+
     Scaffold(
         topBar = {},
         bottomBar = {},
         modifier = modifier
     ) { paddingValues ->
         OverviewScreenContent(
-            amount = "69420.00",
+            amount = balanceAmountFlow.value.toString(),
             balanceName =
-            when(role) {
-                UserRoles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
-                UserRoles.LENDER -> lenderDashboardViewModel?.balanceName!!
-            },
+                when(role) {
+                    UserRoles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
+                    UserRoles.LENDER -> lenderDashboardViewModel?.balanceName!!
+                },
             leftButtonName =
-            when(role) {
-                UserRoles.BORROWER -> borrowerDashboardViewModel?.leftButtonName!!
-                UserRoles.LENDER -> lenderDashboardViewModel?.leftButtonName!!
-            },
+                when(role) {
+                    UserRoles.BORROWER -> borrowerDashboardViewModel?.leftButtonName!!
+                    UserRoles.LENDER -> lenderDashboardViewModel?.leftButtonName!!
+                },
             rightButtonName =
-            when(role) {
-                UserRoles.BORROWER -> borrowerDashboardViewModel?.rightButtonName!!
-                UserRoles.LENDER -> lenderDashboardViewModel?.rightButtonName!!
-            },
+                when(role) {
+                    UserRoles.BORROWER -> borrowerDashboardViewModel?.rightButtonName!!
+                    UserRoles.LENDER -> lenderDashboardViewModel?.rightButtonName!!
+                },
             onLeftButtonClick =
-            when(role) {
-                UserRoles.BORROWER -> onLeftButtonClickAsBorrower
-                UserRoles.LENDER -> onLeftButtonClickAsLender
-            },
+                when(role) {
+                    UserRoles.BORROWER -> onLeftButtonClickAsBorrower
+                    UserRoles.LENDER -> onLeftButtonClickAsLender
+                },
             onRightButtonClick =
-            when(role) {
-                UserRoles.BORROWER -> onRightButtonClickAsBorrower
-                UserRoles.LENDER -> onRightButtonClickAsLender
-            },
+                when(role) {
+                    UserRoles.BORROWER -> onRightButtonClickAsBorrower
+                    UserRoles.LENDER -> onRightButtonClickAsLender
+                },
             modifier = Modifier
                 .padding(paddingValues)
         )

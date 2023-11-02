@@ -13,6 +13,10 @@ class Money(amount: Double) {
 
             return Money(amount.toDouble())
         }
+
+        fun actualValueOf(amount: Long): Money {
+            return Money(amount / DIVISOR)
+        }
     }
 
     val centValue: Long = amount.times(DIVISOR).toLong()

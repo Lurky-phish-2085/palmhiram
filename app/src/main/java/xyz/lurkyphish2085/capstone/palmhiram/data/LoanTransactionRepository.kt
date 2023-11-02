@@ -1,8 +1,12 @@
 package xyz.lurkyphish2085.capstone.palmhiram.data
 
+import kotlinx.coroutines.flow.Flow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 
 interface LoanTransactionRepository {
+
+    val transactions: Flow<List<LoanTransaction>>
 
     suspend fun getLoanTransaction(transactionId: String): Resource<LoanTransaction>
     suspend fun getLoanTransactionsByUser(userId: String): Resource<List<LoanTransaction>>
