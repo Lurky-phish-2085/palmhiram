@@ -54,7 +54,7 @@ class BorrowerDashboardViewModel @Inject constructor(
                 val balanceInCentValue = transaction.totalBalance
 
                 if (transactionStatus == LoanTransactionStatus.APPROVED) {
-                    total += Money.actualValueOf(transaction.totalBalance)
+                    total += Money.parseActualValue(transaction.totalBalance)
                 }
             }
 

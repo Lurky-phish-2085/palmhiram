@@ -14,8 +14,8 @@ class Money(amount: Double) {
             return Money(amount.toDouble())
         }
 
-        fun actualValueOf(amount: Long): Money {
-            return Money(amount / DIVISOR)
+        fun parseActualValue(amountInCents: Long): Money {
+            return Money(amountInCents / DIVISOR)
         }
     }
 
