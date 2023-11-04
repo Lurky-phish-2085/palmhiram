@@ -31,7 +31,7 @@ fun HomeNavigation(
     onRightButtonClickAsBorrower: () -> Unit,
     onLeftButtonClickAsLender: () -> Unit,
     onRightButtonClickAsLender: () -> Unit,
-    role: UserRoles,
+    role: UserRoles?,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
     modifier: Modifier = Modifier
@@ -43,7 +43,7 @@ fun HomeNavigation(
     ) {
         composable(OVERVIEW_ROUTE) {
             OverviewScreen(
-                role = role,
+                role = role!!,
                 borrowerDashboardViewModel = borrowerDashboardViewModel,
                 lenderDashboardViewModel = lenderDashboardViewModel,
                 onLeftButtonClickAsLender = onLeftButtonClickAsLender,

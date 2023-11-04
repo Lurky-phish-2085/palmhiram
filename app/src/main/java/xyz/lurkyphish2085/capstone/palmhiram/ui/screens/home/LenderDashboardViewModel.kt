@@ -34,7 +34,7 @@ class LenderDashboardViewModel @Inject constructor(
         get() = loanTransactionRepository?.transactions!!
 
     // the total balance the lender has to collect (all approved transactions combined)
-    var _totalCollectBalance = MutableStateFlow<Money>(Money(0.00))
+    private var _totalCollectBalance = MutableStateFlow<Money>(Money(0.00))
     val totalCollectBalance: StateFlow<Money> = _totalCollectBalance
 
     // runs the function to keep our balance updated
@@ -64,10 +64,10 @@ class LenderDashboardViewModel @Inject constructor(
         }
     }
 
-    var _approvalLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
-    var _ongoingLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
-    var _settledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
-    var _cancelledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    private var _approvalLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    private var _ongoingLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    private var _settledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    private var _cancelledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
 
     val approvalLoanTransactions: StateFlow<List<LoanTransaction>> = _approvalLoanTransactions
     val ongoingLoanTransactions: StateFlow<List<LoanTransaction>> = _ongoingLoanTransactions

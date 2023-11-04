@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -99,9 +100,14 @@ fun DashboardScreen(
     ) { padding ->
         HomeNavigation(
             navController = navController,
-            role = UserRoles.valueOf(authViewModel?.userDetails?.role!!.uppercase()),
-            borrowerDashboardViewModel = borrowerDashboardViewModel!!,
-            lenderDashboardViewModel = lenderDashboardViewModel!!,
+            role =
+            if (authViewModel == null) {
+                UserRoles.BORROWER
+            } else {
+                UserRoles.valueOf(authViewModel?.userDetails?.role!!.uppercase())
+            },
+            borrowerDashboardViewModel = borrowerDashboardViewModel ?: BorrowerDashboardViewModel(null,null),
+            lenderDashboardViewModel = lenderDashboardViewModel ?: LenderDashboardViewModel(null,null),
             onLeftButtonClickAsLender = onLeftButtonClickAsLender,
             onRightButtonClickAsLender = onRightButtonClickAsLender,
             onLeftButtonClickAsBorrower = onLeftButtonClickAsBorrower,
@@ -127,6 +133,9 @@ fun DashBoardScreenTabRow(
         selectedTabName = selectedTab
     }
 
+    ScrollableTabRow(selectedTabIndex = 0, divider = {}, indicator = {}) {
+
+    }
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
