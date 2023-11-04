@@ -50,6 +50,10 @@ fun HomeNavigation(
                 onRightButtonClickAsLender = onRightButtonClickAsLender,
                 onLeftButtonClickAsBorrower = onLeftButtonClickAsBorrower,
                 onRightButtonClickAsBorrower = onRightButtonClickAsBorrower,
+                onLoansClickAsLender = { /*TODO*/ },
+                onLoansClickAsBorrower = { /*TODO*/ },
+                onTransactionsClickAsLender = { /*TODO*/ },
+                onTransactionsClickAsBorrower = { /*TODO*/ },
             )
         }
         composable(CALENDAR_ROUTE) {

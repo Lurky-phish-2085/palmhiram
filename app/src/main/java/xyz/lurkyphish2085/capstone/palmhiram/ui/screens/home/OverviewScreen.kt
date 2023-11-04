@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,8 +52,11 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ActionButtonTypes
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
+import java.util.Locale
 
 // TODO: ADD ACTION SECTION
 // TODO: Create Composables for elements and style it
@@ -66,6 +70,10 @@ fun OverviewScreen(
     onRightButtonClickAsBorrower: () -> Unit,
     onLeftButtonClickAsLender: () -> Unit,
     onRightButtonClickAsLender: () -> Unit,
+    onLoansClickAsLender: () -> Unit,
+    onLoansClickAsBorrower: () -> Unit,
+    onTransactionsClickAsLender: () -> Unit,
+    onTransactionsClickAsBorrower: () -> Unit,
     role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
@@ -116,6 +124,16 @@ fun OverviewScreen(
                     UserRoles.BORROWER -> borrowerActionItems
                     UserRoles.LENDER -> lenderActionItems
                 },
+            onLoansClick =
+                when(role) {
+                    UserRoles.BORROWER -> onLoansClickAsBorrower
+                    UserRoles.LENDER -> onLoansClickAsLender
+               },
+            onTransactionsClick =
+                when(role) {
+                    UserRoles.BORROWER -> onTransactionsClickAsBorrower
+                    UserRoles.LENDER -> onTransactionsClickAsLender
+                },
             modifier = Modifier
                 .padding(paddingValues)
         )
@@ -132,6 +150,8 @@ fun OverviewScreenContent(
     actionItems: List<ActionItem>,
     onLeftButtonClick: () -> Unit,
     onRightButtonClick: () -> Unit,
+    onLoansClick: () -> Unit,
+    onTransactionsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
@@ -154,6 +174,8 @@ fun OverviewScreenContent(
                 onRightButtonClick = onRightButtonClick,
             )
             ActionSection(
+                onLoansClick = onLoansClick,
+                onTransactionsClick = onTransactionsClick,
                 actionItems = actionItems
             )
             TransactionListSection()
@@ -232,6 +254,8 @@ fun BalanceSectionContent(
 
 @Composable
 fun ActionListGrid(
+    onLoansClick: () -> Unit,
+    onTransactionsClick: () -> Unit,
     actions: List<ActionItem>,
     modifier: Modifier = Modifier
 ) {
@@ -242,11 +266,15 @@ fun ActionListGrid(
         modifier = modifier
             .height(180.dp)
     ) {
-        items(actions) {
+        items(actions) { item ->
             ActionButton(
-                onClick = { /*TODO*/ },
-                icon = it.icon,
-                actionName = it.actionName,
+                onClick =
+                    when(item.type) {
+                        ActionButtonTypes.LOANS -> onLoansClick
+                        ActionButtonTypes.TRANSACTIONS -> onTransactionsClick
+                    },
+                icon = item.icon,
+                actionName = item.actionName,
             )
         }
     }
@@ -254,11 +282,15 @@ fun ActionListGrid(
 
 @Composable
 fun ActionSection(
+    onLoansClick: () -> Unit,
+    onTransactionsClick: () -> Unit,
     actionItems: List<ActionItem>,
     modifier: Modifier = Modifier
 ) {
     ContentSection {
         ActionListGrid(
+            onLoansClick = onLoansClick,
+            onTransactionsClick = onTransactionsClick,
             actions = actionItems,
             modifier = modifier
                 .fillMaxWidth()
@@ -343,7 +375,6 @@ fun TransactionListSection() {
 }
 
 @Preview(name = "light - borrower", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(name = "dark - borrower", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreenBorrowerPreview() {
@@ -357,6 +388,10 @@ fun OverviewScreenBorrowerPreview() {
                 onLeftButtonClickAsLender = {},
                 onRightButtonClickAsBorrower = {},
                 onRightButtonClickAsLender = {},
+                onLoansClickAsBorrower = {},
+                onLoansClickAsLender = {},
+                onTransactionsClickAsBorrower = {},
+                onTransactionsClickAsLender = {},
                 modifier = Modifier.padding(all = 16.dp)
             )
         }
@@ -364,7 +399,6 @@ fun OverviewScreenBorrowerPreview() {
 }
 
 @Preview(name = "light - lender", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(name = "dark - lender", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreenLenderPreview() {
@@ -378,6 +412,10 @@ fun OverviewScreenLenderPreview() {
                 onLeftButtonClickAsLender = {},
                 onRightButtonClickAsBorrower = {},
                 onRightButtonClickAsLender = {},
+                onLoansClickAsBorrower = {},
+                onLoansClickAsLender = {},
+                onTransactionsClickAsBorrower = {},
+                onTransactionsClickAsLender = {},
                 modifier = Modifier.padding(all = 16.dp)
             )
         }
@@ -387,58 +425,65 @@ fun OverviewScreenLenderPreview() {
 data class ActionItem(
     val icon: ImageVector,
     val actionName: String,
+    val type: ActionButtonTypes,
 )
 
 private val borrowerActionItems = listOf(
     ActionItem(
         icon = Icons.Outlined.Money,
-        actionName = "Loans",
+        actionName = ActionButtonTypes.LOANS.toString().lowercase().capitalized(),
+        type = ActionButtonTypes.LOANS,
     ),
     ActionItem(
         icon = Icons.Outlined.Dataset,
-        actionName = "Transactions",
+        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
 )
 
 private val lenderActionItems = listOf(
     ActionItem(
-        icon = Icons.Outlined.RequestPage,
-        actionName = "Request",
-    ),
-    ActionItem(
         icon = Icons.Outlined.Money,
-        actionName = "Loans",
+        actionName = ActionButtonTypes.LOANS.toString().lowercase().capitalized(),
+        type = ActionButtonTypes.LOANS,
     ),
     ActionItem(
         icon = Icons.Outlined.Dataset,
-        actionName = "Transactions",
+        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
 )
 
 private val fakeActionItems = listOf(
     ActionItem(
         icon = Icons.Outlined.AddBox,
-        actionName = "Add"
+        actionName = "Add",
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
     ActionItem(
         icon = Icons.Outlined.AddHomeWork,
-        actionName = "Transactions"
+        actionName = "Transactions",
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
     ActionItem(
         icon = Icons.Outlined.AirplanemodeActive,
-        actionName = "Airplane"
+        actionName = "Airplane",
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
     ActionItem(
         icon = Icons.Outlined.Inbox,
-        actionName = "Inbox"
+        actionName = "Inbox",
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
     ActionItem(
         icon = Icons.Outlined.Man,
-        actionName = "Man"
+        actionName = "Man",
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
     ActionItem(
         icon = Icons.Outlined.Woman2,
-        actionName = "Woman"
+        actionName = "Woman",
+        type = ActionButtonTypes.TRANSACTIONS,
     ),
 )
 
