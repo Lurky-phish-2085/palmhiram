@@ -2,7 +2,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.utils
 
 import java.util.regex.Pattern
 
-class InputValidationUtil {
+class InputValidationUtils {
 
     companion object {
         // TODO: Improve email regex to check domains

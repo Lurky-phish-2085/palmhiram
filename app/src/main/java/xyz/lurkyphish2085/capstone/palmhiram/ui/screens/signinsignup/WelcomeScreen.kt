@@ -1,7 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup
 
 import android.content.res.Configuration
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -57,7 +56,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.common.CommonColors
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
-import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtil
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtils
 
 @ExperimentalMaterial3Api
 @Composable
@@ -490,7 +489,7 @@ fun EmailField(
             value = emailText,
             onValueChange = {
                 emailText = it
-                emailNotValid = !InputValidationUtil.validateEmail(emailText)
+                emailNotValid = !InputValidationUtils.validateEmail(emailText)
                 onValueChange(emailText, !emailNotValid)
             },
             label = { Text(text = "Email")},
@@ -502,7 +501,7 @@ fun EmailField(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    emailNotValid = !InputValidationUtil.validateEmail(emailText)
+                    emailNotValid = !InputValidationUtils.validateEmail(emailText)
                 }
             ),
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -561,7 +560,7 @@ fun PasswordField(
             value = passwordText,
             onValueChange = {
                 passwordText = it
-                passwordNotValid = !InputValidationUtil.validatePassword(passwordText)
+                passwordNotValid = !InputValidationUtils.validatePassword(passwordText)
                 onValueChange(passwordText, !passwordNotValid, passwordMatched)
             },
             label = { Text(text = "Password")},
@@ -582,7 +581,7 @@ fun PasswordField(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    passwordNotValid = !InputValidationUtil.validatePassword(passwordText)
+                    passwordNotValid = !InputValidationUtils.validatePassword(passwordText)
                 }
             ),
             colors = TextFieldDefaults.outlinedTextFieldColors(

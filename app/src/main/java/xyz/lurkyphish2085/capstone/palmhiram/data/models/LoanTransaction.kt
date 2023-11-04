@@ -10,6 +10,7 @@ data class LoanTransaction(
     @DocumentId
     val id: String = "",
     val borrowerId: String = "",
+    val borrowerName: String = "",
 
     var totalBalance: Long = 0L,
     var totalPrincipalBalance: Long = 0L,
@@ -20,7 +21,7 @@ data class LoanTransaction(
     var interestRateInPercentage: Int = 0,
     var timePeriodInYears: Float = 0.0F,
     var startDate: Timestamp? = null,
-    var EndDate: Timestamp? = null,
+    var endDate: Timestamp? = null,
     var status: String = "",
 
     @ServerTimestamp

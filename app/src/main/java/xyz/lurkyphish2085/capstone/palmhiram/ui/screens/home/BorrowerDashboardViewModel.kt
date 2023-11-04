@@ -78,6 +78,7 @@ class BorrowerDashboardViewModel @Inject constructor(
         val amountInCents = amount.centValue
         val loanRequestDetails = LoanTransaction(
             borrowerId = currentUser?.uid!!,
+            borrowerName = currentUser?.displayName!!,
             principalAmount = amountInCents,
             startDate = Timestamp.now(),
             status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString(),
