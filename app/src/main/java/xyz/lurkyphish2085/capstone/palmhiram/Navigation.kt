@@ -29,6 +29,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.RegistrationRoute
@@ -47,6 +48,7 @@ private object Destinations {
             const val NOTIFICATIONS_ROUTE = "${DASHBOARD_ROUTE}/notifications"
 
             const val APPLY_LOAN_ROUTE = "${DASHBOARD_ROUTE}/apply-loan"
+            const val LOANS_ROUTE = "${DASHBOARD_ROUTE}/loans"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -179,9 +181,15 @@ fun PalmHiramNavHost(
                 onBorrowerApplyLoanClick = {
                     navController.navigate(Destinations.APPLY_LOAN_ROUTE)
                 },
-                onBorrowerPayLoanClick = {},
-                onLenderCollectLoanClick = {},
-                onLenderGiveLoanClick = {},
+                onBorrowerPayLoanClick = { /*TODO*/ },
+                onLenderCollectLoanClick = { /*TODO*/ },
+                onLenderGiveLoanClick = { /*TODO*/ },
+                onLoansClickAsBorrower = {
+                    navController.navigate(Destinations.LOANS_ROUTE)
+                },
+                onLoansClickAsLender = {
+                    navController.navigate(Destinations.LOANS_ROUTE)
+                },
                 authViewModel = globalAuthViewModel!!,
                 borrowerDashboardViewModel = it.sharedViewModel(navController),
                 lenderDashboardViewModel = it.sharedViewModel(navController),
@@ -224,6 +232,16 @@ fun PalmHiramNavHost(
                 viewModel = it.sharedViewModel(navController),
                 onSubmit = { navController.navigateUp() },
                 onCloseClick = { navController.navigateUp() }
+            )
+        }
+        composable(
+            route = Destinations.LOANS_ROUTE
+        ) {
+            LoansScreenRoute(
+                onClose = { navController.navigateUp() },
+                authViewModel = globalAuthViewModel!!,
+                borrowerDashboardViewModel = it.sharedViewModel(navController),
+                lenderDashboardViewModel = it.sharedViewModel(navController)
             )
         }
     }

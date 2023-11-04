@@ -8,8 +8,11 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -54,6 +57,7 @@ import kotlinx.coroutines.flow.StateFlow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopNavigationTab
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
@@ -154,8 +158,6 @@ fun LoansScreenContent(
     balanceName: String,
     modifier: Modifier = Modifier
 ) {
-    Spacer(modifier = Modifier.height(4.dp))
-
     Box(
         modifier = modifier
     ) {
@@ -171,10 +173,10 @@ fun LoansScreenContent(
                 ongoingLoanTransactionState = ongoingLoanTransactionState,
                 cancelledLoanTransactionState = cancelledLoanTransactionState,
                 selectedList = selectedList,
-                balanceName = balanceName
+                balanceName = balanceName,
+                modifier = Modifier
+                    .fillMaxSize()
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -240,18 +242,20 @@ fun LoanTransactionList(
             else -> ongoingLoanTransactionState.value
         }
 
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        items(loanTransactionList) { transaction ->
-            LoanTransactionItemCard(
-                balanceName = balanceName,
-                transactionDetails = transaction
-            )
+    if (loanTransactionList.isEmpty()) NothingToSeeHere(Modifier.fillMaxSize()) else
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(bottom = 16.dp),
+            modifier = modifier
+        ) {
+            items(loanTransactionList) { transaction ->
+                LoanTransactionItemCard(
+                    balanceName = balanceName,
+                    transactionDetails = transaction
+                )
+            }
         }
-    }
 }
 
 @Preview(name = "light", showBackground = true, heightDp = 640, uiMode = UI_MODE_NIGHT_NO)

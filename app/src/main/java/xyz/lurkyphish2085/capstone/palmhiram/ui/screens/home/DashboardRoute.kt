@@ -17,6 +17,8 @@ fun DashboardRoute(
     onBorrowerPayLoanClick: () -> Unit,
     onLenderCollectLoanClick: () -> Unit,
     onLenderGiveLoanClick: () -> Unit,
+    onLoansClickAsLender: () -> Unit,
+    onLoansClickAsBorrower: () -> Unit,
     authViewModel: AuthViewModel,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
@@ -31,6 +33,8 @@ fun DashboardRoute(
         onRightButtonClickAsLender = onLenderGiveLoanClick,
         onLeftButtonClickAsBorrower = onBorrowerApplyLoanClick,
         onRightButtonClickAsBorrower = onBorrowerPayLoanClick,
+        onLoansClickAsLender = onLoansClickAsLender,
+        onLoansClickAsBorrower = onLoansClickAsBorrower,
         modifier = Modifier
             .padding(top = 16.dp)
             .padding(horizontal = 16.dp)

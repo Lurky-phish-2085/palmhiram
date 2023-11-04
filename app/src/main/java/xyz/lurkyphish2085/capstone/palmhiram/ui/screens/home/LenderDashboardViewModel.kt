@@ -85,7 +85,9 @@ class LenderDashboardViewModel @Inject constructor(
         allLoanTransactions
             .collectLatest {
                 val approvalTransactions = it.filter { transaction ->
-                    LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER
+                    (LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER)
+                            ||
+                            (LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER)
                 }
 
                 _approvalLoanTransactions.value = approvalTransactions

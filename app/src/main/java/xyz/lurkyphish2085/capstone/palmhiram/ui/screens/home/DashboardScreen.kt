@@ -48,6 +48,8 @@ fun DashboardScreen(
     onRightButtonClickAsBorrower: () -> Unit,
     onLeftButtonClickAsLender: () -> Unit,
     onRightButtonClickAsLender: () -> Unit,
+    onLoansClickAsLender: () -> Unit,
+    onLoansClickAsBorrower: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
@@ -112,6 +114,8 @@ fun DashboardScreen(
             onRightButtonClickAsLender = onRightButtonClickAsLender,
             onLeftButtonClickAsBorrower = onLeftButtonClickAsBorrower,
             onRightButtonClickAsBorrower = onRightButtonClickAsBorrower,
+            onLoansClickAsLender = onLoansClickAsLender,
+            onLoansClickAsBorrower = onLoansClickAsBorrower,
             modifier = Modifier.padding(padding)
         )
     }
@@ -181,6 +185,8 @@ fun DashboardScreenPreview() {
                 onLeftButtonClickAsBorrower = {},
                 onRightButtonClickAsLender = {},
                 onLeftButtonClickAsLender = {},
+                onLoansClickAsBorrower = {},
+                onLoansClickAsLender = {},
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
