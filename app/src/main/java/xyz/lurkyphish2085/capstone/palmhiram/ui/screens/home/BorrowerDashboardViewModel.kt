@@ -71,6 +71,77 @@ class BorrowerDashboardViewModel @Inject constructor(
         }
     }
 
+    var _approvalLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    var _ongoingLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    var _settledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    var _cancelledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+
+    val approvalLoanTransactions: StateFlow<List<LoanTransaction>> = _approvalLoanTransactions
+    val ongoingLoanTransactions: StateFlow<List<LoanTransaction>> = _ongoingLoanTransactions
+    val settledLoanTransactions: StateFlow<List<LoanTransaction>> = _settledLoanTransactions
+    val cancelledLoanTransactions: StateFlow<List<LoanTransaction>> = _cancelledLoanTransactions
+
+    init {
+        collectApprovalLoanTransaction()
+        collectOngoingLoanTransaction()
+        collectSettledLoanTransaction()
+        collectCancelledLoanTransaction()
+    }
+
+    private fun collectApprovalLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val approvalTransactions = it.filter { transaction ->
+                    val ownedByCurrentUser = transaction.borrowerId == currentUser?.uid
+                    val isPendingForApproval =
+                        LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER
+
+                    ownedByCurrentUser && isPendingForApproval
+                }
+
+                _approvalLoanTransactions.value = approvalTransactions
+            }
+    }
+    private fun collectOngoingLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val ongoingTransactions = it.filter { transaction ->
+                    val ownedByCurrentUser = transaction.borrowerId == currentUser?.uid
+                    val isApproved = LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.APPROVED
+
+                    ownedByCurrentUser && isApproved
+                }
+
+                _ongoingLoanTransactions.value = ongoingTransactions
+            }
+    }
+    private fun collectSettledLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val settledTransactions = it.filter { transaction ->
+                    val ownedByCurrentUser = transaction.borrowerId == currentUser?.uid
+                    val isSettled = LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.SETTLED
+
+                    ownedByCurrentUser && isSettled
+                }
+
+                _settledLoanTransactions.value = settledTransactions
+            }
+    }
+    private fun collectCancelledLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val cancelledTransactions = it.filter { transaction ->
+                    val ownedByCurrentUser = transaction.borrowerId == currentUser?.uid
+                    val isCancelled = LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.CANCELLED
+
+                    ownedByCurrentUser && isCancelled
+                }
+
+                _cancelledLoanTransactions.value = cancelledTransactions
+            }
+    }
+
     private val _submissionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
     val submissionFlow: StateFlow<Resource<LoanTransaction>?> = _submissionFlow
 

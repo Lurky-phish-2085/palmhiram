@@ -63,4 +63,62 @@ class LenderDashboardViewModel @Inject constructor(
             }
         }
     }
+
+    var _approvalLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    var _ongoingLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    var _settledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+    var _cancelledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
+
+    val approvalLoanTransactions: StateFlow<List<LoanTransaction>> = _approvalLoanTransactions
+    val ongoingLoanTransactions: StateFlow<List<LoanTransaction>> = _ongoingLoanTransactions
+    val settledLoanTransactions: StateFlow<List<LoanTransaction>> = _settledLoanTransactions
+    val cancelledLoanTransactions: StateFlow<List<LoanTransaction>> = _cancelledLoanTransactions
+
+    init {
+        collectApprovalLoanTransaction()
+        collectOngoingLoanTransaction()
+        collectSettledLoanTransaction()
+        collectCancelledLoanTransaction()
+    }
+
+    private fun collectApprovalLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val approvalTransactions = it.filter { transaction ->
+                    LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER
+                }
+
+                _approvalLoanTransactions.value = approvalTransactions
+            }
+    }
+    private fun collectOngoingLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val ongoingTransactions = it.filter { transaction ->
+                    LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.APPROVED
+                }
+
+                _ongoingLoanTransactions.value = ongoingTransactions
+            }
+    }
+    private fun collectSettledLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val settledTransactions = it.filter { transaction ->
+                    LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.SETTLED
+                }
+
+                _settledLoanTransactions.value = settledTransactions
+            }
+    }
+    private fun collectCancelledLoanTransaction() = viewModelScope.launch {
+        allLoanTransactions
+            .collectLatest {
+                val cancelledTransactions = it.filter { transaction ->
+                    LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.CANCELLED
+                }
+
+                _cancelledLoanTransactions.value = cancelledTransactions
+            }
+    }
 }

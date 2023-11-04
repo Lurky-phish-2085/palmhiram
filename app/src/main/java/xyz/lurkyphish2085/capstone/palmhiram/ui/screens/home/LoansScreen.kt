@@ -50,6 +50,8 @@ fun LoansScreen(
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // TODO: VIEWMODEL FOR BORROWER OR LENDER BASE ON ROLE
+
     Scaffold(
         topBar = {
             TopBarWithBackButton(
@@ -79,15 +81,15 @@ fun LoansScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LoanTransactionItemCard(
-                balanceName = "Total amount to pay",
-                transactionDetails = LoanTransaction(
-                    borrowerName = "Mal Boros",
-                    status = LoanTransactionStatus.APPROVED.toString(),
-                    totalBalance = 69420,
-                    endDate = Timestamp.now(),
-                ),
-            )
+//            LoanTransactionItemCard(
+//                balanceName = "Total amount to pay",
+//                transactionDetails = LoanTransaction(
+//                    borrowerName = "Mal Boros",
+//                    status = LoanTransactionStatus.APPROVED.toString(),
+//                    totalBalance = 69420,
+//                    endDate = Timestamp.now(),
+//                ),
+//            )
         }
     }
 }
