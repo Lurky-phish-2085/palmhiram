@@ -81,15 +81,27 @@ fun LoansScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-//            LoanTransactionItemCard(
-//                balanceName = "Total amount to pay",
-//                transactionDetails = LoanTransaction(
-//                    borrowerName = "Mal Boros",
-//                    status = LoanTransactionStatus.APPROVED.toString(),
-//                    totalBalance = 69420,
-//                    endDate = Timestamp.now(),
-//                ),
-//            )
+            LoanTransactionItemCard(
+                balanceName = "Total amount to pay",
+                transactionDetails = LoanTransaction(
+                    borrowerName = "Mal Boros",
+                    status = LoanTransactionStatus.APPROVED.toString(),
+                    totalBalance = 69420,
+                    endDate = Timestamp.now(),
+                ),
+            )
+            LoanTransactionItemCard(
+                balanceName = "Total amount to pay",
+                transactionDetails = LoanTransaction(
+                    borrowerName = "Mal Boros",
+                    status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString(),
+                    principalAmount = 69240,
+                    totalBalance = 69420,
+                    totalPayment = 0,
+                    startDate = Timestamp.now(),
+                    endDate = null,
+                ),
+            )
         }
     }
 }
