@@ -329,11 +329,11 @@ fun TransactionListSection() {
     }
 }
 
-@Preview(name = "light", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(name = "dark", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "light - borrower", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(name = "dark - borrower", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @ExperimentalMaterial3Api
 @Composable
-fun OverviewScreenPreview() {
+fun OverviewScreenBorrowerPreview() {
     PalmHiramTheme {
         Surface {
             OverviewScreen(
@@ -349,6 +349,28 @@ fun OverviewScreenPreview() {
         }
     }
 }
+
+@Preview(name = "light - lender", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(name = "dark - lender", showBackground = true, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ExperimentalMaterial3Api
+@Composable
+fun OverviewScreenLenderPreview() {
+    PalmHiramTheme {
+        Surface {
+            OverviewScreen(
+                role = UserRoles.LENDER,
+                borrowerDashboardViewModel = BorrowerDashboardViewModel(null, null),
+                lenderDashboardViewModel = LenderDashboardViewModel(),
+                onLeftButtonClickAsBorrower = {},
+                onLeftButtonClickAsLender = {},
+                onRightButtonClickAsBorrower = {},
+                onRightButtonClickAsLender = {},
+                modifier = Modifier.padding(all = 16.dp)
+            )
+        }
+    }
+}
+
 
 data class ActionItem(
     val icon: ImageVector,
