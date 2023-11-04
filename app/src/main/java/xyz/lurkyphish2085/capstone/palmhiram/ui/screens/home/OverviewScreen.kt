@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -22,8 +23,11 @@ import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.AddHomeWork
 import androidx.compose.material.icons.outlined.AirplanemodeActive
+import androidx.compose.material.icons.outlined.Dataset
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Man
+import androidx.compose.material.icons.outlined.Money
+import androidx.compose.material.icons.outlined.RequestPage
 import androidx.compose.material.icons.outlined.Woman2
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -107,6 +111,11 @@ fun OverviewScreen(
                     UserRoles.BORROWER -> onRightButtonClickAsBorrower
                     UserRoles.LENDER -> onRightButtonClickAsLender
                 },
+            actionItems =
+                when(role) {
+                    UserRoles.BORROWER -> borrowerActionItems
+                    UserRoles.LENDER -> lenderActionItems
+                },
             modifier = Modifier
                 .padding(paddingValues)
         )
@@ -120,6 +129,7 @@ fun OverviewScreenContent(
     balanceName: String,
     leftButtonName: String,
     rightButtonName: String,
+    actionItems: List<ActionItem>,
     onLeftButtonClick: () -> Unit,
     onRightButtonClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -143,7 +153,9 @@ fun OverviewScreenContent(
                 onLeftButtonClick = onLeftButtonClick,
                 onRightButtonClick = onRightButtonClick,
             )
-            ActionSection()
+            ActionSection(
+                actionItems = actionItems
+            )
             TransactionListSection()
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -242,14 +254,15 @@ fun ActionListGrid(
 
 @Composable
 fun ActionSection(
+    actionItems: List<ActionItem>,
     modifier: Modifier = Modifier
 ) {
     ContentSection {
         ActionListGrid(
-            actions = fakeActionItems,
+            actions = actionItems,
             modifier = modifier
                 .fillMaxWidth()
-
+                .height(128.dp)
         )
     }
 }
@@ -371,10 +384,35 @@ fun OverviewScreenLenderPreview() {
     }
 }
 
-
 data class ActionItem(
     val icon: ImageVector,
     val actionName: String,
+)
+
+private val borrowerActionItems = listOf(
+    ActionItem(
+        icon = Icons.Outlined.Money,
+        actionName = "Loans",
+    ),
+    ActionItem(
+        icon = Icons.Outlined.Dataset,
+        actionName = "Transactions",
+    ),
+)
+
+private val lenderActionItems = listOf(
+    ActionItem(
+        icon = Icons.Outlined.RequestPage,
+        actionName = "Request",
+    ),
+    ActionItem(
+        icon = Icons.Outlined.Money,
+        actionName = "Loans",
+    ),
+    ActionItem(
+        icon = Icons.Outlined.Dataset,
+        actionName = "Transactions",
+    ),
 )
 
 private val fakeActionItems = listOf(
