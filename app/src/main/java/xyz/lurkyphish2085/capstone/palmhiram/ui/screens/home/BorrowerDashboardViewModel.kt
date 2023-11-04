@@ -35,7 +35,7 @@ class BorrowerDashboardViewModel @Inject constructor(
     val allLoanTransactions: Flow<List<LoanTransaction>>
         get() = loanTransactionRepository?.transactions!!
 
-    // the total balance the borrower has to pay (all approved transactions combined)
+    // the total balance the borrower has to pay (all approved transactions by the current user)
     var _totalPayablesBalance = MutableStateFlow<Money>(Money(0.00))
     val totalPayablesBalanc: StateFlow<Money> = _totalPayablesBalance
 
@@ -50,10 +50,14 @@ class BorrowerDashboardViewModel @Inject constructor(
         allLoanTransactions.collectLatest { transactions ->
             total = Money(0.00)
             transactions.forEach { transaction ->
+                val transactionOwnerId = transaction.borrowerId
                 val transactionStatus = LoanTransactionStatus.valueOf(transaction.status.uppercase())
                 val balanceInCentValue = transaction.totalBalance
 
-                if (transactionStatus == LoanTransactionStatus.APPROVED) {
+                val isTransactionApproved = transactionStatus == LoanTransactionStatus.APPROVED
+                val doesCurrentUserOwnsTransaction = transactionOwnerId == currentUser?.uid
+
+                if (isTransactionApproved && doesCurrentUserOwnsTransaction) {
                     total += Money.parseActualValue(transaction.totalBalance)
                 }
             }

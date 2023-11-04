@@ -383,7 +383,7 @@ fun OverviewScreenBorrowerPreview() {
             OverviewScreen(
                 role = UserRoles.BORROWER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null, null),
-                lenderDashboardViewModel = LenderDashboardViewModel(),
+                lenderDashboardViewModel = LenderDashboardViewModel(null, null),
                 onLeftButtonClickAsBorrower = {},
                 onLeftButtonClickAsLender = {},
                 onRightButtonClickAsBorrower = {},
@@ -407,7 +407,7 @@ fun OverviewScreenLenderPreview() {
             OverviewScreen(
                 role = UserRoles.LENDER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null, null),
-                lenderDashboardViewModel = LenderDashboardViewModel(),
+                lenderDashboardViewModel = LenderDashboardViewModel(null, null),
                 onLeftButtonClickAsBorrower = {},
                 onLeftButtonClickAsLender = {},
                 onRightButtonClickAsBorrower = {},
