@@ -80,7 +80,7 @@ fun LoanTransactionItemCard(
                     LoanTransactionStatus.SETTLED -> "SETTLED"
                     LoanTransactionStatus.CANCELLED -> "CANCELLED"
                 },
-                style = MaterialTheme.typography.labelLarge.copy(
+                style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
                     color =
                     when(LoanTransactionStatus.valueOf(transactionDetails.status.uppercase())) {
@@ -115,32 +115,96 @@ fun LoanTransactionItemCard(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
-                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = DateTimeUtils.formatToISO8601Date(transactionDetails.endDate?.toDate()!!),
+                    text = "Principal Amount",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+                Spacer(Modifier.weight(1f, true))
+                Text(
+                    text =
+                    when(transactionDetails.principalAmount) {
+                        0L ->
+                            "N/A"
+                        else ->
+                            Money.parseActualValue(transactionDetails.principalAmount).toString()
+                    },
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Interest Rate",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+                Spacer(Modifier.weight(1f, true))
+                Text(
+                    text = "${transactionDetails.interestRateInPercentage}%",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Total Payment",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+                Spacer(Modifier.weight(1f, true))
+                Text(
+                    text =
+                    when(transactionDetails.totalPayment) {
+                        0L -> "N/A"
+                        else -> Money.parseActualValue(transactionDetails.totalPayment).toString()
+                    },
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Started on",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+                Spacer(Modifier.weight(1f, true))
+                Text(
+                    text =
+                    when(transactionDetails.startDate) {
+                        null -> "N/A"
+                        else -> DateTimeUtils.formatToISO8601Date(transactionDetails.startDate?.toDate()!!)
+                    },
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Due on",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
+                )
+                Spacer(Modifier.weight(1f, true))
+                Text(
+                    text =
+                    when(transactionDetails.endDate) {
+                        null -> "N/A"
+                        else -> DateTimeUtils.formatToISO8601Date(transactionDetails.endDate?.toDate()!!)
+                    },
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-            ContentSection {
-                Column() {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "DETAILS",
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(text = transactionDetails.toString())
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -159,6 +223,9 @@ fun LoanTransactionItemCardLenderPreview() {
                         borrowerName = "Mal Boros",
                         status = LoanTransactionStatus.APPROVED.toString(),
                         totalBalance = 69420,
+                        totalPayment = 69420,
+                        principalAmount = 69420,
+                        startDate = Timestamp.now(),
                         endDate = Timestamp.now(),
                     ),
                 )
@@ -179,9 +246,12 @@ fun LoanTransactionItemCardBorrowerPreview() {
                     balanceName = "Total amount to pay",
                     transactionDetails = LoanTransaction(
                         borrowerName = "Mal Boros",
-                        status = LoanTransactionStatus.APPROVED.toString(),
+                        status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString(),
+                        principalAmount = 69240,
                         totalBalance = 69420,
-                        endDate = Timestamp.now(),
+                        totalPayment = 0,
+                        startDate = Timestamp.now(),
+                        endDate = null,
                     ),
                 )
             }
