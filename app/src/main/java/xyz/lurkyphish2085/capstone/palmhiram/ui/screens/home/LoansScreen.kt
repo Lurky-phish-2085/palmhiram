@@ -1,69 +1,53 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.firebase.Timestamp
-import kotlinx.coroutines.flow.StateFlow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
-import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopNavigationTab
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
-import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
 fun LoansScreen(
@@ -99,8 +83,11 @@ fun LoansScreen(
             UserRoles.LENDER -> lenderDashboardViewModel?.cancelledLoanTransactions?.collectAsState()!!
         }
 
-    var selectedTab by rememberSaveable {
+    var selectedTabName by rememberSaveable {
         mutableStateOf("ongoing")
+    }
+    var selectedTabIndex by rememberSaveable {
+        mutableStateOf(0)
     }
 
     Scaffold(
@@ -108,29 +95,35 @@ fun LoansScreen(
             Column {
                 TopBarWithBackButton(
                     text = "Loans",
-                    onClose = onClose
+                    onClose = onClose,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 LoanScreenTabRow(
-                    selectedTabName = selectedTab,
+                    selectedTabIndex = selectedTabIndex,
+                    selectedTabName = selectedTabName,
                     onOnGoingClick =
                     {
-                        selectedTab = "ongoing"
+                        selectedTabIndex = 0
+                        selectedTabName = "ongoing"
                     },
                     onApprovalClick =
                     {
-                        selectedTab = "approval"
+                        selectedTabIndex = 1
+                        selectedTabName = "approval"
                     },
                     onSettledClick =
                     {
-                        selectedTab = "settled"
+                        selectedTabIndex = 2
+                        selectedTabName = "settled"
                     },
                     onCancelledClick =
                     {
-                        selectedTab = "cancelled"
+                        selectedTabIndex = 3
+                        selectedTabName = "cancelled"
                     },
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
         },
         modifier = modifier
@@ -140,7 +133,7 @@ fun LoansScreen(
             settledLoanTransactionState = settledLoanTransactionFlow,
             ongoingLoanTransactionState = ongoingLoanTransactionFlow,
             cancelledLoanTransactionState = cancelledLoanTransactionFlow,
-            selectedList = selectedTab,
+            selectedList = selectedTabName,
             balanceName = balanceName,
             modifier = Modifier
                 .padding(padding)
@@ -148,6 +141,8 @@ fun LoansScreen(
     }
 }
 
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
 @Composable
 fun LoansScreenContent(
     approvalLoanTransactionState: State<List<LoanTransaction>>,
@@ -176,6 +171,7 @@ fun LoansScreenContent(
                 balanceName = balanceName,
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 16.dp)
             )
         }
     }
@@ -183,6 +179,7 @@ fun LoansScreenContent(
 
 @Composable
 fun LoanScreenTabRow(
+    selectedTabIndex: Int = 0,
     selectedTabName: String,
     onOnGoingClick: () -> Unit,
     onApprovalClick: () -> Unit,
@@ -191,7 +188,7 @@ fun LoanScreenTabRow(
     modifier: Modifier = Modifier
 ) {
     ScrollableTabRow(
-        selectedTabIndex = 0,
+        selectedTabIndex = selectedTabIndex,
         indicator = {},
         divider = {},
         modifier = modifier
@@ -223,6 +220,9 @@ fun LoanScreenTabRow(
     }
 }
 
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
 @Composable
 fun LoanTransactionList(
     approvalLoanTransactionState: State<List<LoanTransaction>>,
@@ -242,24 +242,37 @@ fun LoanTransactionList(
             else -> ongoingLoanTransactionState.value
         }
 
-    if (loanTransactionList.isEmpty()) NothingToSeeHere(Modifier.fillMaxSize()) else
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(bottom = 16.dp),
-            modifier = modifier
-        ) {
-            items(loanTransactionList) { transaction ->
-                LoanTransactionItemCard(
-                    balanceName = balanceName,
-                    transactionDetails = transaction
-                )
+    AnimatedContent(
+        targetState = selectedList,
+        label = "AnimatedAppearanceOfList",
+        transitionSpec = {
+            slideInVertically { height -> height }  togetherWith
+                    ExitTransition.None
+        },
+    ) {
+        if (loanTransactionList.isEmpty()) NothingToSeeHere(Modifier.fillMaxSize()) else
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(bottom = 16.dp),
+                modifier = modifier
+            ) {
+                items(loanTransactionList, key = { it.id }) { transaction ->
+                    LoanTransactionItemCard(
+                        balanceName = balanceName,
+                        transactionDetails = transaction,
+                        modifier = Modifier
+                            .animateItemPlacement()
+                    )
+                }
             }
-        }
+    }
 }
 
 @Preview(name = "light", showBackground = true, heightDp = 640, uiMode = UI_MODE_NIGHT_NO)
 @Preview(name = "dark", showBackground = true, heightDp = 640, uiMode = UI_MODE_NIGHT_YES)
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
 fun LoansScreenPreview() {
@@ -271,7 +284,6 @@ fun LoansScreenPreview() {
                 lenderDashboardViewModel = LenderDashboardViewModel(null,null),
                 onClose = {},
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
             )
         }
