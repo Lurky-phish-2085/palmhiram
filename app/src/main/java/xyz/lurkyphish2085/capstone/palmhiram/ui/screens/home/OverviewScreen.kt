@@ -1,9 +1,11 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -47,13 +52,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.StateFlow
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ActionButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ActionButtonTypes
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 import java.util.Locale
@@ -172,13 +180,39 @@ fun OverviewScreenContent(
                 rightButtonName = rightButtonName,
                 onLeftButtonClick = onLeftButtonClick,
                 onRightButtonClick = onRightButtonClick,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
             )
             ActionSection(
                 onLoansClick = onLoansClick,
                 onTransactionsClick = onTransactionsClick,
-                actionItems = actionItems
+                actionItems = actionItems,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
             )
-            TransactionListSection()
+            OngoingLoanTransactionsHorizontalPager(
+                transactionList = listOf(
+                    LoanTransaction(
+                        status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString()
+                    ),
+                    LoanTransaction(
+                        status = LoanTransactionStatus.APPROVED.toString()
+                    ),
+                    LoanTransaction(
+                        status = LoanTransactionStatus.SETTLED.toString()
+                    ),
+                    LoanTransaction(
+                        status = LoanTransactionStatus.CANCELLED.toString()
+                    ),
+                ),
+                balanceName = "Total amount to pay",
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            TransactionListSection(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -195,16 +229,18 @@ fun BalanceSection(
     onRightButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ContentSection {
-        BalanceSectionContent(
-            onLeftButtonClick = onLeftButtonClick,
-            onRightButtonClick = onRightButtonClick,
-            leftButtonName = leftButtonName,
-            rightButtonName = rightButtonName,
-            currencySymbol = currencySymbol,
-            amount = amount,
-            balanceName = balanceName
-        )
+    Column(modifier) {
+        ContentSection() {
+            BalanceSectionContent(
+                onLeftButtonClick = onLeftButtonClick,
+                onRightButtonClick = onRightButtonClick,
+                leftButtonName = leftButtonName,
+                rightButtonName = rightButtonName,
+                currencySymbol = currencySymbol,
+                amount = amount,
+                balanceName = balanceName,
+            )
+        }
     }
 }
 
@@ -287,14 +323,38 @@ fun ActionSection(
     actionItems: List<ActionItem>,
     modifier: Modifier = Modifier
 ) {
-    ContentSection {
-        ActionListGrid(
-            onLoansClick = onLoansClick,
-            onTransactionsClick = onTransactionsClick,
-            actions = actionItems,
-            modifier = modifier
-                .fillMaxWidth()
-                .height(128.dp)
+    Column(modifier) {
+        ContentSection {
+            ActionListGrid(
+                onLoansClick = onLoansClick,
+                onTransactionsClick = onTransactionsClick,
+                actions = actionItems,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(128.dp)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun OngoingLoanTransactionsHorizontalPager(
+    transactionList: List<LoanTransaction>,
+    balanceName: String,
+    modifier: Modifier = Modifier
+) {
+    HorizontalPager(
+        state = rememberPagerState(pageCount = { transactionList.size }),
+        contentPadding = PaddingValues(all = 8.dp),
+        pageSpacing = 3.dp,
+        modifier = modifier
+    ) { index ->
+        LoanTransactionItemCard(
+            balanceName = balanceName,
+            transactionDetails = transactionList[index],
+            modifier = Modifier
+                .fillMaxSize()
         )
     }
 }
@@ -368,9 +428,13 @@ fun PendingTransactionList(
 }
 
 @Composable
-fun TransactionListSection() {
-    ContentSection {
-        PendingTransactionList()
+fun TransactionListSection(
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        ContentSection {
+            PendingTransactionList()
+        }
     }
 }
 
@@ -392,7 +456,6 @@ fun OverviewScreenBorrowerPreview() {
                 onLoansClickAsLender = {},
                 onTransactionsClickAsBorrower = {},
                 onTransactionsClickAsLender = {},
-                modifier = Modifier.padding(all = 16.dp)
             )
         }
     }
@@ -416,7 +479,6 @@ fun OverviewScreenLenderPreview() {
                 onLoansClickAsLender = {},
                 onTransactionsClickAsBorrower = {},
                 onTransactionsClickAsLender = {},
-                modifier = Modifier.padding(all = 16.dp)
             )
         }
     }

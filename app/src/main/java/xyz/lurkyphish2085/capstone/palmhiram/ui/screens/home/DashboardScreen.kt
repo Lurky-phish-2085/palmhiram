@@ -61,7 +61,10 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
             ) {
                 Row {
                     IconButton(onClick = onProfileClick) {
@@ -188,8 +191,6 @@ fun DashboardScreenPreview() {
                 onLoansClickAsBorrower = {},
                 onLoansClickAsLender = {},
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
             )
         }
     }
