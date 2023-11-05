@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -32,7 +30,6 @@ import androidx.compose.material.icons.outlined.Dataset
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Man
 import androidx.compose.material.icons.outlined.Money
-import androidx.compose.material.icons.outlined.RequestPage
 import androidx.compose.material.icons.outlined.Woman2
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +44,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +53,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ActionButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ActionButtonTypes
@@ -64,7 +61,6 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
-import java.util.Locale
 
 // TODO: ADD ACTION SECTION
 // TODO: Create Composables for elements and style it
@@ -89,11 +85,19 @@ fun OverviewScreen(
 ) {
     val balanceAmountRef: StateFlow<Money> =
         when(role) {
-            UserRoles.BORROWER -> borrowerDashboardViewModel?.totalPayablesBalanc!!
+            UserRoles.BORROWER -> borrowerDashboardViewModel?.totalPayablesBalance!!
             UserRoles.LENDER -> lenderDashboardViewModel?.totalCollectBalance!!
         }
 
     val balanceAmountFlow = balanceAmountRef.collectAsState()
+
+    val ongoingLoanTransactionListRef: StateFlow<List<LoanTransaction>> =
+        when(role) {
+            UserRoles.BORROWER -> borrowerDashboardViewModel?.ongoingLoanTransactions!!
+            UserRoles.LENDER -> lenderDashboardViewModel?.ongoingLoanTransactions!!
+        }
+
+    val ongoingLoanTransactionListFlow = ongoingLoanTransactionListRef.collectAsState()
 
     Scaffold(
         topBar = {},
@@ -102,6 +106,7 @@ fun OverviewScreen(
     ) { paddingValues ->
         OverviewScreenContent(
             amount = balanceAmountFlow.value.toString(),
+            ongoingTransactionList = ongoingLoanTransactionListFlow.value,
             balanceName =
                 when(role) {
                     UserRoles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
@@ -153,6 +158,7 @@ fun OverviewScreen(
 fun OverviewScreenContent(
     amount: String,
     balanceName: String,
+    ongoingTransactionList: List<LoanTransaction>,
     leftButtonName: String,
     rightButtonName: String,
     actionItems: List<ActionItem>,
@@ -183,31 +189,18 @@ fun OverviewScreenContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             )
+            OngoingLoanTransactionsHorizontalPager(
+                transactionList = ongoingTransactionList,
+                balanceName = "Total amount to pay",
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
             ActionSection(
                 onLoansClick = onLoansClick,
                 onTransactionsClick = onTransactionsClick,
                 actionItems = actionItems,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-            )
-            OngoingLoanTransactionsHorizontalPager(
-                transactionList = listOf(
-                    LoanTransaction(
-                        status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString()
-                    ),
-                    LoanTransaction(
-                        status = LoanTransactionStatus.APPROVED.toString()
-                    ),
-                    LoanTransaction(
-                        status = LoanTransactionStatus.SETTLED.toString()
-                    ),
-                    LoanTransaction(
-                        status = LoanTransactionStatus.CANCELLED.toString()
-                    ),
-                ),
-                balanceName = "Total amount to pay",
-                modifier = Modifier
-                    .fillMaxWidth()
             )
             TransactionListSection(
                 modifier = Modifier
@@ -344,19 +337,20 @@ fun OngoingLoanTransactionsHorizontalPager(
     balanceName: String,
     modifier: Modifier = Modifier
 ) {
-    HorizontalPager(
-        state = rememberPagerState(pageCount = { transactionList.size }),
-        contentPadding = PaddingValues(all = 8.dp),
-        pageSpacing = 3.dp,
-        modifier = modifier
-    ) { index ->
-        LoanTransactionItemCard(
-            balanceName = balanceName,
-            transactionDetails = transactionList[index],
-            modifier = Modifier
-                .fillMaxSize()
-        )
-    }
+    if (transactionList.isEmpty()) NothingToSeeHere(Modifier.fillMaxSize()) else
+        HorizontalPager(
+            state = rememberPagerState(pageCount = { transactionList.size }),
+            contentPadding = PaddingValues(all = 8.dp),
+            pageSpacing = 3.dp,
+            modifier = modifier
+        ) { index ->
+            LoanTransactionItemCard(
+                balanceName = balanceName,
+                transactionDetails = transactionList[index],
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        }
 }
 
 @Composable

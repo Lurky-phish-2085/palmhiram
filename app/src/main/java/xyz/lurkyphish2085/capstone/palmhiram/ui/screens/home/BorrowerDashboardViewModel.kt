@@ -37,7 +37,7 @@ class BorrowerDashboardViewModel @Inject constructor(
 
     // the total balance the borrower has to pay (all approved transactions by the current user)
     private var _totalPayablesBalance = MutableStateFlow<Money>(Money(0.00))
-    val totalPayablesBalanc: StateFlow<Money> = _totalPayablesBalance
+    val totalPayablesBalance: StateFlow<Money> = _totalPayablesBalance
 
     // runs the function to keep our balance updated
     init {
