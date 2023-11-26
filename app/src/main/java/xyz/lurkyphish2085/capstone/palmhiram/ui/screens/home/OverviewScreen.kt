@@ -204,15 +204,16 @@ fun OverviewScreenContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             )
+
             LoanTransactionsHorizontalPager(
                 transactionList = ongoingTransactionList,
-                balanceName = "Total amount to pay",
+                balanceName = balanceName,
                 modifier = Modifier
                     .fillMaxWidth()
             )
             LoanTransactionsHorizontalPager(
                 transactionList = approvalTransactionList,
-                balanceName = "Total amount to pay",
+                balanceName = balanceName,
                 modifier = Modifier
                     .fillMaxWidth()
             )
