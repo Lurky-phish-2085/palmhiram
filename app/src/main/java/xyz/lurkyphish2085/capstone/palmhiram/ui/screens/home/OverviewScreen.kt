@@ -2,6 +2,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +13,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -32,6 +38,7 @@ import androidx.compose.material.icons.outlined.Man
 import androidx.compose.material.icons.outlined.Money
 import androidx.compose.material.icons.outlined.Woman2
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -40,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
@@ -53,12 +61,11 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ActionButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
-import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.PagerScrollIndicatorDots
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ActionButtonTypes
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
-import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
@@ -96,8 +103,14 @@ fun OverviewScreen(
             UserRoles.BORROWER -> borrowerDashboardViewModel?.ongoingLoanTransactions!!
             UserRoles.LENDER -> lenderDashboardViewModel?.ongoingLoanTransactions!!
         }
+    val approvalLoanTransactionListRef: StateFlow<List<LoanTransaction>> =
+        when(role) {
+            UserRoles.BORROWER -> borrowerDashboardViewModel?.approvalLoanTransactions!!
+            UserRoles.LENDER -> lenderDashboardViewModel?.approvalLoanTransactions!!
+        }
 
     val ongoingLoanTransactionListFlow = ongoingLoanTransactionListRef.collectAsState()
+    val approvalLoanTransactionListFlow = approvalLoanTransactionListRef.collectAsState()
 
     Scaffold(
         topBar = {},
@@ -107,6 +120,7 @@ fun OverviewScreen(
         OverviewScreenContent(
             amount = balanceAmountFlow.value.toString(),
             ongoingTransactionList = ongoingLoanTransactionListFlow.value,
+            approvalTransactionList = approvalLoanTransactionListFlow.value,
             balanceName =
                 when(role) {
                     UserRoles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
@@ -159,6 +173,7 @@ fun OverviewScreenContent(
     amount: String,
     balanceName: String,
     ongoingTransactionList: List<LoanTransaction>,
+    approvalTransactionList: List<LoanTransaction>,
     leftButtonName: String,
     rightButtonName: String,
     actionItems: List<ActionItem>,
@@ -189,8 +204,14 @@ fun OverviewScreenContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             )
-            OngoingLoanTransactionsHorizontalPager(
+            LoanTransactionsHorizontalPager(
                 transactionList = ongoingTransactionList,
+                balanceName = "Total amount to pay",
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            LoanTransactionsHorizontalPager(
+                transactionList = approvalTransactionList,
                 balanceName = "Total amount to pay",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -332,14 +353,15 @@ fun ActionSection(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OngoingLoanTransactionsHorizontalPager(
+fun LoanTransactionsHorizontalPager(
     transactionList: List<LoanTransaction>,
     balanceName: String,
     modifier: Modifier = Modifier
 ) {
-    if (transactionList.isEmpty()) NothingToSeeHere(Modifier.fillMaxSize()) else
+    val pagerState = rememberPagerState(pageCount = { transactionList.size })
+    if (transactionList.isNotEmpty()) {
         HorizontalPager(
-            state = rememberPagerState(pageCount = { transactionList.size }),
+            state = pagerState,
             contentPadding = PaddingValues(all = 8.dp),
             pageSpacing = 3.dp,
             modifier = modifier
@@ -351,6 +373,14 @@ fun OngoingLoanTransactionsHorizontalPager(
                     .fillMaxSize()
             )
         }
+
+        PagerScrollIndicatorDots(
+            totalDots = transactionList.size,
+            selectedIndex = pagerState.currentPage,
+            selectedColor = MaterialTheme.colorScheme.onBackground,
+            unselectedColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+        )
+    }
 }
 
 @Composable
