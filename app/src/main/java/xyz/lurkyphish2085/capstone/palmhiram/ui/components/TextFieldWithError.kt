@@ -35,6 +35,10 @@ fun TextFieldWithError(
         mutableStateOf(value)
     }
 
+    LaunchedEffect(value) {
+        text = value
+    }
+
     var enableError by rememberSaveable {
         mutableStateOf(isError)
     }

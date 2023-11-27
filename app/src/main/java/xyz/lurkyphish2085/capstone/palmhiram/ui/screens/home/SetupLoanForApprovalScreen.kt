@@ -39,6 +39,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.Timestamp
+import com.maxkeppeker.sheets.core.models.base.UseCaseState
+import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
+import com.maxkeppeler.sheets.calendar.CalendarDialog
+import com.maxkeppeler.sheets.calendar.models.CalendarConfig
+import com.maxkeppeler.sheets.calendar.models.CalendarSelection
+import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
@@ -49,6 +55,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import java.time.DateTimeException
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 @ExperimentalMaterial3Api
 @Composable
@@ -82,6 +90,34 @@ fun SetupLoanForApprovalScreen(
     var totalPayment by rememberSaveable {
         mutableStateOf(Money.parseActualValue(transactionDetails.totalPayment).toString())
     }
+
+
+    val calendarStartedOnState = rememberUseCaseState()
+    val calendarDueOnState = rememberUseCaseState()
+
+    CalendarDialog(
+        state = calendarStartedOnState,
+        config = CalendarConfig(
+            yearSelection = true,
+            monthSelection = true,
+            style = CalendarStyle.MONTH,
+        ),
+        selection = CalendarSelection.Date {
+            startedOn = DateTimeUtils.formatToISO8601Date(it)
+        }
+    )
+    CalendarDialog(
+        state = calendarDueOnState,
+        config = CalendarConfig(
+            yearSelection = true,
+            monthSelection = true,
+            style = CalendarStyle.MONTH,
+        ),
+        selection = CalendarSelection.Date {
+            dueOn = DateTimeUtils.formatToISO8601Date(it)
+        }
+    )
+
 
     Scaffold(
         topBar = {
@@ -181,7 +217,7 @@ fun SetupLoanForApprovalScreen(
                             )
 
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = { calendarStartedOnState.show() },
                                 modifier = Modifier
                                     .padding(top = 8.dp)
                             ) {
@@ -210,7 +246,7 @@ fun SetupLoanForApprovalScreen(
                             )
 
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = { calendarDueOnState.show() },
                                 modifier = Modifier
                                     .padding(top = 8.dp)
                             ) {

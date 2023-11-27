@@ -1,5 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.utils
 
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -14,6 +15,11 @@ class DateTimeUtils {
             val zonedDateTime = instant.atZone(zoneId)
 
             return zonedDateTime.toLocalDateTime().format(DateTimeFormatter.ISO_DATE)
+        }
+
+        fun formatToISO8601Date(date: LocalDate): String {
+
+            return date.format(DateTimeFormatter.ISO_DATE)
         }
     }
 }
