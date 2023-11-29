@@ -33,6 +33,12 @@ class LenderDashboardViewModel @Inject constructor(
     val allLoanTransactions: Flow<List<LoanTransaction>>
         get() = loanTransactionRepository?.transactions!!
 
+    val allLoanTransactionsOrderedByStartDate: Flow<List<LoanTransaction>>
+        get() = loanTransactionRepository?.transactionsOrderedByStartDateDesc!!
+
+    val allLoanTransactionsOrderedByEndDate: Flow<List<LoanTransaction>>
+        get() = loanTransactionRepository?.transactionsOrderedByEndDateAsc!!
+
     // the total balance the lender has to collect (all approved transactions combined)
     private var _totalCollectBalance = MutableStateFlow<Money>(Money(0.00))
     val totalCollectBalance: StateFlow<Money> = _totalCollectBalance
@@ -82,7 +88,7 @@ class LenderDashboardViewModel @Inject constructor(
     }
 
     private fun collectApprovalLoanTransaction() = viewModelScope.launch {
-        allLoanTransactions
+        allLoanTransactionsOrderedByStartDate
             .collectLatest {
                 val approvalTransactions = it.filter { transaction ->
                     (LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER)
@@ -94,7 +100,7 @@ class LenderDashboardViewModel @Inject constructor(
             }
     }
     private fun collectOngoingLoanTransaction() = viewModelScope.launch {
-        allLoanTransactions
+        allLoanTransactionsOrderedByEndDate
             .collectLatest {
                 val ongoingTransactions = it.filter { transaction ->
                     LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.APPROVED

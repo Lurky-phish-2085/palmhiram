@@ -18,11 +18,23 @@ class LoanTransactionRepositoryImpl @Inject constructor(
     companion object {
         const val LOAN_TRANSACTIONS_COLLECTIONS_PATH = "loan-transactions"
         const val ORDER_BY_END_DATE = "endDate"
+        const val ORDER_BY_START_DATE = "startDate"
     }
 
     override val transactions: Flow<List<LoanTransaction>>
         get() = firebaseFirestore.collection(LOAN_TRANSACTIONS_COLLECTIONS_PATH)
-            .orderBy(ORDER_BY_END_DATE, Query.Direction.DESCENDING)
+            .snapshots().map { snapshots ->
+                snapshots.toObjects(LoanTransaction::class.java)
+            }
+    override val transactionsOrderedByEndDateAsc: Flow<List<LoanTransaction>>
+        get() = firebaseFirestore.collection(LOAN_TRANSACTIONS_COLLECTIONS_PATH)
+            .orderBy(ORDER_BY_END_DATE, Query.Direction.ASCENDING)
+            .snapshots().map { snapshots ->
+                snapshots.toObjects(LoanTransaction::class.java)
+            }
+    override val transactionsOrderedByStartDateDesc: Flow<List<LoanTransaction>>
+        get() = firebaseFirestore.collection(LOAN_TRANSACTIONS_COLLECTIONS_PATH)
+            .orderBy(ORDER_BY_START_DATE, Query.Direction.DESCENDING)
             .snapshots().map { snapshots ->
                 snapshots.toObjects(LoanTransaction::class.java)
             }

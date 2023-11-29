@@ -35,6 +35,12 @@ class BorrowerDashboardViewModel @Inject constructor(
     val allLoanTransactions: Flow<List<LoanTransaction>>
         get() = loanTransactionRepository?.transactions!!
 
+    val allLoanTransactionsOrderedByStartDate: Flow<List<LoanTransaction>>
+        get() = loanTransactionRepository?.transactionsOrderedByStartDateDesc!!
+
+    val allLoanTransactionsOrderedByEndDate: Flow<List<LoanTransaction>>
+        get() = loanTransactionRepository?.transactionsOrderedByEndDateAsc!!
+
     // the total balance the borrower has to pay (all approved transactions by the current user)
     private var _totalPayablesBalance = MutableStateFlow<Money>(Money(0.00))
     val totalPayablesBalance: StateFlow<Money> = _totalPayablesBalance
@@ -89,7 +95,7 @@ class BorrowerDashboardViewModel @Inject constructor(
     }
 
     private fun collectApprovalLoanTransaction() = viewModelScope.launch {
-        allLoanTransactions
+        allLoanTransactionsOrderedByStartDate
             .collectLatest {
                 val approvalTransactions = it.filter { transaction ->
                     val ownedByCurrentUser = transaction.borrowerId == currentUser?.uid
@@ -103,7 +109,7 @@ class BorrowerDashboardViewModel @Inject constructor(
             }
     }
     private fun collectOngoingLoanTransaction() = viewModelScope.launch {
-        allLoanTransactions
+        allLoanTransactionsOrderedByEndDate
             .collectLatest {
                 val ongoingTransactions = it.filter { transaction ->
                     val ownedByCurrentUser = transaction.borrowerId == currentUser?.uid
