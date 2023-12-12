@@ -1,5 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.utils
 
+import java.text.NumberFormat
+
 
 class Money(amount: Double) {
 
@@ -23,7 +25,10 @@ class Money(amount: Double) {
     val value: Double = centValue / DIVISOR
 
     override fun toString(): String {
-        return String.format("%.2f", value)
+        val formatter = NumberFormat.getInstance()
+        formatter.isGroupingUsed = true
+
+        return formatter.format(value)
     }
 
     operator fun plus(other: Money): Money = Money(this.value + other.value)
