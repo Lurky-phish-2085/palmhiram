@@ -52,6 +52,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.extractNumericValue
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import java.time.DateTimeException
@@ -167,13 +168,6 @@ fun SetupLoanForApprovalScreen(
                     .align(Alignment.Center)
                     .padding(top = 16.dp)
             ) {
-                LoanTransactionItemCard(
-                    balanceName = balanceName,
-                    transactionDetails = transactionDetails
-                )
-
-                Divider(Modifier.padding(top = 16.dp, bottom = 2.dp))
-
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -185,14 +179,14 @@ fun SetupLoanForApprovalScreen(
                         label = "Principal Amount",
                         value = principalAmount,
                         passingCondition = { it.isNotBlank() },
-                        onValueChange = { principalAmount = it },
+                        onValueChange = { principalAmount = it},
                         keyboardType = KeyboardType.Number,
                     )
                     TextFieldWithError(
                         label = "Interest Rate (%)",
                         value = interestRate,
                         passingCondition = { it.isNotBlank() },
-                        onValueChange = { interestRate = "$it" },
+                        onValueChange = { interestRate = it },
                         keyboardType = KeyboardType.Number,
                     )
 
