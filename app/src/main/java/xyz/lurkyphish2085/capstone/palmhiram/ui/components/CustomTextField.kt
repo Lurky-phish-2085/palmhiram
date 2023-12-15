@@ -28,6 +28,7 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     label: String,
     isError: Boolean = false,
+    readOnly: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier
@@ -36,6 +37,7 @@ fun CustomTextField(
         value = value,
         label = { Text(text = label) },
         isError = isError,
+        readOnly = readOnly,
         onValueChange = { onValueChange(it) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = MaterialTheme.colorScheme.outline,

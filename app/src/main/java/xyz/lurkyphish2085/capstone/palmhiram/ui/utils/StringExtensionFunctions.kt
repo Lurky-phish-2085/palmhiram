@@ -37,3 +37,7 @@ fun String.extractNumericValue(): String {
 
     return numericValue
 }
+
+fun String.replaceUnderscoresWithWhitespaces(): String {
+    return this.replace("_", " ")
+}

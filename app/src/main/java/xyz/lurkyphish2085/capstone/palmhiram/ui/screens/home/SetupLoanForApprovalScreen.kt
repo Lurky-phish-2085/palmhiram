@@ -1,5 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,14 +22,26 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +49,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,19 +63,24 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CustomTextField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.extractNumericValue
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.replaceUnderscoresWithWhitespaces
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import java.time.DateTimeException
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
+@OptIn(ExperimentalStdlibApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun SetupLoanForApprovalScreen(
@@ -66,6 +88,8 @@ fun SetupLoanForApprovalScreen(
     transactionDetails: LoanTransaction,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     var principalAmount by rememberSaveable {
         mutableStateOf("${transactionDetails.principalAmount}")
     }
@@ -119,6 +143,16 @@ fun SetupLoanForApprovalScreen(
         }
     )
 
+    var expandRepaymentDropDown by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var repaymentDropDownSelectedItem by rememberSaveable {
+        mutableStateOf(LoanRepaymentFrequencies.values()[0].name.replaceUnderscoresWithWhitespaces().lowercase().capitalized())
+    }
+
+    var expandBottomDetails by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         topBar = {
@@ -138,17 +172,60 @@ fun SetupLoanForApprovalScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
+                    Column(
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ) {
+                        Text(
+                            text = "Total Payment",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+
+                        AnimatedVisibility(visible = expandBottomDetails) {
+                            Box(modifier = Modifier.weight(1f, true)) {
+                                Column(
+                                    modifier = Modifier.align(Alignment.CenterStart)
+                                ) {
+                                    repeat(6) {
+                                        Text(text = "Term")
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Text(
+                            text = "₱ $totalPayment",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+
+                        AnimatedVisibility(visible = expandBottomDetails) {
+                            Box(modifier = Modifier.weight(1f, true)) {
+                                Column(
+                                    modifier = Modifier.align(Alignment.CenterStart)
+                                ) {
+                                    repeat(6) {
+                                        Text(text = "₱ 0")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+                TextButton(
+                    onClick = { expandBottomDetails = !expandBottomDetails },
+                ) {
                     Text(
-                        text = "Total Payment",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                    )
-                    Text(
-                        text = "₱ $totalPayment",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
+                        text = if (expandBottomDetails) "Hide Details" else "Show Details",
+                        style = TextStyle.Default.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        ),
                     )
                 }
 
@@ -194,22 +271,21 @@ fun SetupLoanForApprovalScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .fillMaxSize()
+                            .padding(top = 32.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 36.dp)
                         ) {
-                            TextFieldWithError(
-                                label = "Started On",
+                            CustomTextField(
                                 value = startedOn,
-                                passingCondition = { it.isNotBlank() },
                                 onValueChange = { /*TODO*/ },
-                                keyboardType = KeyboardType.Number,
+                                label = "Started On",
+                                readOnly = true,
                                 modifier = Modifier
                                     .width(128.dp)
                             )
-
                             IconButton(
                                 onClick = { calendarStartedOnState.show() },
                                 modifier = Modifier
@@ -229,16 +305,14 @@ fun SetupLoanForApprovalScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 36.dp)
                         ) {
-                            TextFieldWithError(
-                                label = "Due On",
+                            CustomTextField(
                                 value = dueOn,
-                                passingCondition = { it.isNotBlank() },
                                 onValueChange = { /*TODO*/ },
-                                keyboardType = KeyboardType.Number,
+                                label = "Due On",
+                                readOnly = true,
                                 modifier = Modifier
                                     .width(128.dp)
                             )
-
                             IconButton(
                                 onClick = { calendarDueOnState.show() },
                                 modifier = Modifier
@@ -250,6 +324,48 @@ fun SetupLoanForApprovalScreen(
                                     modifier = Modifier
                                         .size(32.dp)
                                 )
+                            }
+                        }
+
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp)
+                        ) {
+                            ExposedDropdownMenuBox(
+                                expanded = expandRepaymentDropDown,
+                                onExpandedChange = { expandRepaymentDropDown = !expandRepaymentDropDown }
+                            ) {
+
+                               OutlinedTextField(
+                                   value = repaymentDropDownSelectedItem,
+                                   label = { Text(text = "Repayment Frequency") },
+                                   onValueChange = {},
+                                   readOnly = true,
+                                   trailingIcon = {
+                                           ExposedDropdownMenuDefaults.TrailingIcon(
+                                           expanded = expandRepaymentDropDown
+                                       )
+                                   },
+                                   colors = TextFieldDefaults.outlinedTextFieldColors(
+                                       focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                       focusedLabelColor = MaterialTheme.colorScheme.primary
+                                   ),
+                                   singleLine = true,
+                                   modifier = Modifier.menuAnchor()
+                               )
+
+                                DropdownMenu(
+                                    expanded = expandRepaymentDropDown,
+                                    onDismissRequest = { expandRepaymentDropDown = !expandRepaymentDropDown },
+                                    modifier = Modifier.width(258.dp)
+                                ) {
+                                    LoanRepaymentFrequencies.values().forEach { item ->
+                                        DropdownMenuItem(
+                                            text = { Text(text = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()) },
+                                            onClick = { /*TODO*/ },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
