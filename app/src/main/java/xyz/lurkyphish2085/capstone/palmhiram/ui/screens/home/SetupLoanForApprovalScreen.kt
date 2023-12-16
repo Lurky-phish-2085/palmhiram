@@ -43,6 +43,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -85,10 +86,13 @@ import java.util.Date
 @Composable
 fun SetupLoanForApprovalScreen(
     balanceName: String,
-    transactionDetails: LoanTransaction,
+    lenderDashboardViewModel: LenderDashboardViewModel,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val transactionDetailsState = lenderDashboardViewModel.selectedLoanTransactionItem?.collectAsState()
+    val transactionDetails = transactionDetailsState?.value!!
 
     var principalAmount by rememberSaveable {
         mutableStateOf("${transactionDetails.principalAmount}")
@@ -158,7 +162,7 @@ fun SetupLoanForApprovalScreen(
         topBar = {
             TopBarWithBackButton(
                 text = "Setup Loan",
-                onClose = { /*TODO*/ }
+                onClose = onClose
             )
         },
         bottomBar = {
@@ -384,15 +388,8 @@ fun SetupLoanForApprovalScreenPreview() {
         Surface {
             SetupLoanForApprovalScreen(
                 balanceName = "Total amount to collect",
-                transactionDetails = LoanTransaction(
-                    borrowerName = "Mal Boros",
-                    status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString(),
-                    principalAmount = 69240,
-                    totalBalance = 69420,
-                    totalPayment = 0,
-                    startDate = Timestamp.now(),
-                    endDate = null,
-                ),
+                lenderDashboardViewModel = LenderDashboardViewModel(null, null),
+                onClose = {},
                 modifier = Modifier
                     .padding(all = 16.dp),
             )

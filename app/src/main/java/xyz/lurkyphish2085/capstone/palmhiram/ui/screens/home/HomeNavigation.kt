@@ -33,6 +33,8 @@ fun HomeNavigation(
     onRightButtonClickAsLender: () -> Unit,
     onLoansClickAsLender: () -> Unit,
     onLoansClickAsBorrower: () -> Unit,
+    onSelectLoanTransactionItemAsLender: () -> Unit,
+    onSelectLoanTransactionItemAsBorrower: () -> Unit,
     role: UserRoles?,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
@@ -54,8 +56,10 @@ fun HomeNavigation(
                 onRightButtonClickAsBorrower = onRightButtonClickAsBorrower,
                 onLoansClickAsLender = onLoansClickAsLender,
                 onLoansClickAsBorrower = onLoansClickAsBorrower,
-                onTransactionsClickAsLender = { /*TODO*/ },
+                onTransactionsClickAsLender = onSelectLoanTransactionItemAsLender,
                 onTransactionsClickAsBorrower = { /*TODO*/ },
+                onSelectLoanTransactionItemAsLender = onSelectLoanTransactionItemAsLender,
+                onSelectLoanTransactionItemAsBorrower = onSelectLoanTransactionItemAsBorrower,
             )
         }
         composable(CALENDAR_ROUTE) {

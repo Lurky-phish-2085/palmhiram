@@ -32,6 +32,13 @@ class BorrowerDashboardViewModel @Inject constructor(
     val currentUser: FirebaseUser?
         get() = authRepository?.currentUser
 
+    private var _selectedLoanTransactionItem = MutableStateFlow<LoanTransaction>(LoanTransaction())
+    val selectedLoanTransactionItem: Flow<LoanTransaction> = _selectedLoanTransactionItem
+
+    fun setSelectedLoanTransactionItem(item: LoanTransaction) {
+        _selectedLoanTransactionItem.value = item
+    }
+
     val allLoanTransactions: Flow<List<LoanTransaction>>
         get() = loanTransactionRepository?.transactions!!
 

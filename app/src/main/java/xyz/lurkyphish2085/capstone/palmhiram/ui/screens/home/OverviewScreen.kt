@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +56,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ActionButton
@@ -85,6 +87,8 @@ fun OverviewScreen(
     onLoansClickAsBorrower: () -> Unit,
     onTransactionsClickAsLender: () -> Unit,
     onTransactionsClickAsBorrower: () -> Unit,
+    onSelectLoanTransactionItemAsLender: () -> Unit,
+    onSelectLoanTransactionItemAsBorrower: () -> Unit,
     role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
@@ -161,6 +165,15 @@ fun OverviewScreen(
                     UserRoles.BORROWER -> onTransactionsClickAsBorrower
                     UserRoles.LENDER -> onTransactionsClickAsLender
                 },
+            onSelectLoanTransactionPager =
+                when(role) {
+                    UserRoles.BORROWER -> onSelectLoanTransactionItemAsBorrower
+                    // TODO: Add the nav for the lender
+                     UserRoles.LENDER ->  onSelectLoanTransactionItemAsLender
+                },
+            role = role,
+            borrowerDashboardViewModel = borrowerDashboardViewModel,
+            lenderDashboardViewModel = lenderDashboardViewModel,
             modifier = Modifier
                 .padding(paddingValues)
         )
@@ -181,6 +194,10 @@ fun OverviewScreenContent(
     onRightButtonClick: () -> Unit,
     onLoansClick: () -> Unit,
     onTransactionsClick: () -> Unit,
+    onSelectLoanTransactionPager: () -> Unit,
+    role: UserRoles,
+    borrowerDashboardViewModel: BorrowerDashboardViewModel?,
+    lenderDashboardViewModel: LenderDashboardViewModel?,
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
@@ -206,14 +223,22 @@ fun OverviewScreenContent(
             )
 
             LoanTransactionsHorizontalPager(
+                onClickItem = onSelectLoanTransactionPager,
                 transactionList = ongoingTransactionList,
                 balanceName = balanceName,
+                role = role,
+                borrowerDashboardViewModel = borrowerDashboardViewModel,
+                lenderDashboardViewModel = lenderDashboardViewModel,
                 modifier = Modifier
                     .fillMaxWidth()
             )
             LoanTransactionsHorizontalPager(
+                onClickItem = onSelectLoanTransactionPager,
                 transactionList = approvalTransactionList,
                 balanceName = balanceName,
+                role = role,
+                borrowerDashboardViewModel = borrowerDashboardViewModel,
+                lenderDashboardViewModel = lenderDashboardViewModel,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -355,6 +380,10 @@ fun ActionSection(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoanTransactionsHorizontalPager(
+    onClickItem: () -> Unit,
+    role: UserRoles,
+    borrowerDashboardViewModel: BorrowerDashboardViewModel?,
+    lenderDashboardViewModel: LenderDashboardViewModel?,
     transactionList: List<LoanTransaction>,
     balanceName: String,
     modifier: Modifier = Modifier
@@ -368,6 +397,14 @@ fun LoanTransactionsHorizontalPager(
             modifier = modifier
         ) { index ->
             LoanTransactionItemCard(
+                // TODO: Go to the designated screen if a borrower clicked this
+                onClick = {
+                    borrowerDashboardViewModel?.setSelectedLoanTransactionItem(transactionList[index])
+                    lenderDashboardViewModel?.setSelectedLoanTransactionItem(transactionList[index])
+
+                    Log.e("SELECTED LOAN DEBUG", "${lenderDashboardViewModel?.selectedLoanTransactionItem?.value}", )
+                    onClickItem()
+                },
                 balanceName = balanceName,
                 transactionDetails = transactionList[index],
                 modifier = Modifier
@@ -481,6 +518,8 @@ fun OverviewScreenBorrowerPreview() {
                 onLoansClickAsLender = {},
                 onTransactionsClickAsBorrower = {},
                 onTransactionsClickAsLender = {},
+                onSelectLoanTransactionItemAsBorrower = {},
+                onSelectLoanTransactionItemAsLender = {}
             )
         }
     }
@@ -504,6 +543,8 @@ fun OverviewScreenLenderPreview() {
                 onLoansClickAsLender = {},
                 onTransactionsClickAsBorrower = {},
                 onTransactionsClickAsLender = {},
+                onSelectLoanTransactionItemAsBorrower = {},
+                onSelectLoanTransactionItemAsLender = {},
             )
         }
     }

@@ -35,6 +35,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 
 @Composable
 fun LoanTransactionItemCard(
+    onClick: () -> Unit,
     currencySymbol: Char = '₱',
     balanceName: String,
     transactionDetails: LoanTransaction,
@@ -47,7 +48,7 @@ fun LoanTransactionItemCard(
         ),
         modifier = modifier
             .fillMaxWidth()
-            .clickable { /*TODO*/ }
+            .clickable { onClick() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -218,6 +219,7 @@ fun LoanTransactionItemCardLenderPreview() {
                 modifier = Modifier.padding(all = 8.dp)
             ) {
                 LoanTransactionItemCard(
+                    onClick = {},
                     balanceName = "Total amount to collect",
                     transactionDetails = LoanTransaction(
                         borrowerName = "Mal Boros",
@@ -243,6 +245,7 @@ fun LoanTransactionItemCardBorrowerPreview() {
                 modifier = Modifier.padding(all = 8.dp)
             ) {
                 LoanTransactionItemCard(
+                    onClick = {},
                     balanceName = "Total amount to pay",
                     transactionDetails = LoanTransaction(
                         borrowerName = "Mal Boros",

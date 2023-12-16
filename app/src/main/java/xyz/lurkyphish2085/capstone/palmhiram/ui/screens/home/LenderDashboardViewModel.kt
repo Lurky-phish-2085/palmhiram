@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
@@ -26,6 +27,13 @@ class LenderDashboardViewModel @Inject constructor(
     val balanceName = "Total amount to collect"
     val leftButtonName = "Collect"
     val rightButtonName = "Give Loan"
+
+    private var _selectedLoanTransactionItem = MutableStateFlow<LoanTransaction>(LoanTransaction())
+    val selectedLoanTransactionItem = _selectedLoanTransactionItem.asStateFlow()
+
+    fun setSelectedLoanTransactionItem(item: LoanTransaction) {
+        _selectedLoanTransactionItem.value = item
+    }
 
     val currentUser: FirebaseUser?
         get() = authRepository?.currentUser

@@ -31,6 +31,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.SetupLoanApprovalScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.RegistrationRoute
@@ -50,6 +51,7 @@ private object Destinations {
 
             const val APPLY_LOAN_ROUTE = "${DASHBOARD_ROUTE}/apply-loan"
             const val LOANS_ROUTE = "${DASHBOARD_ROUTE}/loans"
+            const val SETUP_LOAN_ROUTE = "${DASHBOARD_ROUTE}/setup-loan"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -195,6 +197,8 @@ fun PalmHiramNavHost(
                 authViewModel = globalAuthViewModel!!,
                 borrowerDashboardViewModel = it.sharedViewModel(navController),
                 lenderDashboardViewModel = it.sharedViewModel(navController),
+                onSelectedLoanTransactionAsLender = { navController.navigate(Destinations.SETUP_LOAN_ROUTE) },
+                onSelectedLoanTransactionAsBorrower = { /*TODO*/ },
             )
         }
         composable(
@@ -243,6 +247,14 @@ fun PalmHiramNavHost(
                 onClose = { navController.navigateUp() },
                 authViewModel = globalAuthViewModel!!,
                 borrowerDashboardViewModel = it.sharedViewModel(navController),
+                lenderDashboardViewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.SETUP_LOAN_ROUTE
+        ) {
+            SetupLoanApprovalScreenRoute(
+                onClose = { navController.navigateUp() },
                 lenderDashboardViewModel = it.sharedViewModel(navController)
             )
         }

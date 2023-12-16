@@ -259,6 +259,7 @@ fun LoanTransactionList(
             ) {
                 items(loanTransactionList, key = { it.id }) { transaction ->
                     LoanTransactionItemCard(
+                        onClick = { /*TODO: Navigate to detail screen or something */ },
                         balanceName = balanceName,
                         transactionDetails = transaction,
                         modifier = Modifier
