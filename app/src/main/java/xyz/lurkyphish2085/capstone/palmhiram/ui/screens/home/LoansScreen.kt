@@ -3,6 +3,8 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -36,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
@@ -43,6 +46,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCa
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopNavigationTab
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
@@ -51,6 +55,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 @ExperimentalMaterial3Api
 @Composable
 fun LoansScreen(
+    globalState: FunniGlobalViewModel,
     role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
@@ -129,6 +134,7 @@ fun LoansScreen(
         modifier = modifier
     ) { padding ->
         LoansScreenContent(
+            globalState = globalState,
             approvalLoanTransactionState = approvalLoanTransactionFlow,
             settledLoanTransactionState = settledLoanTransactionFlow,
             ongoingLoanTransactionState = ongoingLoanTransactionFlow,
@@ -145,6 +151,7 @@ fun LoansScreen(
 @ExperimentalFoundationApi
 @Composable
 fun LoansScreenContent(
+    globalState: FunniGlobalViewModel,
     approvalLoanTransactionState: State<List<LoanTransaction>>,
     settledLoanTransactionState: State<List<LoanTransaction>>,
     ongoingLoanTransactionState: State<List<LoanTransaction>>,
@@ -163,6 +170,7 @@ fun LoansScreenContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             LoanTransactionList(
+                globalState = globalState,
                 approvalLoanTransactionState = approvalLoanTransactionState,
                 settledLoanTransactionState = settledLoanTransactionState,
                 ongoingLoanTransactionState = ongoingLoanTransactionState,
@@ -225,6 +233,7 @@ fun LoanScreenTabRow(
 @ExperimentalFoundationApi
 @Composable
 fun LoanTransactionList(
+    globalState: FunniGlobalViewModel,
     approvalLoanTransactionState: State<List<LoanTransaction>>,
     settledLoanTransactionState: State<List<LoanTransaction>>,
     ongoingLoanTransactionState: State<List<LoanTransaction>>,
@@ -233,6 +242,8 @@ fun LoanTransactionList(
     balanceName: String,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     val loanTransactionList =
         when(selectedList) {
             "approval" -> approvalLoanTransactionState.value
@@ -259,7 +270,11 @@ fun LoanTransactionList(
             ) {
                 items(loanTransactionList, key = { it.id }) { transaction ->
                     LoanTransactionItemCard(
-                        onClick = { /*TODO: Navigate to detail screen or something */ },
+                        onClick = {
+                                  globalState.selectedLoanTransactionItem = transaction
+                            //TODO: Navigate to detail screen or something
+                            Log.e("LoanT Item Select", "LoanTransactionList: ${transaction.totalBalance}")
+                        },
                         balanceName = balanceName,
                         transactionDetails = transaction,
                         modifier = Modifier
@@ -280,6 +295,7 @@ fun LoansScreenPreview() {
     PalmHiramTheme {
         Surface {
             LoansScreen(
+                globalState = FunniGlobalViewModel(),
                 role = UserRoles.LENDER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null,null),
                 lenderDashboardViewModel = LenderDashboardViewModel(null,null),
