@@ -1,31 +1,20 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -40,7 +29,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -57,7 +45,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.Timestamp
-import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -65,21 +52,15 @@ import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CustomTextField
-import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
-import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.extractNumericValue
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.replaceUnderscoresWithWhitespaces
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
-import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
-import java.time.DateTimeException
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 @OptIn(ExperimentalStdlibApi::class)
 @ExperimentalMaterial3Api
@@ -87,6 +68,7 @@ import java.util.Date
 fun SetupLoanForApprovalScreen(
     balanceName: String,
     lenderDashboardViewModel: LenderDashboardViewModel,
+    viewModel: SetupLoanForApprovalScreenViewModel,
     transactionDetails: LoanTransaction,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
@@ -94,7 +76,7 @@ fun SetupLoanForApprovalScreen(
     val context = LocalContext.current
 
     var principalAmount by rememberSaveable {
-        mutableStateOf("${transactionDetails.principalAmount}")
+        mutableStateOf("${Money.parseActualValue(transactionDetails.principalAmount)}")
     }
     var interestRate by rememberSaveable {
         mutableStateOf("${transactionDetails.interestRateInPercentage}")
@@ -115,10 +97,11 @@ fun SetupLoanForApprovalScreen(
             }
         )
     }
-    var totalPayment by rememberSaveable {
-        mutableStateOf(Money.parseActualValue(transactionDetails.totalPayment).toString())
-    }
+    val totalPaymentFlow = viewModel.totalPayment.collectAsState()
 
+    var timeInYears by rememberSaveable {
+        mutableStateOf(0.0)
+    }
 
     val calendarStartedOnState = rememberUseCaseState()
     val calendarDueOnState = rememberUseCaseState()
@@ -141,8 +124,20 @@ fun SetupLoanForApprovalScreen(
             monthSelection = true,
             style = CalendarStyle.MONTH,
         ),
-        selection = CalendarSelection.Date {
-            dueOn = DateTimeUtils.formatToISO8601Date(it)
+        selection = CalendarSelection.Date { dueDate ->
+            dueOn = DateTimeUtils.formatToISO8601Date(dueDate)
+
+            timeInYears = DateTimeUtils.calculateYearsBetween(
+                DateTimeUtils.parseISO8601DateString(startedOn),
+                dueDate
+            )
+
+            // TODO: THIS IS TEMP, please fix this asap
+            viewModel.calculateTotalPayment(
+                principalAmount = Money(principalAmount.toDouble()),
+                interestRatePercent = Integer.valueOf(interestRate),
+                timeInYears = timeInYears
+            )
         }
     )
 
@@ -200,7 +195,7 @@ fun SetupLoanForApprovalScreen(
                         modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
                         Text(
-                            text = "₱ $totalPayment",
+                            text = "₱ ${Money.parseActualValue(totalPaymentFlow.value)}",
                             style = MaterialTheme.typography.titleLarge,
                         )
 
@@ -224,7 +219,7 @@ fun SetupLoanForApprovalScreen(
                     onClick = { expandBottomDetails = !expandBottomDetails },
                 ) {
                     Text(
-                        text = if (expandBottomDetails) "Hide Details" else "Show Details",
+                        text = if (expandBottomDetails) "Show less" else "Show more",
                         style = TextStyle.Default.copy(
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold
@@ -365,7 +360,10 @@ fun SetupLoanForApprovalScreen(
                                     LoanRepaymentFrequencies.values().forEach { item ->
                                         DropdownMenuItem(
                                             text = { Text(text = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()) },
-                                            onClick = { /*TODO*/ },
+                                            onClick = {
+                                                repaymentDropDownSelectedItem = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()
+                                                expandRepaymentDropDown = false
+                                            },
                                         )
                                     }
                                 }
@@ -388,6 +386,7 @@ fun SetupLoanForApprovalScreenPreview() {
             SetupLoanForApprovalScreen(
                 balanceName = "Total amount to collect",
                 lenderDashboardViewModel = LenderDashboardViewModel(null, null),
+                viewModel = SetupLoanForApprovalScreenViewModel(),
                 transactionDetails = LoanTransaction(
                     borrowerName = "Bibong M",
                     principalAmount = 69420L,

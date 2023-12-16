@@ -262,6 +262,7 @@ fun PalmHiramNavHost(
             SetupLoanApprovalScreenRoute(
                 globalState = globalState!!,
                 onClose = { navController.navigateUp() },
+                setupLoanForApprovalScreenViewModel = it.sharedViewModel(navController),
                 lenderDashboardViewModel = it.sharedViewModel(navController)
             )
         }
