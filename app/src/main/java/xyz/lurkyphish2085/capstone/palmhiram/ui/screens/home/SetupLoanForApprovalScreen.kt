@@ -76,7 +76,7 @@ fun SetupLoanForApprovalScreen(
     val context = LocalContext.current
 
     var principalAmount by rememberSaveable {
-        mutableStateOf("${Money.parseActualValue(transactionDetails.principalAmount)}")
+        mutableStateOf("${Money.parseActualValue(transactionDetails.principalAmount).value}")
     }
     var interestRate by rememberSaveable {
         mutableStateOf("${transactionDetails.interestRateInPercentage}")
