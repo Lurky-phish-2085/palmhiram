@@ -5,12 +5,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 
 
 @ExperimentalMaterial3Api
 @Composable
 fun DashboardRoute(
+    globalState: FunniGlobalViewModel,
     onProfileClick: () -> Unit,
     onNotificationsClick: () -> Unit,
     onBorrowerApplyLoanClick: () -> Unit,
@@ -26,6 +28,7 @@ fun DashboardRoute(
     lenderDashboardViewModel: LenderDashboardViewModel,
 ) {
     DashboardScreen(
+        globalState = globalState,
         onProfileClick = onProfileClick,
         onNotificationsClick = onNotificationsClick,
         authViewModel = authViewModel,

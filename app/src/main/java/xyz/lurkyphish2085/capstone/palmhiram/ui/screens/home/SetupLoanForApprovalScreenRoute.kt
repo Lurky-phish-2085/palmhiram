@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 
 
 @ExperimentalAnimationApi
@@ -17,13 +18,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SetupLoanApprovalScreenRoute(
     onClose: () -> Unit,
+    globalState: FunniGlobalViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
 ) {
-    Log.e("SELECTED LOAN DEBUG", "${lenderDashboardViewModel?.selectedLoanTransactionItem?.value}", )
     SetupLoanForApprovalScreen(
         balanceName = lenderDashboardViewModel.balanceName,
         lenderDashboardViewModel = lenderDashboardViewModel,
         onClose = onClose,
+        transactionDetails = globalState.selectedLoanTransactionItem,
         modifier = Modifier.padding(all = 16.dp)
     )
 }

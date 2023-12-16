@@ -65,6 +65,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.PagerScrollIndicatorDots
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ActionButtonTypes
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
@@ -79,6 +80,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreen(
+    globalState: FunniGlobalViewModel,
     onLeftButtonClickAsBorrower: () -> Unit,
     onRightButtonClickAsBorrower: () -> Unit,
     onLeftButtonClickAsLender: () -> Unit,
@@ -122,6 +124,7 @@ fun OverviewScreen(
         modifier = modifier
     ) { paddingValues ->
         OverviewScreenContent(
+            globalState = globalState,
             amount = balanceAmountFlow.value.toString(),
             ongoingTransactionList = ongoingLoanTransactionListFlow.value,
             approvalTransactionList = approvalLoanTransactionListFlow.value,
@@ -183,6 +186,7 @@ fun OverviewScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreenContent(
+    globalState: FunniGlobalViewModel,
     amount: String,
     balanceName: String,
     ongoingTransactionList: List<LoanTransaction>,
@@ -223,6 +227,7 @@ fun OverviewScreenContent(
             )
 
             LoanTransactionsHorizontalPager(
+                globalState = globalState,
                 onClickItem = onSelectLoanTransactionPager,
                 transactionList = ongoingTransactionList,
                 balanceName = balanceName,
@@ -233,6 +238,7 @@ fun OverviewScreenContent(
                     .fillMaxWidth()
             )
             LoanTransactionsHorizontalPager(
+                globalState = globalState,
                 onClickItem = onSelectLoanTransactionPager,
                 transactionList = approvalTransactionList,
                 balanceName = balanceName,
@@ -380,6 +386,7 @@ fun ActionSection(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoanTransactionsHorizontalPager(
+    globalState: FunniGlobalViewModel,
     onClickItem: () -> Unit,
     role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
@@ -399,10 +406,7 @@ fun LoanTransactionsHorizontalPager(
             LoanTransactionItemCard(
                 // TODO: Go to the designated screen if a borrower clicked this
                 onClick = {
-                    borrowerDashboardViewModel?.setSelectedLoanTransactionItem(transactionList[index])
-                    lenderDashboardViewModel?.setSelectedLoanTransactionItem(transactionList[index])
-
-                    Log.e("SELECTED LOAN DEBUG", "${lenderDashboardViewModel?.selectedLoanTransactionItem?.value}", )
+                    globalState.selectedLoanTransactionItem = transactionList[index]
                     onClickItem()
                 },
                 balanceName = balanceName,
@@ -507,6 +511,7 @@ fun OverviewScreenBorrowerPreview() {
     PalmHiramTheme {
         Surface {
             OverviewScreen(
+                globalState = FunniGlobalViewModel(),
                 role = UserRoles.BORROWER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null, null),
                 lenderDashboardViewModel = LenderDashboardViewModel(null, null),
@@ -532,6 +537,7 @@ fun OverviewScreenLenderPreview() {
     PalmHiramTheme {
         Surface {
             OverviewScreen(
+                globalState = FunniGlobalViewModel(),
                 role = UserRoles.LENDER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null, null),
                 lenderDashboardViewModel = LenderDashboardViewModel(null, null),

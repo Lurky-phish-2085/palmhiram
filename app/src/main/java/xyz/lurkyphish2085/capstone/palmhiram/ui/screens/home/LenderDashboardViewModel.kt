@@ -28,13 +28,6 @@ class LenderDashboardViewModel @Inject constructor(
     val leftButtonName = "Collect"
     val rightButtonName = "Give Loan"
 
-    private var _selectedLoanTransactionItem = MutableStateFlow<LoanTransaction>(LoanTransaction())
-    val selectedLoanTransactionItem = _selectedLoanTransactionItem.asStateFlow()
-
-    fun setSelectedLoanTransactionItem(item: LoanTransaction) {
-        _selectedLoanTransactionItem.value = item
-    }
-
     val currentUser: FirebaseUser?
         get() = authRepository?.currentUser
 

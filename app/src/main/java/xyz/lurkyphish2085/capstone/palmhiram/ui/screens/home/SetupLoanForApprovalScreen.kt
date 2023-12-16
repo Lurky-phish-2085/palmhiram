@@ -87,12 +87,11 @@ import java.util.Date
 fun SetupLoanForApprovalScreen(
     balanceName: String,
     lenderDashboardViewModel: LenderDashboardViewModel,
+    transactionDetails: LoanTransaction,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val transactionDetailsState = lenderDashboardViewModel.selectedLoanTransactionItem?.collectAsState()
-    val transactionDetails = transactionDetailsState?.value!!
 
     var principalAmount by rememberSaveable {
         mutableStateOf("${transactionDetails.principalAmount}")
@@ -389,6 +388,12 @@ fun SetupLoanForApprovalScreenPreview() {
             SetupLoanForApprovalScreen(
                 balanceName = "Total amount to collect",
                 lenderDashboardViewModel = LenderDashboardViewModel(null, null),
+                transactionDetails = LoanTransaction(
+                    borrowerName = "Bibong M",
+                    principalAmount = 69420L,
+                    interestRateInPercentage = 69420,
+                    startDate = Timestamp.now(),
+                ),
                 onClose = {},
                 modifier = Modifier
                     .padding(all = 16.dp),

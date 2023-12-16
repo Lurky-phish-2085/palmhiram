@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopNavigationTab
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.CALENDAR_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.OVERVIEW_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.REPORTS_ROUTE
@@ -39,6 +40,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
+    globalState: FunniGlobalViewModel,
     authViewModel: AuthViewModel?,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
@@ -106,6 +108,7 @@ fun DashboardScreen(
         modifier = modifier
     ) { padding ->
         HomeNavigation(
+            globalState = globalState,
             navController = navController,
             role =
             if (authViewModel == null) {
@@ -183,6 +186,7 @@ fun DashboardScreenPreview() {
     PalmHiramTheme {
         Surface {
             DashboardScreen(
+                globalState = FunniGlobalViewModel(),
                 onProfileClick = {},
                 onNotificationsClick = {},
                 authViewModel = null,

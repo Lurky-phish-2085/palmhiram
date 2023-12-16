@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
@@ -69,6 +70,7 @@ fun PalmHiramNavHost(
         modifier = modifier
     ) {
         var globalAuthViewModel: AuthViewModel? = null
+        var globalState: FunniGlobalViewModel? = null
 
         // TODO: INSERT SCREENS HERE
         navigation(
@@ -77,6 +79,7 @@ fun PalmHiramNavHost(
         ) {
             composable(Destinations.WELCOME_ROUTE) {
                 val viewModel = it.sharedViewModel<AuthViewModel>(navController)
+                val globalStateViewModel = it.sharedViewModel<FunniGlobalViewModel>(navController)
                 WelcomeRoute(
 //                    viewModel = it.sharedViewModel(navController),
                     viewModel = viewModel,
@@ -90,6 +93,7 @@ fun PalmHiramNavHost(
                         navController.navigate(Destinations.DASHBOARD_ROUTE) {
                             popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
                             globalAuthViewModel = viewModel
+                            globalState = globalStateViewModel
                         }
                     },
                     onRegister = { navController.navigate(Destinations.REGISTRATION_ROUTE) }
@@ -178,6 +182,7 @@ fun PalmHiramNavHost(
             }
         ) {
             DashboardRoute(
+                globalState = globalState!!,
                 onProfileClick = {
                      navController.navigate(Destinations.PROFILE_DRAWER_ROUTE)
                 },
@@ -254,6 +259,7 @@ fun PalmHiramNavHost(
             route = Destinations.SETUP_LOAN_ROUTE
         ) {
             SetupLoanApprovalScreenRoute(
+                globalState = globalState!!,
                 onClose = { navController.navigateUp() },
                 lenderDashboardViewModel = it.sharedViewModel(navController)
             )

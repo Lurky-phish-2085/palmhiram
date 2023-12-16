@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.CALENDAR_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.OVERVIEW_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.REPORTS_ROUTE
@@ -26,6 +27,7 @@ object DashboardRouteDestinations {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeNavigation(
+    globalState: FunniGlobalViewModel,
     navController: NavHostController = rememberNavController(),
     onLeftButtonClickAsBorrower: () -> Unit,
     onRightButtonClickAsBorrower: () -> Unit,
@@ -47,6 +49,7 @@ fun HomeNavigation(
     ) {
         composable(OVERVIEW_ROUTE) {
             OverviewScreen(
+                globalState = globalState,
                 role = role!!,
                 borrowerDashboardViewModel = borrowerDashboardViewModel,
                 lenderDashboardViewModel = lenderDashboardViewModel,
