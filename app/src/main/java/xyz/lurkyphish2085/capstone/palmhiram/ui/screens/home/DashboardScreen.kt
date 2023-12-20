@@ -52,6 +52,7 @@ fun DashboardScreen(
     onRightButtonClickAsLender: () -> Unit,
     onLoansClickAsLender: () -> Unit,
     onLoansClickAsBorrower: () -> Unit,
+    onUserProfilesClickAsLender: () -> Unit,
     onSelectedLoanTransactionItemAsLender: () -> Unit,
     onSelectedLoanTransactionItemAsBorrower: () -> Unit,
     modifier: Modifier = Modifier
@@ -124,6 +125,7 @@ fun DashboardScreen(
             onRightButtonClickAsBorrower = onRightButtonClickAsBorrower,
             onLoansClickAsLender = onLoansClickAsLender,
             onLoansClickAsBorrower = onLoansClickAsBorrower,
+            onProfilesClickAsLender = onUserProfilesClickAsLender,
             onSelectLoanTransactionItemAsLender = onSelectedLoanTransactionItemAsLender,
             onSelectLoanTransactionItemAsBorrower = onSelectedLoanTransactionItemAsBorrower,
             modifier = Modifier.padding(padding)
@@ -198,6 +200,7 @@ fun DashboardScreenPreview() {
                 onLeftButtonClickAsLender = {},
                 onLoansClickAsBorrower = {},
                 onLoansClickAsLender = {},
+                onUserProfilesClickAsLender = {},
                 onSelectedLoanTransactionItemAsLender = {},
                 onSelectedLoanTransactionItemAsBorrower = {},
                 modifier = Modifier

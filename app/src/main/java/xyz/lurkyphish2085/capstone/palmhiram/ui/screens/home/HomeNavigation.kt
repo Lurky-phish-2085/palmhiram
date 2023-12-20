@@ -35,6 +35,7 @@ fun HomeNavigation(
     onRightButtonClickAsLender: () -> Unit,
     onLoansClickAsLender: () -> Unit,
     onLoansClickAsBorrower: () -> Unit,
+    onProfilesClickAsLender: () -> Unit,
     onSelectLoanTransactionItemAsLender: () -> Unit,
     onSelectLoanTransactionItemAsBorrower: () -> Unit,
     role: UserRoles?,
@@ -61,6 +62,7 @@ fun HomeNavigation(
                 onLoansClickAsBorrower = onLoansClickAsBorrower,
                 onTransactionsClickAsLender = onSelectLoanTransactionItemAsLender,
                 onTransactionsClickAsBorrower = { /*TODO*/ },
+                onProfilesClickAsLender = onProfilesClickAsLender,
                 onSelectLoanTransactionItemAsLender = onSelectLoanTransactionItemAsLender,
                 onSelectLoanTransactionItemAsBorrower = onSelectLoanTransactionItemAsBorrower,
             )

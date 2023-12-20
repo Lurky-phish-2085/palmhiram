@@ -21,6 +21,7 @@ fun DashboardRoute(
     onLenderGiveLoanClick: () -> Unit,
     onLoansClickAsLender: () -> Unit,
     onLoansClickAsBorrower: () -> Unit,
+    onUserProfilesClickAsLender: () -> Unit,
     onSelectedLoanTransactionAsLender: () -> Unit,
     onSelectedLoanTransactionAsBorrower: () -> Unit,
     authViewModel: AuthViewModel,
@@ -40,6 +41,7 @@ fun DashboardRoute(
         onRightButtonClickAsBorrower = onBorrowerPayLoanClick,
         onLoansClickAsLender = onLoansClickAsLender,
         onLoansClickAsBorrower = onLoansClickAsBorrower,
+        onUserProfilesClickAsLender = onUserProfilesClickAsLender,
         onSelectedLoanTransactionItemAsLender = onSelectedLoanTransactionAsLender,
         onSelectedLoanTransactionItemAsBorrower = onSelectedLoanTransactionAsBorrower,
         modifier = Modifier

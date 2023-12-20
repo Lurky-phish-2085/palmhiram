@@ -30,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowOutward
+import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.AddHomeWork
 import androidx.compose.material.icons.outlined.AirplanemodeActive
@@ -89,6 +90,7 @@ fun OverviewScreen(
     onLoansClickAsBorrower: () -> Unit,
     onTransactionsClickAsLender: () -> Unit,
     onTransactionsClickAsBorrower: () -> Unit,
+    onProfilesClickAsLender: () -> Unit,
     onSelectLoanTransactionItemAsLender: () -> Unit,
     onSelectLoanTransactionItemAsBorrower: () -> Unit,
     role: UserRoles,
@@ -168,6 +170,7 @@ fun OverviewScreen(
                     UserRoles.BORROWER -> onTransactionsClickAsBorrower
                     UserRoles.LENDER -> onTransactionsClickAsLender
                 },
+            onProfilesClick = onProfilesClickAsLender,
             onSelectLoanTransactionPager =
                 when(role) {
                     UserRoles.BORROWER -> onSelectLoanTransactionItemAsBorrower
@@ -198,6 +201,7 @@ fun OverviewScreenContent(
     onRightButtonClick: () -> Unit,
     onLoansClick: () -> Unit,
     onTransactionsClick: () -> Unit,
+    onProfilesClick: () -> Unit,
     onSelectLoanTransactionPager: () -> Unit,
     role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
@@ -251,6 +255,7 @@ fun OverviewScreenContent(
             ActionSection(
                 onLoansClick = onLoansClick,
                 onTransactionsClick = onTransactionsClick,
+                onProfilesClick = onProfilesClick,
                 actionItems = actionItems,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -338,6 +343,7 @@ fun BalanceSectionContent(
 fun ActionListGrid(
     onLoansClick: () -> Unit,
     onTransactionsClick: () -> Unit,
+    onProfilesClick: () -> Unit,
     actions: List<ActionItem>,
     modifier: Modifier = Modifier
 ) {
@@ -354,6 +360,7 @@ fun ActionListGrid(
                     when(item.type) {
                         ActionButtonTypes.LOANS -> onLoansClick
                         ActionButtonTypes.TRANSACTIONS -> onTransactionsClick
+                        ActionButtonTypes.PROFILES -> onProfilesClick
                     },
                 icon = item.icon,
                 actionName = item.actionName,
@@ -366,6 +373,7 @@ fun ActionListGrid(
 fun ActionSection(
     onLoansClick: () -> Unit,
     onTransactionsClick: () -> Unit,
+    onProfilesClick: () -> Unit,
     actionItems: List<ActionItem>,
     modifier: Modifier = Modifier
 ) {
@@ -374,6 +382,7 @@ fun ActionSection(
             ActionListGrid(
                 onLoansClick = onLoansClick,
                 onTransactionsClick = onTransactionsClick,
+                onProfilesClick = onProfilesClick,
                 actions = actionItems,
                 modifier = modifier
                     .fillMaxWidth()
@@ -523,6 +532,7 @@ fun OverviewScreenBorrowerPreview() {
                 onLoansClickAsLender = {},
                 onTransactionsClickAsBorrower = {},
                 onTransactionsClickAsLender = {},
+                onProfilesClickAsLender = {},
                 onSelectLoanTransactionItemAsBorrower = {},
                 onSelectLoanTransactionItemAsLender = {}
             )
@@ -549,6 +559,7 @@ fun OverviewScreenLenderPreview() {
                 onLoansClickAsLender = {},
                 onTransactionsClickAsBorrower = {},
                 onTransactionsClickAsLender = {},
+                onProfilesClickAsLender = {},
                 onSelectLoanTransactionItemAsBorrower = {},
                 onSelectLoanTransactionItemAsLender = {},
             )
@@ -586,6 +597,11 @@ private val lenderActionItems = listOf(
         actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
         type = ActionButtonTypes.TRANSACTIONS,
     ),
+    ActionItem(
+        icon = Icons.Outlined.AccountBox,
+        actionName = ActionButtonTypes.PROFILES.toString().lowercase().capitalized(),
+        type = ActionButtonTypes.PROFILES
+    )
 )
 
 private val fakeActionItems = listOf(

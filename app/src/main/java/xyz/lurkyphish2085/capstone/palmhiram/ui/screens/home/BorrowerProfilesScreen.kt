@@ -34,11 +34,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
@@ -47,7 +51,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @Composable
 fun BorrowerProfilesScreen(
     onClose: () -> Unit,
-    profiles: List<User>,
+    profiles: State<List<User>>,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -80,7 +84,7 @@ fun BorrowerProfilesScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BorrowerProfileList(
-                        profiles = profiles,
+                        profiles = profiles.value,
                     )
                 }
             }
@@ -159,7 +163,7 @@ fun BorrowerProfileList(
     ) {
         items(profiles, key = { it.id }) { profile ->
             BorrowerProfileItemCard(
-                onClick = {},
+                onClick = { /*TODO*/ },
                 details = User(
                     name = profile.name,
                     email = profile.email,
@@ -197,33 +201,40 @@ fun BorrowerProfileItemCardPreview() {
 fun BorrowerProfilesScreenPreview() {
     PalmHiramTheme {
         Surface {
+            val flow =
+                MutableStateFlow<List<User>>(
+                    listOf(
+                        User(
+                            id = "1",
+                            name = "Bon Appetit",
+                            email = "bonappetit123@gmail.com",
+                            phone = "09988776655"
+                        ),
+                        User(
+                            id = "2",
+                            name = "Bon Appetit",
+                            email = "bonappetit123@gmail.com",
+                            phone = "09988776655"
+                        ),
+                        User(
+                            id = "3",
+                            name = "Bon Appetit",
+                            email = "bonappetit123@gmail.com",
+                            phone = "09988776655"
+                        ),
+                        User(
+                            name = "Bon Appetit",
+                            email = "bonappetit123@gmail.com",
+                            phone = "09988776655"
+                        ),
+                    ),
+                )
+
+            val state = flow.collectAsState()
+
             BorrowerProfilesScreen(
                 onClose = {},
-                profiles = listOf(
-                    User(
-                        id = "1",
-                        name = "Bon Appetit",
-                        email = "bonappetit123@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "2",
-                        name = "Bon Appetit",
-                        email = "bonappetit123@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "3",
-                        name = "Bon Appetit",
-                        email = "bonappetit123@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        name = "Bon Appetit",
-                        email = "bonappetit123@gmail.com",
-                        phone = "09988776655"
-                    ),
-                ),
+                profiles = state,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
             )
         }

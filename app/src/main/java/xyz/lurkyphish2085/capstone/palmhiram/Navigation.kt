@@ -208,6 +208,7 @@ fun PalmHiramNavHost(
                 lenderDashboardViewModel = it.sharedViewModel(navController),
                 onSelectedLoanTransactionAsLender = { navController.navigate(Destinations.SETUP_LOAN_ROUTE) },
                 onSelectedLoanTransactionAsBorrower = { /*TODO*/ },
+                onUserProfilesClickAsLender = { navController.navigate(Destinations.BORROWER_PROFILES_ROUTE) },
             )
         }
         composable(

@@ -135,17 +135,23 @@ class LenderDashboardViewModel @Inject constructor(
             }
     }
 
+    val userProfilesFlow: Flow<List<User>> = userProfilesRepository?.userProfiles!!
+
     private var _borrowerUserProfiles = MutableStateFlow<List<User>>(ArrayList<User>())
     val borrowerUserProfiles: StateFlow<List<User>> = _borrowerUserProfiles
 
+    init {
+        collectBorrowerUserProfiles()
+    }
+
     private fun collectBorrowerUserProfiles() = viewModelScope.launch {
-        borrowerUserProfiles
+        userProfilesFlow
             .collectLatest {
-                val borrowerProfiles = it.filter { profile ->
-                    profile.role == UserRoles.BORROWER.name.lowercase()
+                val profiles = it.filter { user ->
+                    user.role == UserRoles.BORROWER.toString() && user.verified
                 }
 
-                _borrowerUserProfiles.value = borrowerProfiles
+                _borrowerUserProfiles.value = profiles
             }
     }
 }
