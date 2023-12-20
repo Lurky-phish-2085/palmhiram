@@ -44,7 +44,7 @@ fun LoanTransactionItemCard(
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
+            defaultElevation = 4.dp
         ),
         modifier = modifier
             .fillMaxWidth()

@@ -117,7 +117,7 @@ fun DashboardScreen(
                 UserRoles.valueOf(authViewModel?.userDetails?.role!!.uppercase())
             },
             borrowerDashboardViewModel = borrowerDashboardViewModel ?: BorrowerDashboardViewModel(null,null),
-            lenderDashboardViewModel = lenderDashboardViewModel ?: LenderDashboardViewModel(null,null),
+            lenderDashboardViewModel = lenderDashboardViewModel ?: LenderDashboardViewModel(null,null, null),
             onLeftButtonClickAsLender = onLeftButtonClickAsLender,
             onRightButtonClickAsLender = onRightButtonClickAsLender,
             onLeftButtonClickAsBorrower = onLeftButtonClickAsBorrower,

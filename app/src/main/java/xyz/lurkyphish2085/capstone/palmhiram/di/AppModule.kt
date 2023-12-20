@@ -10,6 +10,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepositoryImpl
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepositoryImpl
+import xyz.lurkyphish2085.capstone.palmhiram.data.UserProfilesRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.UserProfilesRepositoryImpl
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -26,4 +28,7 @@ class AppModule {
 
     @Provides
     fun provideLoanTransactionRepository(impl: LoanTransactionRepositoryImpl): LoanTransactionRepository = impl
+
+    @Provides
+    fun provideUserProfilesRepository(impl: UserProfilesRepositoryImpl): UserProfilesRepository = impl
 }

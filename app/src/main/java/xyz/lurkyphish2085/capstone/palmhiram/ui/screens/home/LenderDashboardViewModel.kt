@@ -12,15 +12,19 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.UserProfilesRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
+import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 import javax.inject.Inject
 
 @HiltViewModel
 class LenderDashboardViewModel @Inject constructor(
     private val authRepository: AuthRepository?,
     private val loanTransactionRepository: LoanTransactionRepository?,
+    private val userProfilesRepository: UserProfilesRepository?,
     // TODO: Add one for the notifications
 ): ViewModel() {
 
@@ -128,6 +132,20 @@ class LenderDashboardViewModel @Inject constructor(
                 }
 
                 _cancelledLoanTransactions.value = cancelledTransactions
+            }
+    }
+
+    private var _borrowerUserProfiles = MutableStateFlow<List<User>>(ArrayList<User>())
+    val borrowerUserProfiles: StateFlow<List<User>> = _borrowerUserProfiles
+
+    private fun collectBorrowerUserProfiles() = viewModelScope.launch {
+        borrowerUserProfiles
+            .collectLatest {
+                val borrowerProfiles = it.filter { profile ->
+                    profile.role == UserRoles.BORROWER.name.lowercase()
+                }
+
+                _borrowerUserProfiles.value = borrowerProfiles
             }
     }
 }

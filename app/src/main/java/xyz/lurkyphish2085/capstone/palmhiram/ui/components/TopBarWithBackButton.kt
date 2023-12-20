@@ -10,7 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsEndWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AddAPhoto
+import androidx.compose.material.icons.rounded.AddBox
+import androidx.compose.material.icons.rounded.AddCircle
+import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +30,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+
+@Composable
+fun TopBarWithBackButton(
+    text: String,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
+    actionButtons: @Composable () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        IconButton(
+            onClick = onClose,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(36.dp)
+            )
+        }
+
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier
+                .align(Alignment.Center),
+        )
+
+        Row(
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ) {
+            actionButtons()
+        }
+    }
+}
 
 @Composable
 fun TopBarWithBackButton(
@@ -67,6 +112,28 @@ fun TopBarWithBackButtonPreview() {
                 onClose = {},
                 modifier = Modifier.padding(all = 16.dp)
             )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TopBarWithBackButtonWithActionsPreview() {
+    PalmHiramTheme {
+        Surface {
+            TopBarWithBackButton(
+                text = "Borrowers",
+                onClose = {},
+                modifier = Modifier.padding(all = 16.dp)
+            ) {
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.Rounded.AddCircleOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            }
         }
     }
 }

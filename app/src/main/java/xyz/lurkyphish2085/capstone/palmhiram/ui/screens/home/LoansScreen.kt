@@ -298,7 +298,7 @@ fun LoansScreenPreview() {
                 globalState = FunniGlobalViewModel(),
                 role = UserRoles.LENDER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null,null),
-                lenderDashboardViewModel = LenderDashboardViewModel(null,null),
+                lenderDashboardViewModel = LenderDashboardViewModel(null,null, null),
                 onClose = {},
                 modifier = Modifier
                     .padding(top = 16.dp)

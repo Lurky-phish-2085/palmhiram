@@ -385,7 +385,7 @@ fun SetupLoanForApprovalScreenPreview() {
         Surface {
             SetupLoanForApprovalScreen(
                 balanceName = "Total amount to collect",
-                lenderDashboardViewModel = LenderDashboardViewModel(null, null),
+                lenderDashboardViewModel = LenderDashboardViewModel(null, null, null),
                 viewModel = SetupLoanForApprovalScreenViewModel(),
                 transactionDetails = LoanTransaction(
                     borrowerName = "Bibong M",

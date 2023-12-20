@@ -29,6 +29,9 @@ import androidx.navigation.navigation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanScreen
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfileList
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreen
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
@@ -53,6 +56,7 @@ private object Destinations {
             const val APPLY_LOAN_ROUTE = "${DASHBOARD_ROUTE}/apply-loan"
             const val LOANS_ROUTE = "${DASHBOARD_ROUTE}/loans"
             const val SETUP_LOAN_ROUTE = "${DASHBOARD_ROUTE}/setup-loan"
+            const val BORROWER_PROFILES_ROUTE = "${DASHBOARD_ROUTE}/borrower_profiles"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -263,6 +267,14 @@ fun PalmHiramNavHost(
                 globalState = globalState!!,
                 onClose = { navController.navigateUp() },
                 setupLoanForApprovalScreenViewModel = it.sharedViewModel(navController),
+                lenderDashboardViewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.BORROWER_PROFILES_ROUTE
+        ) {
+            BorrowerProfilesScreenRoute(
+                onClose = { navController.navigateUp() },
                 lenderDashboardViewModel = it.sharedViewModel(navController)
             )
         }
