@@ -9,7 +9,7 @@ fun BorrowerProfilesScreenRoute(
     onClose: () -> Unit,
     lenderDashboardViewModel: LenderDashboardViewModel,
 ) {
-    val profilesFlow = lenderDashboardViewModel.borrowerUserProfiles.collectAsState()
+    val profilesFlow = lenderDashboardViewModel.verifiedBorrowerUserProfiles.collectAsState()
 
     BorrowerProfilesScreen(
         onClose = onClose,

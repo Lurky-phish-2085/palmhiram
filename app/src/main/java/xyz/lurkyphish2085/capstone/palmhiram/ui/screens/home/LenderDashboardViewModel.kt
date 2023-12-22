@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
@@ -137,21 +136,21 @@ class LenderDashboardViewModel @Inject constructor(
 
     val userProfilesFlow: Flow<List<User>> = userProfilesRepository?.userProfiles!!
 
-    private var _borrowerUserProfiles = MutableStateFlow<List<User>>(ArrayList<User>())
-    val borrowerUserProfiles: StateFlow<List<User>> = _borrowerUserProfiles
+    private var _verifiedBorrowerUserProfiles = MutableStateFlow<List<User>>(ArrayList<User>())
+    val verifiedBorrowerUserProfiles: StateFlow<List<User>> = _verifiedBorrowerUserProfiles
 
     init {
-        collectBorrowerUserProfiles()
+        collectVerifiedBorrowerUserProfiles()
     }
 
-    private fun collectBorrowerUserProfiles() = viewModelScope.launch {
+    private fun collectVerifiedBorrowerUserProfiles() = viewModelScope.launch {
         userProfilesFlow
             .collectLatest {
                 val profiles = it.filter { user ->
                     user.role == UserRoles.BORROWER.toString() && user.verified
                 }
 
-                _borrowerUserProfiles.value = profiles
+                _verifiedBorrowerUserProfiles.value = profiles
             }
     }
 }
