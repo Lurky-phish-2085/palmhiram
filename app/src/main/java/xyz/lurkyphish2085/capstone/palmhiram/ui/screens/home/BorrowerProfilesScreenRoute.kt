@@ -1,8 +1,11 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.util.Log
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun BorrowerProfilesScreenRoute(
@@ -13,8 +16,7 @@ fun BorrowerProfilesScreenRoute(
 
     BorrowerProfilesScreen(
         onClose = onClose,
-        profiles = profilesFlow
+        onSearchValueChange = { queriedName -> lenderDashboardViewModel.collectVerifiedBorrowerUserProfiles(queriedName) },
+        profiles = profilesFlow,
     )
-
-    Log.e("BORROWER LIST DEBUG", "BorrowerProfilesScreenRoute: ${profilesFlow.value}", )
 }

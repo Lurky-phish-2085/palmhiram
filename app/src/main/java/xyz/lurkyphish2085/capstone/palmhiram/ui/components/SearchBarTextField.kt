@@ -30,7 +30,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 @Composable
 fun SearchBarTextField(
     onValueChange: (String) -> Unit,
-    value: String = "",
+    value: String,
     placeholder: String = "Search",
     modifier: Modifier = Modifier
 ) {
@@ -44,11 +44,11 @@ fun SearchBarTextField(
             )
         },
         placeholder = {
-            Text(text = placeholder)
+            Text(text = placeholder, maxLines = 1)
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.outlineVariant,
-            unfocusedContainerColor = MaterialTheme.colorScheme.outlineVariant,
+            focusedContainerColor = Color.LightGray,
+            unfocusedContainerColor = Color.LightGray,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor =  Color.Transparent,

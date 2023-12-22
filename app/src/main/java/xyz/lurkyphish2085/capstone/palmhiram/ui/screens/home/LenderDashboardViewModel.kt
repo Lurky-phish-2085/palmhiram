@@ -143,11 +143,17 @@ class LenderDashboardViewModel @Inject constructor(
         collectVerifiedBorrowerUserProfiles()
     }
 
-    private fun collectVerifiedBorrowerUserProfiles() = viewModelScope.launch {
+    fun collectVerifiedBorrowerUserProfiles(queriedName: String = "") = viewModelScope.launch {
         userProfilesFlow
             .collectLatest {
                 val profiles = it.filter { user ->
-                    user.role == UserRoles.BORROWER.toString() && user.verified
+                    val hasStringToSearch = queriedName.isNotBlank()
+
+                    if (!hasStringToSearch) {
+                        user.role == UserRoles.BORROWER.toString() && user.verified
+                    } else {
+                        user.role == UserRoles.BORROWER.toString() && user.verified && user.name.lowercase().contains(queriedName)
+                    }
                 }
 
                 _verifiedBorrowerUserProfiles.value = profiles
