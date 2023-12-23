@@ -42,6 +42,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,15 +55,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.SearchBarTextField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BorrowerProfilesScreen(
+    globalState: FunniGlobalViewModel,
     onClose: () -> Unit,
     onSearchValueChange: (searchValue: String) -> Unit,
     onSearchValueSheetChange: (searchValue: String) -> Unit,
@@ -70,7 +75,14 @@ fun BorrowerProfilesScreen(
     unVerifiedProfiles: State<List<User>>,
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
+
+    var loadingScreenOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     val listState = rememberLazyListState()
+    val sheetState = rememberModalBottomSheetState()
 
     var searchFieldValue by rememberSaveable {
         mutableStateOf("")
@@ -80,6 +92,10 @@ fun BorrowerProfilesScreen(
         mutableStateOf("")
     }
     var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var isVerifyUserDialogOpen by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -133,6 +149,8 @@ fun BorrowerProfilesScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BorrowerProfileList(
+                        onClickItem = { /*TODO*/ },
+                        globalState = globalState,
                         state = listState,
                         profiles = verifiedProfiles.value,
                     )
@@ -142,13 +160,38 @@ fun BorrowerProfilesScreen(
     }
 
     VerifyUsersBottomSheet(
+        sheetState = sheetState,
+        globalState = globalState,
         isOpen = isSheetOpen,
         profiles = unVerifiedProfiles,
         onDismissRequest = { isSheetOpen = false },
+        onClickItem = {
+            isSheetOpen = false
+            isVerifyUserDialogOpen = true
+        },
         onSearchValueChange = {
             searchFieldValueSheet = it
             onSearchValueSheetChange(it)
         },
+    )
+
+    VerifyUserDialog(
+        isOpen = isVerifyUserDialogOpen,
+        onDismissRequest = {
+            isVerifyUserDialogOpen = false
+            isSheetOpen = true
+        },
+        onClose = {
+            isVerifyUserDialogOpen = false
+            isSheetOpen = true
+        },
+        onSendViaEmail = { /*TODO*/ },
+        onSendViaSMS = { /*TODO*/ },
+        userDetails = globalState.selectedUserProfileItem
+    )
+
+    CircularProgressLoadingIndicator(
+        isOpen = loadingScreenOpen
     )
 }
 
@@ -211,6 +254,8 @@ fun BorrowerProfileItemCard(
 }
 @Composable
 fun BorrowerProfileList(
+    globalState: FunniGlobalViewModel,
+    onClickItem: () -> Unit,
     state: LazyListState = rememberLazyListState(),
     profiles: List<User>,
     modifier: Modifier = Modifier
@@ -224,7 +269,10 @@ fun BorrowerProfileList(
     ) {
         items(profiles, key = { it.id }) { profile ->
             BorrowerProfileItemCard(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    globalState.selectedUserProfileItem = profile
+                    onClickItem()
+                },
                 details = User(
                     name = profile.name,
                     email = profile.email,
@@ -238,10 +286,12 @@ fun BorrowerProfileList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerifyUsersBottomSheet(
-    isOpen: Boolean = false,
+    globalState: FunniGlobalViewModel,
+    isOpen: Boolean,
     sheetState: SheetState = rememberModalBottomSheetState(),
     profiles: State<List<User>>,
     onDismissRequest: () -> Unit,
+    onClickItem: () -> Unit,
     onSearchValueChange: (searchValue: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -293,6 +343,8 @@ fun VerifyUsersBottomSheet(
                     modifier = Modifier.padding(paddingValues)
                 ) {
                     BorrowerProfileList(
+                        globalState = globalState,
+                        onClickItem = onClickItem,
                         state = lazyListState,
                         profiles = profiles.value,
                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -305,7 +357,7 @@ fun VerifyUsersBottomSheet(
 
 @Composable
 fun VerifyUserDialog(
-    isOpen: Boolean = false,
+    isOpen: Boolean,
     onDismissRequest: () -> Unit,
     onClose: () -> Unit,
     onSendViaEmail: () -> Unit,
@@ -314,91 +366,91 @@ fun VerifyUserDialog(
     modifier: Modifier = Modifier
 ) {
     if (isOpen)
-    Dialog(onDismissRequest = onDismissRequest) {
-        Card(
-            shape = MaterialTheme.shapes.large,
-            modifier = modifier
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
+        Dialog(onDismissRequest = onDismissRequest) {
+            Card(
+                shape = MaterialTheme.shapes.large,
+                modifier = modifier
             ) {
-                Box(
-                    Modifier
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)) {
+                        .padding(vertical = 16.dp)
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)) {
+                        Text(
+                            text = "Verify User",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                            ),
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+
+                        IconButton(
+                            onClick = onClose,
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(36.dp)
+                            )
+                        }
+                    }
+
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(128.dp)
+                    )
                     Text(
-                        text = "Verify User",
+                        text = userDetails.name,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                         ),
-                        modifier = Modifier
-                            .align(Alignment.Center)
+                    )
+                    Text(
+                        text = userDetails.email,
+                        style = MaterialTheme.typography.bodyLarge
+                            .copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                    )
+                    Text(
+                        text = userDetails.phone,
+                        style = MaterialTheme.typography.bodyLarge
+                            .copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.outline
+                            )
                     )
 
-                    IconButton(
-                        onClick = onClose,
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(36.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(text = "Send code via:")
+
+                    Button(onClick = { /*TODO*/ }) {
+                        Text(
+                            text = "Send via Email",
+                        )
+                    }
+                    Button(onClick = { /*TODO*/ }) {
+                        Text(
+                            text = "Send via SMS"
                         )
                     }
                 }
-
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(128.dp)
-                )
-                Text(
-                    text = userDetails.name,
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                    ),
-                )
-                Text(
-                    text = userDetails.email,
-                    style = MaterialTheme.typography.bodyLarge
-                        .copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                )
-                Text(
-                    text = userDetails.phone,
-                    style = MaterialTheme.typography.bodyLarge
-                        .copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text(text = "Send code via:")
-
-                Button(onClick = { /*TODO*/ }) {
-                    Text(
-                        text = "Send via Email",
-                    )
-                }
-                Button(onClick = { /*TODO*/ }) {
-                    Text(
-                        text = "Send via SMS"
-                    )
-                }
             }
         }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -427,6 +479,8 @@ fun VerifyBorrowerBottomSheetPreview() {
                 }
 
                 VerifyUsersBottomSheet(
+                    globalState = FunniGlobalViewModel(),
+                    onClickItem = {},
                     isOpen = isSheetOpen,
                     sheetState = sheetState,
                     profiles = profilesState,
@@ -502,6 +556,7 @@ fun BorrowerProfilesScreenPreview() {
             val state = flow.collectAsState()
 
             BorrowerProfilesScreen(
+                globalState = FunniGlobalViewModel(),
                 onClose = {},
                 onSearchValueChange = {},
                 onSearchValueSheetChange = {},
