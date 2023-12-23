@@ -9,6 +9,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPRequest
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailRequest
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailResponse
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.VerificationCodeRequest
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.VerificationCodeResponse
 
 interface PalmhiramAPI {
 
@@ -20,4 +22,7 @@ interface PalmhiramAPI {
 
     @POST("/v1/send-verification")
     suspend fun sendVerificationEmail(@Body request: SendEmailRequest): Response<SendEmailResponse>
+
+    @POST("/v1/send-verification-code")
+    suspend fun sendVerificationCodeEmail(@Body request: VerificationCodeRequest): Response<VerificationCodeResponse>
 }
