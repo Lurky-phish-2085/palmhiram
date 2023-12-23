@@ -139,8 +139,12 @@ class LenderDashboardViewModel @Inject constructor(
     private var _verifiedBorrowerUserProfiles = MutableStateFlow<List<User>>(ArrayList<User>())
     val verifiedBorrowerUserProfiles: StateFlow<List<User>> = _verifiedBorrowerUserProfiles
 
+    private var _unVerifiedBorrowerUserProfiles = MutableStateFlow<List<User>>(ArrayList<User>())
+    val unVerifiedBorrowerUserProfiles: StateFlow<List<User>> = _unVerifiedBorrowerUserProfiles
+
     init {
         collectVerifiedBorrowerUserProfiles()
+        collectUnVerifiedBorrowerUserProfiles()
     }
 
     fun collectVerifiedBorrowerUserProfiles(queriedName: String = "") = viewModelScope.launch {
@@ -157,6 +161,23 @@ class LenderDashboardViewModel @Inject constructor(
                 }
 
                 _verifiedBorrowerUserProfiles.value = profiles
+            }
+    }
+
+    fun collectUnVerifiedBorrowerUserProfiles(queriedName: String = "") = viewModelScope.launch {
+        userProfilesFlow
+            .collectLatest {
+                val profiles = it.filter { user ->
+                    val hasStringToSearch = queriedName.isNotBlank()
+
+                    if (!hasStringToSearch) {
+                        user.role == UserRoles.BORROWER.toString() && !user.verified
+                    } else {
+                        user.role == UserRoles.BORROWER.toString() && !user.verified && user.name.lowercase().contains(queriedName)
+                    }
+                }
+
+                _unVerifiedBorrowerUserProfiles.value = profiles
             }
     }
 }

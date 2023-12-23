@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,13 +58,22 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 fun BorrowerProfilesScreen(
     onClose: () -> Unit,
     onSearchValueChange: (searchValue: String) -> Unit,
-    profiles: State<List<User>>,
+    onSearchValueSheetChange: (searchValue: String) -> Unit,
+    verifiedProfiles: State<List<User>>,
+    unVerifiedProfiles: State<List<User>>,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
 
     var searchFieldValue by rememberSaveable {
         mutableStateOf("")
+    }
+
+    var searchFieldValueSheet by rememberSaveable {
+        mutableStateOf("")
+    }
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
     }
 
     Scaffold(
@@ -76,7 +86,7 @@ fun BorrowerProfilesScreen(
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp)
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { isSheetOpen = true }) {
                         Icon(
                             imageVector = Icons.Rounded.AddCircleOutline,
                             contentDescription = null,
@@ -103,29 +113,36 @@ fun BorrowerProfilesScreen(
             }
         },
         modifier = modifier
-            .fillMaxSize()
     ) { paddingValues ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(paddingValues)
         ) {
-            Box(modifier = Modifier.padding(paddingValues)) {
+            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BorrowerProfileList(
                         state = listState,
-                        profiles = profiles.value,
+                        profiles = verifiedProfiles.value,
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(4.dp))
         }
     }
+
+    VerifyUsersBottomSheet(
+        isOpen = isSheetOpen,
+        profiles = unVerifiedProfiles,
+        onDismissRequest = { isSheetOpen = false },
+        onSearchValueChange = {
+            searchFieldValueSheet = it
+            onSearchValueSheetChange(it)
+        },
+    )
 }
 
 @Composable
@@ -214,7 +231,7 @@ fun BorrowerProfileList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerifyUsersBottomSheet(
-    isVisible: Boolean = false,
+    isOpen: Boolean = false,
     sheetState: SheetState = rememberModalBottomSheetState(),
     profiles: State<List<User>>,
     onDismissRequest: () -> Unit,
@@ -227,7 +244,7 @@ fun VerifyUsersBottomSheet(
         mutableStateOf("")
     }
 
-    if (isVisible) {
+    if (isOpen) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = onDismissRequest,
@@ -242,7 +259,8 @@ fun VerifyUsersBottomSheet(
                         Text(
                             text = "Choose which accounts to verify",
                             modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 16.dp)
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 16.dp)
                         )
 
                         SearchBarTextField(
@@ -470,7 +488,7 @@ fun VerifyBorrowerBottomSheetPreview() {
                 }
 
                 VerifyUsersBottomSheet(
-                    isVisible = isSheetOpen,
+                    isOpen = isSheetOpen,
                     sheetState = sheetState,
                     profiles = profilesState,
                     onDismissRequest = { isSheetOpen = false },
@@ -542,7 +560,9 @@ fun BorrowerProfilesScreenPreview() {
             BorrowerProfilesScreen(
                 onClose = {},
                 onSearchValueChange = {},
-                profiles = state,
+                onSearchValueSheetChange = {},
+                verifiedProfiles = state,
+                unVerifiedProfiles = state,
             )
         }
     }
