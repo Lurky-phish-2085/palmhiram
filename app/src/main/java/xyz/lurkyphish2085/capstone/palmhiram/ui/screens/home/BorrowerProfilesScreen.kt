@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.rounded.AddCircleOutline
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -27,16 +28,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,7 +51,6 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.SearchBarTextField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
-import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.SearchUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -206,6 +207,276 @@ fun BorrowerProfileList(
                     phone = profile.phone,
                 )
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VerifyUsersBottomSheet(
+    isVisible: Boolean = false,
+    sheetState: SheetState = rememberModalBottomSheetState(),
+    profiles: State<List<User>>,
+    onDismissRequest: () -> Unit,
+    onSearchValueChange: (searchValue: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val lazyListState = rememberLazyListState()
+
+    var searchFieldValue by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    if (isVisible) {
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = onDismissRequest,
+            modifier = modifier
+        ) {
+            Scaffold(
+                topBar = {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Choose which accounts to verify",
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 16.dp)
+                        )
+
+                        SearchBarTextField(
+                            onValueChange = {
+                                searchFieldValue = it
+                                onSearchValueChange(it)
+                            },
+                            value = searchFieldValue,
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .padding(horizontal = 16.dp)
+                        )
+
+                        if (lazyListState.firstVisibleItemScrollOffset > 0) Divider()
+                    }
+                },
+                modifier = Modifier
+                    .padding(top = 16.dp)
+            ) { paddingValues ->
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(paddingValues)
+                ) {
+                    BorrowerProfileList(
+                        state = lazyListState,
+                        profiles = profiles.value,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(name = "light - Borrower", showBackground = true, uiMode = UI_MODE_NIGHT_NO)
+@Composable
+fun VerifyBorrowerBottomSheetPreview() {
+    PalmHiramTheme {
+        Surface {
+            var profilesFlow = MutableStateFlow<List<User>>(
+                listOf(
+                    User(
+                        id = "234822",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "23492jsdkfjdk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234823ui3dasf8",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234929kskssk",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "28disjf23492jdk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234823ui323isj8",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234jcnsoqo",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "23492jdk9ksks",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234823ui3nxnxnx8",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "2iwkska34",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "23492jd99ik2ws[nk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "hxn234823ui38",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234**&*&*&",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "23492jbbjddk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "ksnxl234823ui38",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234-0--=--9jk",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "23492ksjlknkjdk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "ksn928&&^234823ui38",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "2sijsj    4",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "23492j0298uiokdk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234823ui3oobo8",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "jksjx9234",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "23492jdxnnxnxxnk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234823ui3-okl;mkmvcx x8",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234  ",
+                        name = "Dok Chuang",
+                        email = "dok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "  23492jdk",
+                        name = "Bing Choy",
+                        email = "bing1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                    User(
+                        id = "234823u   i38",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
+                ),
+            )
+
+            var profilesState = profilesFlow.collectAsState()
+
+            var isSheetOpen by rememberSaveable {
+                mutableStateOf(false)
+            }
+
+            val sheetState = rememberModalBottomSheetState()
+
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Button(onClick = { isSheetOpen = true }) {
+                        Text(text = "Open sheet")
+                    }
+                }
+
+                VerifyUsersBottomSheet(
+                    isVisible = isSheetOpen,
+                    sheetState = sheetState,
+                    profiles = profilesState,
+                    onDismissRequest = { isSheetOpen = false },
+                    onSearchValueChange = {}
+                )
+            }
         }
     }
 }
