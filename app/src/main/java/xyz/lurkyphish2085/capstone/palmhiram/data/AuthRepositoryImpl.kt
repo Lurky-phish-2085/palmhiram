@@ -8,11 +8,14 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.VerificationCode
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPRequest
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailRequest
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.SendEmailResponse
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.VerificationCodeRequest
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.VerificationCodeResponse
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -23,6 +26,7 @@ class AuthRepositoryImpl @Inject constructor(
     companion object {
         const val OTP_COLLECTIONS_PATH = "otp"
         const val USERS_COLLECTIONS_PATH = "users"
+        const val VERIFICATION_CODES_PATH = "verification_codes"
     }
 
     override val currentUser: FirebaseUser?
@@ -95,6 +99,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun sendAccountVerificationCodeEmail(
+        name: String,
+        email: String
+    ): Resource<VerificationCodeResponse> {
+        return try {
+            val response = RetrofitInstance.api.sendVerificationCodeEmail(VerificationCodeRequest(name, email))
+            Resource.Success(response.body()!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
     override suspend fun storeOtp(otp: OTP): Resource<OTP> {
         return try {
             val result = firebaseFirestore.collection(OTP_COLLECTIONS_PATH).add(otp).await()
@@ -129,6 +146,44 @@ class AuthRepositoryImpl @Inject constructor(
 
         docuemets.forEach {
             firebaseFirestore.collection(OTP_COLLECTIONS_PATH)
+                .document(it.id).delete().await()
+        }
+    }
+
+    override suspend fun storeVerificationCode(code: VerificationCode): Resource<VerificationCode> {
+        return try {
+            val result = firebaseFirestore.collection(VERIFICATION_CODES_PATH).add(code).await()
+            val retrievedItem = result.get().await()
+            Resource.Success(retrievedItem.toObject(VerificationCode::class.java)!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun retrievedValidVerificationCode(email: String): Resource<VerificationCode> {
+        return try {
+            val document = firebaseFirestore.collection(VERIFICATION_CODES_PATH)
+                .whereEqualTo("email", email)
+                .orderBy("created", Query.Direction.DESCENDING)
+                .limit(1)
+                .get().await()
+
+            val result = document.documents.get(0).toObject(VerificationCode::class.java)
+            Resource.Success(result!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun clearAllVerificationCode(email: String) {
+        val docuemets = firebaseFirestore.collection(VERIFICATION_CODES_PATH)
+            .whereEqualTo("email", email)
+            .get().await()
+
+        docuemets.forEach {
+            firebaseFirestore.collection(VERIFICATION_CODES_PATH)
                 .document(it.id).delete().await()
         }
     }

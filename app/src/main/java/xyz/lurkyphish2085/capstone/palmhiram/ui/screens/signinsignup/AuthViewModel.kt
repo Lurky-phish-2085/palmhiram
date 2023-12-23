@@ -13,6 +13,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.OTP
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.VerificationCode
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
@@ -43,6 +44,12 @@ class AuthViewModel @Inject constructor(
 
     private val _retrievedOtpFlow = MutableStateFlow<Resource<OTP>?>(null)
     val retrievedOtpFlow: StateFlow<Resource<OTP>?> = _retrievedOtpFlow
+
+    private val _verificationCodeFlow = MutableStateFlow<Resource<VerificationCode>?>(null)
+    val verificationCodeFlow: StateFlow<Resource<VerificationCode>?> = _verificationCodeFlow
+
+    private val _retrievedVerificationFlow = MutableStateFlow<Resource<VerificationCode>?>(null)
+    val retrievedVerificationFlow: StateFlow<Resource<VerificationCode>?> = _retrievedVerificationFlow
 
     private val _emailInUseFlow = MutableStateFlow<Resource<User>?>(null)
     val emailInUseFlow: StateFlow<Resource<User>?> = _emailInUseFlow
@@ -97,6 +104,11 @@ class AuthViewModel @Inject constructor(
         Log.e("AAAAAAAAAAa", "sendVerificationEmail: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ")
     }
 
+    fun sendVerificationCodeEmail() = viewModelScope.launch {
+        repository.sendAccountVerificationCodeEmail(fields.displayName, fields.email)
+        Log.e("AAAAAAAAAAa", "sendVerificationCodeEmail: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ")
+    }
+
     fun storeOtp(code: String) = viewModelScope.launch {
         _otpFlow.value = Resource.Loading
         val result = repository.storeOtp(OTP(code, fields.email))
@@ -112,6 +124,24 @@ class AuthViewModel @Inject constructor(
     fun clearAllOtp(email: String) {
         viewModelScope.launch {
             repository.clearAllOtp(email)
+        }
+    }
+
+    fun storeVerificationCode(code: String) = viewModelScope.launch {
+        _verificationCodeFlow.value = Resource.Loading
+        val result = repository.storeVerificationCode(VerificationCode(code, fields.email))
+        _verificationCodeFlow.value = result
+    }
+
+    fun retrieveValidVerificationCode() = viewModelScope.launch {
+        _retrievedVerificationFlow.value = Resource.Loading
+        val result = repository.retrievedValidVerificationCode(fields.email)
+        _retrievedVerificationFlow.value = result
+    }
+
+    fun clearAllVerificationCodes(email: String) {
+        viewModelScope.launch {
+            repository.clearAllVerificationCode(email)
         }
     }
 
