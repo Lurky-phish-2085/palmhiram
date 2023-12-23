@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -44,13 +46,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.flow.MutableStateFlow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.SearchBarTextField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -296,179 +303,111 @@ fun VerifyUsersBottomSheet(
     }
 }
 
+@Composable
+fun VerifyUserDialog(
+    isOpen: Boolean = false,
+    onDismissRequest: () -> Unit,
+    onClose: () -> Unit,
+    onSendViaEmail: () -> Unit,
+    onSendViaSMS: () -> Unit,
+    userDetails: User,
+    modifier: Modifier = Modifier
+) {
+    if (isOpen)
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            shape = MaterialTheme.shapes.large,
+            modifier = modifier
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)) {
+                    Text(
+                        text = "Verify User",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                    )
+
+                    IconButton(
+                        onClick = onClose,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(36.dp)
+                        )
+                    }
+                }
+
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(128.dp)
+                )
+                Text(
+                    text = userDetails.name,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                )
+                Text(
+                    text = userDetails.email,
+                    style = MaterialTheme.typography.bodyLarge
+                        .copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                )
+                Text(
+                    text = userDetails.phone,
+                    style = MaterialTheme.typography.bodyLarge
+                        .copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Text(text = "Send code via:")
+
+                Button(onClick = { /*TODO*/ }) {
+                    Text(
+                        text = "Send via Email",
+                    )
+                }
+                Button(onClick = { /*TODO*/ }) {
+                    Text(
+                        text = "Send via SMS"
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(name = "light - Borrower", showBackground = true, uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun VerifyBorrowerBottomSheetPreview() {
     PalmHiramTheme {
         Surface {
-            var profilesFlow = MutableStateFlow<List<User>>(
-                listOf(
-                    User(
-                        id = "234822",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "23492jsdkfjdk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234823ui3dasf8",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234929kskssk",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "28disjf23492jdk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234823ui323isj8",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234jcnsoqo",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "23492jdk9ksks",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234823ui3nxnxnx8",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "2iwkska34",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "23492jd99ik2ws[nk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "hxn234823ui38",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234**&*&*&",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "23492jbbjddk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "ksnxl234823ui38",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234-0--=--9jk",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "23492ksjlknkjdk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "ksn928&&^234823ui38",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "2sijsj    4",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "23492j0298uiokdk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234823ui3oobo8",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "jksjx9234",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "23492jdxnnxnxxnk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234823ui3-okl;mkmvcx x8",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234  ",
-                        name = "Dok Chuang",
-                        email = "dok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "  23492jdk",
-                        name = "Bing Choy",
-                        email = "bing1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                    User(
-                        id = "234823u   i38",
-                        name = "Zhalou Chua",
-                        email = "skdkbok1234@gmail.com",
-                        phone = "09988776655"
-                    ),
-                ),
-            )
-
+            var profilesFlow = fakeData2
             var profilesState = profilesFlow.collectAsState()
 
             var isSheetOpen by rememberSaveable {
@@ -493,6 +432,39 @@ fun VerifyBorrowerBottomSheetPreview() {
                     profiles = profilesState,
                     onDismissRequest = { isSheetOpen = false },
                     onSearchValueChange = {}
+                )
+            }
+        }
+    }
+}
+
+@Preview(name = "light - Borrower", showBackground = true, uiMode = UI_MODE_NIGHT_NO, heightDp = 512, widthDp = 512)
+@Composable
+fun VerifyUserDialogPreview() {
+    PalmHiramTheme {
+        Surface {
+            var isDialogOpen by rememberSaveable {
+                mutableStateOf(true)
+            }
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                VerifyUserDialog(
+                    isOpen = isDialogOpen,
+                    onDismissRequest = { isDialogOpen = false},
+                    onClose = { isDialogOpen = false },
+                    onSendViaEmail = { isDialogOpen = false },
+                    onSendViaSMS = { isDialogOpen = false },
+                    userDetails = User(
+                        id = "234823u   i38",
+                        name = "Zhalou Chua",
+                        email = "skdkbok1234@gmail.com",
+                        phone = "09988776655"
+                    ),
                 )
             }
         }
@@ -526,35 +498,7 @@ fun BorrowerProfileItemCardPreview() {
 fun BorrowerProfilesScreenPreview() {
     PalmHiramTheme {
         Surface {
-            val flow =
-                MutableStateFlow<List<User>>(
-                    listOf(
-                        User(
-                            id = "1",
-                            name = "Bon Appetit",
-                            email = "bonappetit123@gmail.com",
-                            phone = "09988776655"
-                        ),
-                        User(
-                            id = "2",
-                            name = "Bon Appetit",
-                            email = "bonappetit123@gmail.com",
-                            phone = "09988776655"
-                        ),
-                        User(
-                            id = "3",
-                            name = "Bon Appetit",
-                            email = "bonappetit123@gmail.com",
-                            phone = "09988776655"
-                        ),
-                        User(
-                            name = "Bon Appetit",
-                            email = "bonappetit123@gmail.com",
-                            phone = "09988776655"
-                        ),
-                    ),
-                )
-
+            val flow = fakeData1
             val state = flow.collectAsState()
 
             BorrowerProfilesScreen(
@@ -567,3 +511,198 @@ fun BorrowerProfilesScreenPreview() {
         }
     }
 }
+
+private val fakeData1 = MutableStateFlow<List<User>>(
+    listOf(
+        User(
+            id = "1",
+            name = "Bon Appetit",
+            email = "bonappetit123@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "2",
+            name = "Bon Appetit",
+            email = "bonappetit123@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "3",
+            name = "Bon Appetit",
+            email = "bonappetit123@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            name = "Bon Appetit",
+            email = "bonappetit123@gmail.com",
+            phone = "09988776655"
+        ),
+    ),
+)
+
+private val fakeData2 = MutableStateFlow<List<User>>(
+    listOf(
+        User(
+            id = "234822",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "23492jsdkfjdk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234823ui3dasf8",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234929kskssk",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "28disjf23492jdk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234823ui323isj8",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234jcnsoqo",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "23492jdk9ksks",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234823ui3nxnxnx8",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "2iwkska34",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "23492jd99ik2ws[nk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "hxn234823ui38",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234**&*&*&",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "23492jbbjddk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "ksnxl234823ui38",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234-0--=--9jk",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "23492ksjlknkjdk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "ksn928&&^234823ui38",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "2sijsj    4",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "23492j0298uiokdk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234823ui3oobo8",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "jksjx9234",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "23492jdxnnxnxxnk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234823ui3-okl;mkmvcx x8",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234  ",
+            name = "Dok Chuang",
+            email = "dok1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "  23492jdk",
+            name = "Bing Choy",
+            email = "bing1234@gmail.com",
+            phone = "09988776655"
+        ),
+        User(
+            id = "234823u   i38",
+            name = "Zhalou Chua",
+            email = "skdkbok1234@gmail.com",
+            phone = "09988776655"
+        ),
+    ),
+)
