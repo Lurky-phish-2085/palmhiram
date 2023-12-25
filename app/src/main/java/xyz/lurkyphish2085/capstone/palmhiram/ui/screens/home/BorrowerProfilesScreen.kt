@@ -1,6 +1,8 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,13 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -38,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,34 +48,42 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.VerificationCode
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.VerificationCodeResponse
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.SearchBarTextField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
-import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BorrowerProfilesScreen(
+    authViewModel: AuthViewModel?,
     globalState: FunniGlobalViewModel,
+    verificationCodeResponseFlow: State<Resource<VerificationCodeResponse>?>?,
+    verificationCodeFlow: State<Resource<VerificationCode>?>?,
+    retrievedVerificationCodeFlow: State<Resource<VerificationCode>?>?,
     onClose: () -> Unit,
+    onSendVerificationCodeViaEmail: () -> Unit,
+    onSendVerificationCodeViaSMS: () -> Unit,
+    onSendVerificationCodeSuccess: (code: String) -> Unit,
     onSearchValueChange: (searchValue: String) -> Unit,
     onSearchValueSheetChange: (searchValue: String) -> Unit,
     verifiedProfiles: State<List<User>>,
     unVerifiedProfiles: State<List<User>>,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     var loadingScreenOpen by rememberSaveable {
@@ -97,6 +106,63 @@ fun BorrowerProfilesScreen(
 
     var isVerifyUserDialogOpen by rememberSaveable {
         mutableStateOf(false)
+    }
+    
+    val sendVerificationCodeViaEmail = { authViewModel?.sendVerificationCodeEmail() }
+
+    verificationCodeResponseFlow?.value?.let {
+        when(it) {
+            is Resource.Failure -> {
+                loadingScreenOpen = false
+
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "FAIL: ${it.exception}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+            Resource.Loading -> {
+                loadingScreenOpen = true
+            }
+            is Resource.Success -> {
+                loadingScreenOpen = false
+                
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "SUCCESS: code ${it.result.code} sent to email", Toast.LENGTH_SHORT)
+                        .show()
+
+                    //authViewModel?.storeVerificationCode(it.result.code)
+                    onSendVerificationCodeSuccess(it.result.code)
+                }
+
+                //onSendVerificationCodeSuccess(it.result.code)
+            }
+            else -> {}
+        }
+    }
+    verificationCodeFlow?.value?.let {
+        when(it) {
+            is Resource.Failure -> {
+                loadingScreenOpen = false
+                
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "FAIL: ${it.exception}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+            Resource.Loading -> {
+                loadingScreenOpen = true
+            }
+            is Resource.Success -> {
+                loadingScreenOpen = false
+
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "SUCCESS: code ${it.result.code} stored to DB", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            else -> {}
+        }
     }
 
     Scaffold(
@@ -185,14 +251,20 @@ fun BorrowerProfilesScreen(
             isVerifyUserDialogOpen = false
             isSheetOpen = true
         },
-        onSendViaEmail = { /*TODO*/ },
-        onSendViaSMS = { /*TODO*/ },
+        onSendViaEmail = {
+            onSendVerificationCodeViaEmail()
+            //authViewModel?.sendVerificationCodeEmail()
+            Log.e("CALLED", "BorrowerProfilesScreen: CLICKED SEND VER CODE EMAIL")
+            isVerifyUserDialogOpen = false
+        },
+        onSendViaSMS = {
+            onSendVerificationCodeViaSMS()
+            isVerifyUserDialogOpen = false
+        },
         userDetails = globalState.selectedUserProfileItem
     )
 
-    CircularProgressLoadingIndicator(
-        isOpen = loadingScreenOpen
-    )
+    CircularProgressLoadingIndicator(isOpen = loadingScreenOpen)
 }
 
 @Composable
@@ -438,7 +510,7 @@ fun VerifyUserDialog(
 
                     Text(text = "Send code via:")
 
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = onSendViaEmail) {
                         Text(
                             text = "Send via Email",
                         )
@@ -557,7 +629,14 @@ fun BorrowerProfilesScreenPreview() {
 
             BorrowerProfilesScreen(
                 globalState = FunniGlobalViewModel(),
+                authViewModel = null,
+                verificationCodeResponseFlow = null,
+                verificationCodeFlow = null,
+                retrievedVerificationCodeFlow = null,
                 onClose = {},
+                onSendVerificationCodeViaEmail = {},
+                onSendVerificationCodeViaSMS = {},
+                onSendVerificationCodeSuccess = {},
                 onSearchValueChange = {},
                 onSearchValueSheetChange = {},
                 verifiedProfiles = state,

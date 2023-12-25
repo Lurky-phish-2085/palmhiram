@@ -276,6 +276,7 @@ fun PalmHiramNavHost(
         ) {
             BorrowerProfilesScreenRoute(
                 globalState = globalState!!,
+                authViewModel = it.sharedViewModel(navController),
                 onClose = { navController.navigateUp() },
                 lenderDashboardViewModel = it.sharedViewModel(navController)
             )

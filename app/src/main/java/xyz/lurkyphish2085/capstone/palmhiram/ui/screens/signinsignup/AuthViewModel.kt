@@ -16,6 +16,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.VerificationCode
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.Message
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.OTPResponse
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.api.VerificationCodeResponse
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 import javax.inject.Inject
 
@@ -45,11 +46,14 @@ class AuthViewModel @Inject constructor(
     private val _retrievedOtpFlow = MutableStateFlow<Resource<OTP>?>(null)
     val retrievedOtpFlow: StateFlow<Resource<OTP>?> = _retrievedOtpFlow
 
+    private val _verificationCodeResponseFlow = MutableStateFlow<Resource<VerificationCodeResponse>?>(null)
+    val verificationCodeResponseFlow: StateFlow<Resource<VerificationCodeResponse>?> = _verificationCodeResponseFlow
+
     private val _verificationCodeFlow = MutableStateFlow<Resource<VerificationCode>?>(null)
     val verificationCodeFlow: StateFlow<Resource<VerificationCode>?> = _verificationCodeFlow
 
     private val _retrievedVerificationFlow = MutableStateFlow<Resource<VerificationCode>?>(null)
-    val retrievedVerificationFlow: StateFlow<Resource<VerificationCode>?> = _retrievedVerificationFlow
+    val retrievedVerificationCodeFlow: StateFlow<Resource<VerificationCode>?> = _retrievedVerificationFlow
 
     private val _emailInUseFlow = MutableStateFlow<Resource<User>?>(null)
     val emailInUseFlow: StateFlow<Resource<User>?> = _emailInUseFlow
@@ -101,12 +105,18 @@ class AuthViewModel @Inject constructor(
 
     fun sendVerificationEmail() = viewModelScope.launch {
         repository.sendAccountVerificationEmail(fields.displayName, fields.email)
-        Log.e("AAAAAAAAAAa", "sendVerificationEmail: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ")
     }
 
-    fun sendVerificationCodeEmail() = viewModelScope.launch {
-        repository.sendAccountVerificationCodeEmail(fields.displayName, fields.email)
-        Log.e("AAAAAAAAAAa", "sendVerificationCodeEmail: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ")
+    fun sendVerificationCodeEmail(displayName: String = "", email: String = "") = viewModelScope.launch {
+        _verificationCodeResponseFlow.value = Resource.Loading
+
+       val result = repository.sendAccountVerificationCodeEmail(
+           if (displayName.isBlank()) fields.displayName else displayName,
+           if (email.isBlank()) fields.email else email,
+       )
+
+        Log.e("CALLED", "AUTHVIEWMODEL: SENDING VER CODE EMAIL")
+        _verificationCodeResponseFlow.value = result
     }
 
     fun storeOtp(code: String) = viewModelScope.launch {
@@ -130,6 +140,7 @@ class AuthViewModel @Inject constructor(
     fun storeVerificationCode(code: String) = viewModelScope.launch {
         _verificationCodeFlow.value = Resource.Loading
         val result = repository.storeVerificationCode(VerificationCode(code, fields.email))
+        Log.e("CALLED", "AUTHVIEWMODEL: STORING VER CODE EMAIL")
         _verificationCodeFlow.value = result
     }
 

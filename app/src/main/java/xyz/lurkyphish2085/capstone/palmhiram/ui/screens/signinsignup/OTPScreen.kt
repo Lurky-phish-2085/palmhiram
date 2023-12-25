@@ -80,6 +80,7 @@ fun OTPScreen(
     // TODO: CREATES A LOT OF REQUEST THIS SHOULD ONLY BE CALLED OONCCEE!!!!
     LaunchedEffect(shouldSendOtpEmail) {
         if (shouldSendOtpEmail) {
+//            viewModel?.sendOtpEmail()
             viewModel?.sendOtpEmail()
             shouldSendOtpEmail = false
         }
