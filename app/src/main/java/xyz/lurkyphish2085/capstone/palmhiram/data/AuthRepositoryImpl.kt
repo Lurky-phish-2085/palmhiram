@@ -219,6 +219,31 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun verifyAccount(userId: String): Resource<User> {
+        return try {
+            val document = firebaseFirestore.collection(USERS_COLLECTIONS_PATH)
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            val queriedUserData = document.documents.get(0)
+            val queriedUserDataObject = queriedUserData.toObject(User::class.java)
+
+            queriedUserDataObject?.verified = true
+
+            val alteredDocument = firebaseFirestore.collection(USERS_COLLECTIONS_PATH)
+                .add(queriedUserDataObject!!)
+                .await()
+
+            val result = alteredDocument.get().await()
+
+            Resource.Success(result.toObject(User::class.java)!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
     override suspend fun getUser(userId: String): Resource<User> {
         return try {
             val document = firebaseFirestore.collection(USERS_COLLECTIONS_PATH)

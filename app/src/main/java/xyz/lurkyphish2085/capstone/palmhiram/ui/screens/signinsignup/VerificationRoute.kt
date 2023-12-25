@@ -6,17 +6,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 
 // TODO: Add viewmodel
 @ExperimentalMaterial3Api
 @Composable
 fun VerificationRoute(
+    globalState: FunniGlobalViewModel,
     viewModel: AuthViewModel,
-    onSubmit: () -> Unit
+    onSuccessVerification: () -> Unit
 ) {
     AccountVerificationScreen(
+        globalState = globalState,
         viewModel = viewModel,
-        onSubmit = onSubmit,
+        onSuccessVerification = onSuccessVerification,
         modifier = Modifier
             .fillMaxSize()
             .padding(all = 16.dp)

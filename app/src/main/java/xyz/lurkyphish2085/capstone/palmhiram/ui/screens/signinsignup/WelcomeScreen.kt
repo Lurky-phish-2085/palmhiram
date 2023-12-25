@@ -55,12 +55,14 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.ui.common.CommonColors
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtils
 
 @ExperimentalMaterial3Api
 @Composable
 fun WelcomeScreen(
+    globalState: FunniGlobalViewModel?,
     viewModel: AuthViewModel?,
     onLoginNotVerified: () -> Unit,
     onLoginSuccess: () -> Unit,
@@ -248,6 +250,8 @@ fun WelcomeScreen(
                             } else {
                                 Toast.makeText(context, "Sorry, please get verified first", Toast.LENGTH_LONG)
                                     .show()
+
+                                globalState?.user = user
                                 onLoginNotVerified()
                                 viewModel.userDetails = user
                                 enableComponents = true
@@ -731,6 +735,7 @@ fun WelcomeScreenPreview() {
             modifier = Modifier.fillMaxSize(),
         ) {
             WelcomeScreen(
+                globalState = null,
                 viewModel = null,
                 onLoginNotVerified = {},
                 onLoginSuccess = {},

@@ -55,6 +55,9 @@ class AuthViewModel @Inject constructor(
     private val _retrievedVerificationFlow = MutableStateFlow<Resource<VerificationCode>?>(null)
     val retrievedVerificationCodeFlow: StateFlow<Resource<VerificationCode>?> = _retrievedVerificationFlow
 
+    private var _verifiedUserConfirmationFlow = MutableStateFlow<Resource<User>?>(null)
+    val verifiedUserConfirmationFlow: StateFlow<Resource<User>?> = _verifiedUserConfirmationFlow
+
     private val _emailInUseFlow = MutableStateFlow<Resource<User>?>(null)
     val emailInUseFlow: StateFlow<Resource<User>?> = _emailInUseFlow
 
@@ -144,9 +147,11 @@ class AuthViewModel @Inject constructor(
         _verificationCodeFlow.value = result
     }
 
-    fun retrieveValidVerificationCode() = viewModelScope.launch {
+    fun retrieveValidVerificationCode(email: String = "") = viewModelScope.launch {
         _retrievedVerificationFlow.value = Resource.Loading
-        val result = repository.retrievedValidVerificationCode(fields.email)
+        val result = repository.retrievedValidVerificationCode(
+            if (email.isBlank()) fields.email else email
+        )
         _retrievedVerificationFlow.value = result
     }
 
@@ -168,6 +173,12 @@ class AuthViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun verifyUser(userId: String) = viewModelScope.launch {
+        _verifiedUserConfirmationFlow.value = Resource.Loading
+        val result = repository.verifyAccount(userId)
+        _verifiedUserConfirmationFlow.value = result
     }
 
     fun checkIfEmailInUse() = viewModelScope.launch {

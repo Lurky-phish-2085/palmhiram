@@ -1,7 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -28,9 +27,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
-import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanScreen
-import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfileList
-import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
@@ -85,11 +81,14 @@ fun PalmHiramNavHost(
                 val viewModel = it.sharedViewModel<AuthViewModel>(navController)
                 val globalStateViewModel = it.sharedViewModel<FunniGlobalViewModel>(navController)
                 WelcomeRoute(
+                    globalState = globalStateViewModel,
 //                    viewModel = it.sharedViewModel(navController),
                     viewModel = viewModel,
                     onLoginNotVerified = {
                          navController.navigate(Destinations.VERIFICATION_ROUTE) {
                              popUpTo(Destinations.WELCOME_ROUTE) { inclusive = true }
+                             globalAuthViewModel = viewModel
+                             globalState = globalStateViewModel
                          }
                     },
                     onLogin = {
@@ -163,8 +162,9 @@ fun PalmHiramNavHost(
                 }
             ) {
                 VerificationRoute(
+                    globalState = globalState!!,
                     viewModel = it.sharedViewModel(navController),
-                    onSubmit = {
+                    onSuccessVerification = {
                         navController.navigate(Destinations.DASHBOARD_ROUTE) {
                             popUpTo(Destinations.AUTH_NAV_ROUTE) { inclusive = true }
                         }

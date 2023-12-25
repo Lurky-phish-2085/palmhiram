@@ -11,6 +11,9 @@ class FunniGlobalViewModel @Inject constructor(
     // repository here!
 ): ViewModel() {
 
+    // This is used to keep the current user's data
+    var user: User = User()
+
     // This is used to keep data from an element that contains LoanTransaction instance
     var selectedLoanTransactionItem: LoanTransaction = LoanTransaction()
 

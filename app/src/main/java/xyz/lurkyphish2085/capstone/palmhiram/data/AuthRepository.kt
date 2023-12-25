@@ -26,5 +26,6 @@ interface AuthRepository {
     suspend fun clearAllVerificationCode(email: String)
     suspend fun registerUserToDB(user: User): Resource<User>
     suspend fun checkExistingAccount(email: String): Resource<User>
+    suspend fun verifyAccount(userId: String): Resource<User>
     suspend fun getUser(userId: String): Resource<User>
 }
