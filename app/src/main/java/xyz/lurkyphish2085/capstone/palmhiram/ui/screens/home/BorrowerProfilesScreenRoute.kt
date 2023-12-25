@@ -39,6 +39,9 @@ fun BorrowerProfilesScreenRoute(
     LaunchedEffect(sendVerificationCodeEmail) {
         if (sendVerificationCodeEmail) {
 
+            authViewModel?.fields?.email = globalState.selectedUserProfileItem.email
+            authViewModel?.fields?.displayName = globalState.selectedUserProfileItem.name
+
             val sendVerificationCodeEmail1 = authViewModel.sendVerificationCodeEmail(
                 globalState.selectedUserProfileItem.name,
                 globalState.selectedUserProfileItem.email
@@ -49,7 +52,7 @@ fun BorrowerProfilesScreenRoute(
     }
 
     LaunchedEffect(storeVerificationCode) {
-        if (sendVerificationCodeEmail) {
+        if (storeVerificationCode) {
             authViewModel.storeVerificationCode(verificationCode)
             storeVerificationCode = false
         }

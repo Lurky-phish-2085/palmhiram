@@ -158,6 +158,9 @@ fun BorrowerProfilesScreen(
                 LaunchedEffect(Unit) {
                     Toast.makeText(context, "SUCCESS: code ${it.result.code} stored to DB", Toast.LENGTH_SHORT)
                         .show()
+
+                    isSheetOpen = true
+                    isVerifyUserDialogOpen = false
                 }
             }
 
@@ -232,7 +235,6 @@ fun BorrowerProfilesScreen(
         profiles = unVerifiedProfiles,
         onDismissRequest = { isSheetOpen = false },
         onClickItem = {
-            isSheetOpen = false
             isVerifyUserDialogOpen = true
         },
         onSearchValueChange = {

@@ -21,12 +21,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ScreenTitleBar
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtils
 
 @ExperimentalMaterial3Api
 @Composable
@@ -35,6 +38,9 @@ fun AccountVerificationScreen(
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isLoadingProgressIndicatorOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
     var isConfirmButtonEnabled by rememberSaveable {
         mutableStateOf(false)
     }
@@ -57,6 +63,8 @@ fun AccountVerificationScreen(
             Modifier.padding(paddingValues)
         )
     }
+
+    CircularProgressLoadingIndicator(isLoadingProgressIndicatorOpen)
 }
 
 @ExperimentalMaterial3Api
@@ -80,6 +88,7 @@ fun AccountVerificationInputContent(
                 },
                 label = "Verification Code",
                 errorText = "Field is empty",
+                keyboardType = KeyboardType.Number,
                 onValueChange = {
                     onFieldChange(it.isNotBlank())
                 }
