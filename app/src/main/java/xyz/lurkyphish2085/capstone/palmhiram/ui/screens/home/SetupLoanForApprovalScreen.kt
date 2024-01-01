@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.CancelPresentation
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -52,6 +53,8 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ConfirmationDialog
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CustomTextField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
@@ -153,13 +156,21 @@ fun SetupLoanForApprovalScreen(
         mutableStateOf(false)
     }
 
+    var isDeclineConfirmationDialogOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var isLoading by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             TopBarWithBackButton(
                 text = "Setup Loan",
                 onClose = onClose
             ) {
-                IconButton(onClick = {/*TODO*/}) {
+                IconButton(onClick = { isDeclineConfirmationDialogOpen = true }) {
                     Icon(
                         imageVector = Icons.Rounded.Cancel,
                         contentDescription = null,
@@ -246,6 +257,21 @@ fun SetupLoanForApprovalScreen(
         },
         modifier = modifier
     ) { padding ->
+        CircularProgressLoadingIndicator(isOpen = isLoading)
+        ConfirmationDialog(
+            isOpen = isDeclineConfirmationDialogOpen,
+            onPositiveClick = { /*TODO*/ },
+            onNegativeClick = { isDeclineConfirmationDialogOpen = false },
+            onDismissRequest = { isDeclineConfirmationDialogOpen = false },
+            onClose = { isDeclineConfirmationDialogOpen = false },
+            title = "Warning",
+            icon = Icons.Default.CancelPresentation,
+            headline = "Decline Requested Loan?",
+            description = "This action cannot be undone.",
+            positiveButtonText = "YES",
+            negativeButtonText = "NO",
+        )
+
         Box(Modifier.padding(padding)) {
             Column(
                 modifier = Modifier
