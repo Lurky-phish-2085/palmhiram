@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -157,7 +158,15 @@ fun SetupLoanForApprovalScreen(
             TopBarWithBackButton(
                 text = "Setup Loan",
                 onClose = onClose
-            )
+            ) {
+                IconButton(onClick = {/*TODO*/}) {
+                    Icon(
+                        imageVector = Icons.Rounded.Cancel,
+                        contentDescription = null,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            }
         },
         bottomBar = {
             Column(
