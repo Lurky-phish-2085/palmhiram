@@ -21,6 +21,7 @@ fun SetupLoanApprovalScreenRoute(
     lenderDashboardViewModel: LenderDashboardViewModel,
 ) {
     SetupLoanForApprovalScreen(
+        globalState = globalState,
         balanceName = lenderDashboardViewModel.balanceName,
         viewModel = setupLoanForApprovalScreenViewModel,
         lenderDashboardViewModel = lenderDashboardViewModel,

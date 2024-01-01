@@ -1,5 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CancelPresentation
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -33,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +55,7 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
+import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ConfirmationDialog
@@ -59,6 +63,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CustomTextField
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TextFieldWithError
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
@@ -70,6 +75,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 @ExperimentalMaterial3Api
 @Composable
 fun SetupLoanForApprovalScreen(
+    globalState: FunniGlobalViewModel,
     balanceName: String,
     lenderDashboardViewModel: LenderDashboardViewModel,
     viewModel: SetupLoanForApprovalScreenViewModel,
@@ -159,10 +165,40 @@ fun SetupLoanForApprovalScreen(
     var isDeclineConfirmationDialogOpen by rememberSaveable {
         mutableStateOf(false)
     }
+    var isSuccessDialogModalOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     var isLoading by rememberSaveable {
         mutableStateOf(false)
     }
+
+    val updatedTransactionFlow = viewModel?.updatedLoanTransactionFlow?.collectAsState()
+    updatedTransactionFlow?.value?.let {
+        when(it) {
+            is Resource.Failure -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
+                        .show()
+                }
+
+                isLoading = false
+            }
+            Resource.Loading -> { isLoading = true }
+            is Resource.Success -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "SUCCESS: transaction status: ${it.result.status}", Toast.LENGTH_LONG)
+                        .show()
+                }
+
+                isLoading = false
+                isSuccessDialogModalOpen = true
+            }
+
+            else -> {}
+        }
+    }
+
 
     Scaffold(
         topBar = {
@@ -260,7 +296,10 @@ fun SetupLoanForApprovalScreen(
         CircularProgressLoadingIndicator(isOpen = isLoading)
         ConfirmationDialog(
             isOpen = isDeclineConfirmationDialogOpen,
-            onPositiveClick = { /*TODO*/ },
+            onPositiveClick = {
+                viewModel?.declineLoanTransaction(globalState.selectedLoanTransactionItem.id)
+                isDeclineConfirmationDialogOpen = false
+            },
             onNegativeClick = { isDeclineConfirmationDialogOpen = false },
             onDismissRequest = { isDeclineConfirmationDialogOpen = false },
             onClose = { isDeclineConfirmationDialogOpen = false },
@@ -270,6 +309,32 @@ fun SetupLoanForApprovalScreen(
             description = "This action cannot be undone.",
             positiveButtonText = "YES",
             negativeButtonText = "NO",
+        )
+        ConfirmationDialog(
+            isOpen = isSuccessDialogModalOpen,
+            positiveButtonOnly = true,
+            onPositiveClick = {
+                isSuccessDialogModalOpen = false
+                onClose()
+            },
+            onNegativeClick = {
+                isSuccessDialogModalOpen = false
+                onClose()
+            },
+            onDismissRequest = {
+                isSuccessDialogModalOpen = false
+                onClose()
+            },
+            onClose = {
+                isSuccessDialogModalOpen = false
+                onClose()
+            },
+            title = "Success",
+            icon = Icons.Default.Done,
+            headline = "Loan Cancelled",
+            description = "The loan has been successfully cancelled.",
+            positiveButtonText = "OKAY",
+            negativeButtonText = ""
         )
 
         Box(Modifier.padding(padding)) {
@@ -419,9 +484,10 @@ fun SetupLoanForApprovalScreenPreview() {
     PalmHiramTheme {
         Surface {
             SetupLoanForApprovalScreen(
+                globalState = FunniGlobalViewModel(),
                 balanceName = "Total amount to collect",
                 lenderDashboardViewModel = LenderDashboardViewModel(null, null, null),
-                viewModel = SetupLoanForApprovalScreenViewModel(),
+                viewModel = SetupLoanForApprovalScreenViewModel(null),
                 transactionDetails = LoanTransaction(
                     borrowerName = "Bibong M",
                     principalAmount = 69420L,
