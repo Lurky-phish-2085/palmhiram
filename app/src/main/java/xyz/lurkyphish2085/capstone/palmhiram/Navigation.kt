@@ -37,8 +37,12 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.RegistrationRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.VerificationRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.WelcomeRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.splash.SplashRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.splash.SplashScreenViewModel
 
 private object Destinations {
+    const val SPLASH_ROUTE = "splash"
+
     const val AUTH_NAV_ROUTE = "auth"
         const val WELCOME_ROUTE = "${AUTH_NAV_ROUTE}/welcome"
         const val REGISTRATION_ROUTE = "${AUTH_NAV_ROUTE}/registration"
@@ -75,8 +79,14 @@ fun PalmHiramNavHost(
         // TODO: INSERT SCREENS HERE
         navigation(
             route = Destinations.AUTH_NAV_ROUTE,
-            startDestination = Destinations.WELCOME_ROUTE,
+            startDestination = Destinations.SPLASH_ROUTE,
         ) {
+            composable(Destinations.SPLASH_ROUTE) {
+                SplashRoute(
+                    viewModel = it.sharedViewModel<SplashScreenViewModel>(navController),
+                    onInternetOkay = { navController.navigate(Destinations.WELCOME_ROUTE) },
+                )
+            }
             composable(Destinations.WELCOME_ROUTE) {
                 val viewModel = it.sharedViewModel<AuthViewModel>(navController)
                 val globalStateViewModel = it.sharedViewModel<FunniGlobalViewModel>(navController)

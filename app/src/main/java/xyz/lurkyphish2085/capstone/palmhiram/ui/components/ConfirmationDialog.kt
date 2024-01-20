@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -69,6 +70,7 @@ fun ConfirmationDialog(
                     ) {
                         Text(
                             text = title,
+                            textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
                             ),
@@ -99,12 +101,14 @@ fun ConfirmationDialog(
 
                     Text(
                         text = headline,
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                         ),
                     )
                     Text(
                         text = description,
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.SemiBold,
                         ),

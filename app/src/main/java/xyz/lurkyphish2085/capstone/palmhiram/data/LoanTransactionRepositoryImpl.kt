@@ -1,5 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.data
 
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.snapshots
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class LoanTransactionRepositoryImpl @Inject constructor(
@@ -63,6 +65,12 @@ class LoanTransactionRepositoryImpl @Inject constructor(
                 .await()
 
             Resource.Success(result.toObjects(LoanTransaction::class.java))
+        } catch (e: FirebaseNetworkException) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        } catch (e: UnknownHostException) {
+            e.printStackTrace()
+            Resource.Failure(e)
         } catch (e: Exception) {
             e.printStackTrace()
             Resource.Failure(e)
