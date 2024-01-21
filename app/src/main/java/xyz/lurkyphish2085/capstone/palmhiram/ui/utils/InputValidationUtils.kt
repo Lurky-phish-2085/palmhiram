@@ -17,6 +17,9 @@ class InputValidationUtils {
         const val NAME_REGEX = "^[\\p{L}\\p{M} .'-]+\$"
         const val  PHILIPPINE_PHONE_NUMBER_REGEX = "^(\\+?63|0)?[9]\\d{9}$|^\\+?63[2-9]\\d{8}$"
 
+        const val NUMBERS_ONLY_REGEX = "\\d+$"
+        const val NUMBERS_AND_POINTS_ONLY_REGEX = "^\\d*\\.?\\d+\$"
+
         fun validateEmail(email: String): Boolean {
             val pattern = Pattern.compile(EMAIL_VALIDATION_REGEX)
             val matcher = pattern.matcher(email)
@@ -41,6 +44,20 @@ class InputValidationUtils {
         fun validatePhoneNumber(phoneNumber: String): Boolean {
             val pattern = Pattern.compile(PHILIPPINE_PHONE_NUMBER_REGEX)
             val matcher = pattern.matcher(phoneNumber)
+
+            return matcher.matches()
+        }
+
+        fun validateNumeric(input: String): Boolean {
+            val pattern = Pattern.compile(NUMBERS_ONLY_REGEX)
+            val matcher = pattern.matcher(input)
+
+            return matcher.matches()
+        }
+
+        fun validateNumericWithPoints(input: String): Boolean {
+            val pattern = Pattern.compile(NUMBERS_AND_POINTS_ONLY_REGEX)
+            val matcher = pattern.matcher(input)
 
             return matcher.matches()
         }

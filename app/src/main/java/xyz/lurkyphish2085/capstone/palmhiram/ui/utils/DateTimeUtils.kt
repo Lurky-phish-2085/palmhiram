@@ -4,7 +4,9 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
+
 
 class DateTimeUtils {
 
@@ -42,6 +44,26 @@ class DateTimeUtils {
         fun parseISO8601DateString(dateString: String?): LocalDate? {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             return LocalDate.parse(dateString, formatter)
+        }
+
+        fun addMonthsToDate(date: Date, monthsToAdd: Int): Date {
+            val calendar: Calendar = Calendar.getInstance()
+            calendar.setTime(date)
+            calendar.add(Calendar.MONTH, monthsToAdd)
+
+            return calendar.getTime()
+        }
+
+        fun convertToLocalDateToDate(localDate: LocalDate): Date? {
+            // Convert LocalDate to Instant
+            // Set the time to midnight (start of the day)
+            // Convert Instant to Date
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+        }
+
+        fun convertToDateToLocalDate(date: Date): LocalDate? {
+            val instant = date.toInstant()
+            return instant.atZone(ZoneId.systemDefault()).toLocalDate()
         }
     }
 }

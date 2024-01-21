@@ -34,6 +34,10 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
             principalAmount.centValue + CalculationUtils.calculateSimpleInterest(principalAmount, interestRatePercent, timeInYears).centValue
     }
 
+    fun resetTotalPayment() {
+        _totalPayment.value = 0L
+    }
+
     private var _retrievedLoanTransactionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
     val retrievedLoanTransactionFlow:  StateFlow<Resource<LoanTransaction>?> = _retrievedLoanTransactionFlow
 

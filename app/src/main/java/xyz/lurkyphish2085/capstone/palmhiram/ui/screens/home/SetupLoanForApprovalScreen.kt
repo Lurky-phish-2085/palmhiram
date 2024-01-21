@@ -65,7 +65,9 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.CalculationUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.replaceUnderscoresWithWhitespaces
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
@@ -99,6 +101,11 @@ fun SetupLoanForApprovalScreen(
             }
         )
     }
+
+    var durationInMonths by rememberSaveable {
+        mutableStateOf("0")
+    }
+
     var dueOn by rememberSaveable {
         mutableStateOf(
             when(transactionDetails.endDate) {
@@ -199,6 +206,16 @@ fun SetupLoanForApprovalScreen(
         }
     }
 
+    val checkIfAllFieldsOkay = {
+            principalAmount.isNotBlank() &&
+                    InputValidationUtils.validateNumericWithPoints(principalAmount) && principalAmount.toDouble() > 0.0
+                    interestRate.isNotBlank() && InputValidationUtils.validateNumeric(interestRate) && Integer.valueOf(interestRate) > 0
+                    durationInMonths.isNotBlank() && InputValidationUtils.validateNumeric(durationInMonths) && Integer.valueOf(durationInMonths) > 0
+    }
+
+    var allFieldsComplete by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         topBar = {
@@ -287,7 +304,8 @@ fun SetupLoanForApprovalScreen(
 
                 WideButton(
                     text = "SUBMIT",
-                    onclick = { /*TODO*/ }
+                    onclick = { /*TODO*/ },
+                    enabled = allFieldsComplete
                 )
             }
         },
@@ -353,28 +371,107 @@ fun SetupLoanForApprovalScreen(
                     TextFieldWithError(
                         label = "Principal Amount",
                         value = principalAmount,
-                        passingCondition = { it.isNotBlank() },
-                        onValueChange = { principalAmount = it},
+                        passingCondition = { it.isNotBlank() && it.toDouble() > 0.0 },
+                        onValueChange = {
+                            principalAmount = it
+                            allFieldsComplete = checkIfAllFieldsOkay()
+
+                            val principalAmountFieldHasNumbersOnly = InputValidationUtils.validateNumericWithPoints(it)
+                            if (it.isNotBlank() && principalAmountFieldHasNumbersOnly && it.toDouble() > 0.0 && !dueOn.equals("N/A", true) && !startedOn.equals("N/A", true) && startedOn.isNotBlank() && dueOn.isNotBlank()) {
+                                val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
+                                val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
+
+                                viewModel.calculateTotalPayment(
+                                    Money.valueOf(principalAmount),
+                                    Integer.valueOf(interestRate),
+                                    DateTimeUtils.calculateYearsBetween(
+                                        DateTimeUtils.convertToDateToLocalDate(startedDate),
+                                        dueOnDate,
+                                    )
+                                )
+                            } else {
+                                viewModel.resetTotalPayment()
+                            }
+                                        },
                         keyboardType = KeyboardType.Number,
                     )
                     TextFieldWithError(
                         label = "Interest Rate (%)",
                         value = interestRate,
                         passingCondition = { it.isNotBlank() },
-                        onValueChange = { interestRate = it },
+                        onValueChange = {
+                            interestRate = it
+                            allFieldsComplete = checkIfAllFieldsOkay()
+
+                            val interestRateFieldHasNumbersOnly = InputValidationUtils.validateNumeric(it)
+                            if (it.isNotBlank() && interestRateFieldHasNumbersOnly && Integer.valueOf(it) > 0 && !dueOn.equals("N/A", true) && !startedOn.equals("N/A", true) && startedOn.isNotBlank() && dueOn.isNotBlank()) {
+                                val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
+                                val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
+
+                                viewModel.calculateTotalPayment(
+                                    Money.valueOf(principalAmount),
+                                    Integer.valueOf(interestRate),
+                                    DateTimeUtils.calculateYearsBetween(
+                                        DateTimeUtils.convertToDateToLocalDate(startedDate),
+                                        dueOnDate,
+                                    )
+                                )
+                            } else {
+                                viewModel.resetTotalPayment()
+                            }
+                        },
                         keyboardType = KeyboardType.Number,
                     )
+
+                    ExposedDropdownMenuBox(
+                        expanded = expandRepaymentDropDown,
+                        onExpandedChange = { expandRepaymentDropDown = !expandRepaymentDropDown }
+                    ) {
+
+                        OutlinedTextField(
+                            value = repaymentDropDownSelectedItem,
+                            label = { Text(text = "Repayment Frequency") },
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(
+                                    expanded = expandRepaymentDropDown
+                                )
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.primary
+                            ),
+                            singleLine = true,
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        DropdownMenu(
+                            expanded = expandRepaymentDropDown,
+                            onDismissRequest = { expandRepaymentDropDown = !expandRepaymentDropDown },
+                            modifier = Modifier.width(258.dp)
+                        ) {
+                            LoanRepaymentFrequencies.values().forEach { item ->
+                                DropdownMenuItem(
+                                    text = { Text(text = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()) },
+                                    onClick = {
+                                        repaymentDropDownSelectedItem = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()
+                                        expandRepaymentDropDown = false
+                                    },
+                                )
+                            }
+                        }
+                    }
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 32.dp)
+                            .fillMaxWidth()
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 36.dp)
+                                .padding(horizontal = 25.dp)
                         ) {
                             CustomTextField(
                                 value = startedOn,
@@ -401,7 +498,49 @@ fun SetupLoanForApprovalScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 36.dp)
+                                .padding(horizontal = 25.dp)
+                        ) {
+                            TextFieldWithError(
+                                /*TODO*/
+                                label = "Duration in months",
+                                value = durationInMonths,
+                                onValueChange = {
+                                    durationInMonths = it
+                                    allFieldsComplete = checkIfAllFieldsOkay()
+
+                                    val durationFieldHasNumbersOnly = InputValidationUtils.validateNumeric(it)
+                                    if (it.isNotBlank() && durationFieldHasNumbersOnly && Integer.valueOf(it) > 0) {
+                                        val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
+                                        val dueOnDate = DateTimeUtils.addMonthsToDate(startedDate, Integer.valueOf(it) )
+
+                                        dueOn = DateTimeUtils.formatToISO8601Date(dueOnDate)
+
+                                        viewModel.calculateTotalPayment(
+                                            Money.valueOf(principalAmount),
+                                            Integer.valueOf(interestRate),
+                                            DateTimeUtils.calculateYearsBetween(
+                                                DateTimeUtils.convertToDateToLocalDate(startedDate),
+                                                DateTimeUtils.convertToDateToLocalDate(dueOnDate),
+                                            )
+                                        )
+                                    } else {
+                                        dueOn = "N/A"
+                                        viewModel.resetTotalPayment()
+                                    }
+                                },
+                                passingCondition = {
+                                    it.isNotBlank() &&
+                                    InputValidationUtils.validateNumeric(it) &&
+                                    Integer.valueOf(it) > 0
+                                },
+                                keyboardType = KeyboardType.NumberPassword,
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 25.dp)
                         ) {
                             CustomTextField(
                                 value = dueOn,
@@ -411,63 +550,6 @@ fun SetupLoanForApprovalScreen(
                                 modifier = Modifier
                                     .width(128.dp)
                             )
-                            IconButton(
-                                onClick = { calendarDueOnState.show() },
-                                modifier = Modifier
-                                    .padding(top = 8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.CalendarMonth,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                )
-                            }
-                        }
-
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 32.dp)
-                        ) {
-                            ExposedDropdownMenuBox(
-                                expanded = expandRepaymentDropDown,
-                                onExpandedChange = { expandRepaymentDropDown = !expandRepaymentDropDown }
-                            ) {
-
-                               OutlinedTextField(
-                                   value = repaymentDropDownSelectedItem,
-                                   label = { Text(text = "Repayment Frequency") },
-                                   onValueChange = {},
-                                   readOnly = true,
-                                   trailingIcon = {
-                                           ExposedDropdownMenuDefaults.TrailingIcon(
-                                           expanded = expandRepaymentDropDown
-                                       )
-                                   },
-                                   colors = TextFieldDefaults.outlinedTextFieldColors(
-                                       focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                       focusedLabelColor = MaterialTheme.colorScheme.primary
-                                   ),
-                                   singleLine = true,
-                                   modifier = Modifier.menuAnchor()
-                               )
-
-                                DropdownMenu(
-                                    expanded = expandRepaymentDropDown,
-                                    onDismissRequest = { expandRepaymentDropDown = !expandRepaymentDropDown },
-                                    modifier = Modifier.width(258.dp)
-                                ) {
-                                    LoanRepaymentFrequencies.values().forEach { item ->
-                                        DropdownMenuItem(
-                                            text = { Text(text = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()) },
-                                            onClick = {
-                                                repaymentDropDownSelectedItem = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()
-                                                expandRepaymentDropDown = false
-                                            },
-                                        )
-                                    }
-                                }
-                            }
                         }
                     }
                 }
