@@ -47,36 +47,36 @@ fun SplashRoute(
         startCheckInternet = false
     }
 
-    checkInternetFlow?.value?.let {
-        when(it) {
-            is Resource.Failure -> {
-                LaunchedEffect(Unit) {
-                    Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
-                        .show()
-                    if (it.exception is UnknownHostException || it.exception is FirebaseNetworkException || it.exception.cause?.message?.contains("java.net.UnknownHostException")!!) {
-                        isInternetConnectionWarningDialogOpen = true
-                        isLoading = false
-                    } else {
-                        onInternetOkay()
-                        isLoading = false
-                    }
-                }
-            }
-            Resource.Loading -> {
-                LaunchedEffect(Unit) {
-                    isLoading = true
-                }
-            }
-            is Resource.Success -> {
-                isLoading = false
-                if (it.result.isEmpty()) {
-                    isInternetConnectionWarningDialogOpen = true
-                } else {
-                    onInternetOkay()
-                }
-            }
-        }
-    }
+//    checkInternetFlow?.value?.let {
+//        when(it) {
+//            is Resource.Failure -> {
+//                LaunchedEffect(Unit) {
+//                    Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
+//                        .show()
+//                    if (it.exception is UnknownHostException || it.exception is FirebaseNetworkException || it.exception.cause?.message?.contains("java.net.UnknownHostException")!!) {
+//                        isInternetConnectionWarningDialogOpen = true
+//                        isLoading = false
+//                    } else {
+//                        onInternetOkay()
+//                        isLoading = false
+//                    }
+//                }
+//            }
+//            Resource.Loading -> {
+//                LaunchedEffect(Unit) {
+//                    isLoading = true
+//                }
+//            }
+//            is Resource.Success -> {
+//                isLoading = false
+//                if (it.result.isEmpty()) {
+//                    isInternetConnectionWarningDialogOpen = true
+//                } else {
+//                    onInternetOkay()
+//                }
+//            }
+//        }
+//    }
 
     ConfirmationDialog(
         isOpen = isInternetConnectionWarningDialogOpen,
@@ -97,7 +97,7 @@ fun SplashRoute(
     )
 
     SplashScreen(
-        onDelayDone = { startCheckInternet = true },
+        onDelayDone = onInternetOkay,
         displayLoading = isLoading,
         delayHasFinished = hasDelayFinishedFlow.value,
         modifier = Modifier.padding(16.dp)
