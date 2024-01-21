@@ -84,7 +84,11 @@ fun PalmHiramNavHost(
             composable(Destinations.SPLASH_ROUTE) {
                 SplashRoute(
                     viewModel = it.sharedViewModel<SplashScreenViewModel>(navController),
-                    onInternetOkay = { navController.navigate(Destinations.WELCOME_ROUTE) },
+                    onInternetOkay = {
+                        navController.navigate(Destinations.WELCOME_ROUTE) {
+                            popUpTo(Destinations.SPLASH_ROUTE) { inclusive = true }
+                        }
+                    }
                 )
             }
             composable(Destinations.WELCOME_ROUTE) {
