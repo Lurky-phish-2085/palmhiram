@@ -65,7 +65,6 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
-import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.CalculationUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
@@ -206,14 +205,40 @@ fun SetupLoanForApprovalScreen(
         }
     }
 
-    val checkIfAllFieldsOkay = {
-            principalAmount.isNotBlank() &&
-                    InputValidationUtils.validateNumericWithPoints(principalAmount) && principalAmount.toDouble() > 0.0
-                    interestRate.isNotBlank() && InputValidationUtils.validateNumeric(interestRate) && Integer.valueOf(interestRate) > 0
-                    durationInMonths.isNotBlank() && InputValidationUtils.validateNumeric(durationInMonths) && Integer.valueOf(durationInMonths) > 0
+    val isPrincipalAmountFieldValid = {
+        principalAmount.isNotBlank() &&
+        InputValidationUtils.validateNumericWithPoints(principalAmount) &&
+        principalAmount.toDouble() > 0.0
     }
 
-    var allFieldsComplete by rememberSaveable {
+    val isInterestRateFieldValid = {
+        interestRate.isNotBlank() &&
+        InputValidationUtils.validateNumeric(interestRate) &&
+        Integer.valueOf(interestRate) > 0 &&
+        Integer.valueOf(interestRate) <= 100
+    }
+
+    val isDurationInMonthsFieldValid = {
+        durationInMonths.isNotBlank() &&
+        InputValidationUtils.validateNumeric(durationInMonths) &&
+        Integer.valueOf(durationInMonths) > 0
+    }
+
+    val isStartOnAndDueDateValid = {
+        !dueOn.equals("N/A", true) &&
+        !startedOn.equals("N/A", true) &&
+        startedOn.isNotBlank() &&
+        dueOn.isNotBlank()
+    }
+
+    val checkIfAllFieldsOkay = {
+            isPrincipalAmountFieldValid() &&
+            isInterestRateFieldValid() &&
+            isDurationInMonthsFieldValid()
+//            && isStartOnAndDueDateValid() For some reason this crashes lmao!
+    }
+
+    var allFieldsValid by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -305,7 +330,7 @@ fun SetupLoanForApprovalScreen(
                 WideButton(
                     text = "SUBMIT",
                     onclick = { /*TODO*/ },
-                    enabled = allFieldsComplete
+                    enabled = allFieldsValid
                 )
             }
         },
@@ -371,13 +396,16 @@ fun SetupLoanForApprovalScreen(
                     TextFieldWithError(
                         label = "Principal Amount",
                         value = principalAmount,
-                        passingCondition = { it.isNotBlank() && it.toDouble() > 0.0 },
+                        passingCondition = {
+                            it.isNotBlank() &&
+                            InputValidationUtils.validateNumericWithPoints(it) &&
+                            it.toDouble() > 0.0
+                        },
                         onValueChange = {
                             principalAmount = it
-                            allFieldsComplete = checkIfAllFieldsOkay()
+                            allFieldsValid = checkIfAllFieldsOkay()
 
-                            val principalAmountFieldHasNumbersOnly = InputValidationUtils.validateNumericWithPoints(it)
-                            if (it.isNotBlank() && principalAmountFieldHasNumbersOnly && it.toDouble() > 0.0 && !dueOn.equals("N/A", true) && !startedOn.equals("N/A", true) && startedOn.isNotBlank() && dueOn.isNotBlank()) {
+                            if (allFieldsValid) {
                                 val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
                                 val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
 
@@ -398,13 +426,17 @@ fun SetupLoanForApprovalScreen(
                     TextFieldWithError(
                         label = "Interest Rate (%)",
                         value = interestRate,
-                        passingCondition = { it.isNotBlank() },
+                        passingCondition = {
+                           it.isNotBlank() &&
+                           InputValidationUtils.validateNumeric(it) &&
+                           Integer.valueOf(it) > 0 &&
+                           Integer.valueOf(it) <= 100
+                        },
                         onValueChange = {
                             interestRate = it
-                            allFieldsComplete = checkIfAllFieldsOkay()
+                            allFieldsValid = checkIfAllFieldsOkay()
 
-                            val interestRateFieldHasNumbersOnly = InputValidationUtils.validateNumeric(it)
-                            if (it.isNotBlank() && interestRateFieldHasNumbersOnly && Integer.valueOf(it) > 0 && !dueOn.equals("N/A", true) && !startedOn.equals("N/A", true) && startedOn.isNotBlank() && dueOn.isNotBlank()) {
+                            if (allFieldsValid) {
                                 val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
                                 val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
 
@@ -504,12 +536,16 @@ fun SetupLoanForApprovalScreen(
                                 /*TODO*/
                                 label = "Duration in months",
                                 value = durationInMonths,
+                                passingCondition = {
+                                    it.isNotBlank() &&
+                                    InputValidationUtils.validateNumeric(it) &&
+                                    Integer.valueOf(it) > 0
+                                },
                                 onValueChange = {
                                     durationInMonths = it
-                                    allFieldsComplete = checkIfAllFieldsOkay()
+                                    allFieldsValid = checkIfAllFieldsOkay()
 
-                                    val durationFieldHasNumbersOnly = InputValidationUtils.validateNumeric(it)
-                                    if (it.isNotBlank() && durationFieldHasNumbersOnly && Integer.valueOf(it) > 0) {
+                                    if (allFieldsValid) {
                                         val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
                                         val dueOnDate = DateTimeUtils.addMonthsToDate(startedDate, Integer.valueOf(it) )
 
@@ -527,11 +563,6 @@ fun SetupLoanForApprovalScreen(
                                         dueOn = "N/A"
                                         viewModel.resetTotalPayment()
                                     }
-                                },
-                                passingCondition = {
-                                    it.isNotBlank() &&
-                                    InputValidationUtils.validateNumeric(it) &&
-                                    Integer.valueOf(it) > 0
                                 },
                                 keyboardType = KeyboardType.NumberPassword,
                             )
