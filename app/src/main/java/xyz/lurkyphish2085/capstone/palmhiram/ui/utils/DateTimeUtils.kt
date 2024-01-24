@@ -4,6 +4,7 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Date
 
@@ -39,6 +40,17 @@ class DateTimeUtils {
 
             // Convert the period to a decimal representation of years
             return years + months / 12.0 + days / 365.25
+        }
+
+        fun calculateMonthsBetween(startDate: LocalDate, endDate: LocalDate): Int {
+            // Ensure both dates are set to the first day of the month
+            var startDate = startDate
+            var endDate = endDate
+            startDate = startDate.withDayOfMonth(1)
+            endDate = endDate.withDayOfMonth(1)
+
+            // Calculate months between two LocalDates
+            return ChronoUnit.MONTHS.between(startDate, endDate).toInt()
         }
 
         fun parseISO8601DateString(dateString: String?): LocalDate? {

@@ -149,7 +149,7 @@ fun SetupLoanForApprovalScreen(
             )
 
             // TODO: THIS IS TEMP, please fix this asap
-            viewModel.calculateTotalPayment(
+            viewModel.calculateTotalPaymentAsAnnual(
                 principalAmount = Money(principalAmount.toDouble()),
                 interestRatePercent = Integer.valueOf(interestRate),
                 timeInYears = timeInYears
@@ -225,8 +225,8 @@ fun SetupLoanForApprovalScreen(
     }
 
     val isStartOnAndDueDateValid = {
-        !dueOn.equals("N/A", true) &&
         !startedOn.equals("N/A", true) &&
+        !dueOn.equals("N/A", true) &&
         startedOn.isNotBlank() &&
         dueOn.isNotBlank()
     }
@@ -235,11 +235,53 @@ fun SetupLoanForApprovalScreen(
             isPrincipalAmountFieldValid() &&
             isInterestRateFieldValid() &&
             isDurationInMonthsFieldValid()
-//            && isStartOnAndDueDateValid() For some reason this crashes lmao!
+            //&& isStartOnAndDueDateValid() // For some reason this crashes lmao!
     }
 
     var allFieldsValid by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    var repaymentFrequencies by rememberSaveable {
+        mutableStateOf(LoanRepaymentFrequencies.MONTHLY.name)
+    }
+
+    fun calculateTotalPayment() {
+        if (checkIfAllFieldsOkay()) {
+            val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
+            val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
+
+            when(repaymentFrequencies) {
+                LoanRepaymentFrequencies.ANNUALLY.toString() -> {
+                    viewModel.calculateTotalPaymentAsAnnual(
+                        Money.valueOf(principalAmount),
+                        Integer.valueOf(interestRate),
+                        DateTimeUtils.calculateYearsBetween(
+                            DateTimeUtils.convertToDateToLocalDate(startedDate),
+                            dueOnDate,
+                        )
+                    )
+                }
+
+                LoanRepaymentFrequencies.MONTHLY.toString() -> {
+                    viewModel.calculateTotalPaymentAsMonthly(
+                        Money.valueOf(principalAmount),
+                        Integer.valueOf(interestRate),
+                        DateTimeUtils.calculateMonthsBetween(
+                            DateTimeUtils.convertToDateToLocalDate(startedDate)!!,
+                            dueOnDate!!,
+                        )
+                    )
+                }
+            }
+        } else {
+            viewModel.resetTotalPayment()
+        }
+    }
+
+    fun updateRepaymentFrequencyField(frequency: LoanRepaymentFrequencies) {
+        repaymentDropDownSelectedItem = frequency.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()
+        repaymentFrequencies = frequency.name
     }
 
     Scaffold(
@@ -404,23 +446,8 @@ fun SetupLoanForApprovalScreen(
                         onValueChange = {
                             principalAmount = it
                             allFieldsValid = checkIfAllFieldsOkay()
-
-                            if (allFieldsValid) {
-                                val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
-                                val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
-
-                                viewModel.calculateTotalPayment(
-                                    Money.valueOf(principalAmount),
-                                    Integer.valueOf(interestRate),
-                                    DateTimeUtils.calculateYearsBetween(
-                                        DateTimeUtils.convertToDateToLocalDate(startedDate),
-                                        dueOnDate,
-                                    )
-                                )
-                            } else {
-                                viewModel.resetTotalPayment()
-                            }
-                                        },
+                            calculateTotalPayment()
+                        },
                         keyboardType = KeyboardType.Number,
                     )
                     TextFieldWithError(
@@ -435,22 +462,7 @@ fun SetupLoanForApprovalScreen(
                         onValueChange = {
                             interestRate = it
                             allFieldsValid = checkIfAllFieldsOkay()
-
-                            if (allFieldsValid) {
-                                val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
-                                val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
-
-                                viewModel.calculateTotalPayment(
-                                    Money.valueOf(principalAmount),
-                                    Integer.valueOf(interestRate),
-                                    DateTimeUtils.calculateYearsBetween(
-                                        DateTimeUtils.convertToDateToLocalDate(startedDate),
-                                        dueOnDate,
-                                    )
-                                )
-                            } else {
-                                viewModel.resetTotalPayment()
-                            }
+                            calculateTotalPayment()
                         },
                         keyboardType = KeyboardType.Number,
                     )
@@ -483,12 +495,13 @@ fun SetupLoanForApprovalScreen(
                             onDismissRequest = { expandRepaymentDropDown = !expandRepaymentDropDown },
                             modifier = Modifier.width(258.dp)
                         ) {
-                            LoanRepaymentFrequencies.values().forEach { item ->
+                            LoanRepaymentFrequencies.values().forEach { frequencyItem ->
                                 DropdownMenuItem(
-                                    text = { Text(text = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()) },
+                                    text = { Text(text = frequencyItem.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()) },
                                     onClick = {
-                                        repaymentDropDownSelectedItem = item.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()
+                                        updateRepaymentFrequencyField(frequencyItem)
                                         expandRepaymentDropDown = false
+                                        calculateTotalPayment()
                                     },
                                 )
                             }
@@ -545,20 +558,36 @@ fun SetupLoanForApprovalScreen(
                                     durationInMonths = it
                                     allFieldsValid = checkIfAllFieldsOkay()
 
+                                    // Don't use the calculateTotalPayment function here, it crashes for some reason
                                     if (allFieldsValid) {
                                         val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
                                         val dueOnDate = DateTimeUtils.addMonthsToDate(startedDate, Integer.valueOf(it) )
 
                                         dueOn = DateTimeUtils.formatToISO8601Date(dueOnDate)
 
-                                        viewModel.calculateTotalPayment(
-                                            Money.valueOf(principalAmount),
-                                            Integer.valueOf(interestRate),
-                                            DateTimeUtils.calculateYearsBetween(
-                                                DateTimeUtils.convertToDateToLocalDate(startedDate),
-                                                DateTimeUtils.convertToDateToLocalDate(dueOnDate),
-                                            )
-                                        )
+                                        when(repaymentFrequencies) {
+                                            LoanRepaymentFrequencies.ANNUALLY.toString() -> {
+                                                viewModel.calculateTotalPaymentAsAnnual(
+                                                    Money.valueOf(principalAmount),
+                                                    Integer.valueOf(interestRate),
+                                                    DateTimeUtils.calculateYearsBetween(
+                                                        DateTimeUtils.convertToDateToLocalDate(startedDate),
+                                                        DateTimeUtils.convertToDateToLocalDate(dueOnDate),
+                                                    )
+                                                )
+                                            }
+
+                                            LoanRepaymentFrequencies.MONTHLY.toString() -> {
+                                                viewModel.calculateTotalPaymentAsMonthly(
+                                                    Money.valueOf(principalAmount),
+                                                    Integer.valueOf(interestRate),
+                                                    DateTimeUtils.calculateMonthsBetween(
+                                                        DateTimeUtils.convertToDateToLocalDate(startedDate)!!,
+                                                        DateTimeUtils.convertToDateToLocalDate(dueOnDate)!!,
+                                                    )
+                                                )
+                                            }
+                                        }
                                     } else {
                                         dueOn = "N/A"
                                         viewModel.resetTotalPayment()

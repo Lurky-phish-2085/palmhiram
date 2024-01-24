@@ -14,8 +14,12 @@ class CalculationUtils {
             return percentage / 100.0
         }
 
-        fun calculateSimpleInterest(principal: Money, interestPercent: Int, timeInYears: Double): Money {
+        fun calculateSimpleInterestAnnual(principal: Money, interestPercent: Int, timeInYears: Double): Money {
             return Money.parseActualValue((principal.centValue * convertPercentageToDecimal(interestPercent) * timeInYears).toLong())
+        }
+
+        fun calculateSimpleInterestMonthly(principal: Money, interestPercent: Int, months: Int): Money {
+            return Money.parseActualValue((principal.centValue * convertPercentageToDecimal(interestPercent) * months).toLong())
         }
     }
 }
