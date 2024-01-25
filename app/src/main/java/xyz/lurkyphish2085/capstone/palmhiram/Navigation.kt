@@ -220,7 +220,9 @@ fun PalmHiramNavHost(
                 authViewModel = globalAuthViewModel!!,
                 borrowerDashboardViewModel = it.sharedViewModel(navController),
                 lenderDashboardViewModel = it.sharedViewModel(navController),
-                onSelectedLoanTransactionAsLender = { navController.navigate(Destinations.SETUP_LOAN_ROUTE) },
+                onSelectedLoanTransactionRequestedItemAsLender = { navController.navigate(Destinations.SETUP_LOAN_ROUTE) },
+                onSelectedLoanTransactionApprovedItemAsLender = { /*TODO*/ },
+                onSelectedLoanTransactionCancelledOrSettledItemAsLender = { /*TODO*/ },
                 onSelectedLoanTransactionAsBorrower = { /*TODO*/ },
                 onUserProfilesClickAsLender = { navController.navigate(Destinations.BORROWER_PROFILES_ROUTE) },
             )

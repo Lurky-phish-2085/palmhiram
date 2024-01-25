@@ -1,10 +1,8 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 
@@ -22,7 +20,9 @@ fun DashboardRoute(
     onLoansClickAsLender: () -> Unit,
     onLoansClickAsBorrower: () -> Unit,
     onUserProfilesClickAsLender: () -> Unit,
-    onSelectedLoanTransactionAsLender: () -> Unit,
+    onSelectedLoanTransactionApprovedItemAsLender: () -> Unit,
+    onSelectedLoanTransactionRequestedItemAsLender: () -> Unit,
+    onSelectedLoanTransactionCancelledOrSettledItemAsLender: () -> Unit,
     onSelectedLoanTransactionAsBorrower: () -> Unit,
     authViewModel: AuthViewModel,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
@@ -42,7 +42,9 @@ fun DashboardRoute(
         onLoansClickAsLender = onLoansClickAsLender,
         onLoansClickAsBorrower = onLoansClickAsBorrower,
         onUserProfilesClickAsLender = onUserProfilesClickAsLender,
-        onSelectedLoanTransactionItemAsLender = onSelectedLoanTransactionAsLender,
+        onSelectedLoanTransactionApprovedItemAsLender = onSelectedLoanTransactionApprovedItemAsLender,
+        onSelectedLoanTransactionRequestedItemAsLender = onSelectedLoanTransactionRequestedItemAsLender,
+        onSelectedLoanTransactionCancelledOrSettledItemAsLender = onSelectedLoanTransactionCancelledOrSettledItemAsLender,
         onSelectedLoanTransactionItemAsBorrower = onSelectedLoanTransactionAsBorrower,
         modifier = Modifier
     )

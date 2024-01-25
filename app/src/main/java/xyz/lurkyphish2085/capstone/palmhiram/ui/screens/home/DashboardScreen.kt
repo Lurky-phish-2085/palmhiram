@@ -35,6 +35,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDesti
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRouteDestinations.REPORTS_ROUTE
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +54,9 @@ fun DashboardScreen(
     onLoansClickAsLender: () -> Unit,
     onLoansClickAsBorrower: () -> Unit,
     onUserProfilesClickAsLender: () -> Unit,
-    onSelectedLoanTransactionItemAsLender: () -> Unit,
+    onSelectedLoanTransactionApprovedItemAsLender: () -> Unit,
+    onSelectedLoanTransactionRequestedItemAsLender: () -> Unit,
+    onSelectedLoanTransactionCancelledOrSettledItemAsLender: () -> Unit,
     onSelectedLoanTransactionItemAsBorrower: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -126,7 +129,14 @@ fun DashboardScreen(
             onLoansClickAsLender = onLoansClickAsLender,
             onLoansClickAsBorrower = onLoansClickAsBorrower,
             onProfilesClickAsLender = onUserProfilesClickAsLender,
-            onSelectLoanTransactionItemAsLender = onSelectedLoanTransactionItemAsLender,
+            onSelectLoanTransactionItemAsLender = {
+                when (LoanTransactionStatus.valueOf(globalState.selectedLoanTransactionItem.status)) {
+                    LoanTransactionStatus.APPROVED -> onSelectedLoanTransactionApprovedItemAsLender()
+                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER -> onSelectedLoanTransactionRequestedItemAsLender()
+                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER -> {}
+                    else -> onSelectedLoanTransactionCancelledOrSettledItemAsLender()
+                }
+            },
             onSelectLoanTransactionItemAsBorrower = onSelectedLoanTransactionItemAsBorrower,
             modifier = Modifier.padding(padding)
         )
@@ -201,7 +211,9 @@ fun DashboardScreenPreview() {
                 onLoansClickAsBorrower = {},
                 onLoansClickAsLender = {},
                 onUserProfilesClickAsLender = {},
-                onSelectedLoanTransactionItemAsLender = {},
+                onSelectedLoanTransactionApprovedItemAsLender = {},
+                onSelectedLoanTransactionRequestedItemAsLender = {},
+                onSelectedLoanTransactionCancelledOrSettledItemAsLender = {},
                 onSelectedLoanTransactionItemAsBorrower = {},
                 modifier = Modifier
             )
