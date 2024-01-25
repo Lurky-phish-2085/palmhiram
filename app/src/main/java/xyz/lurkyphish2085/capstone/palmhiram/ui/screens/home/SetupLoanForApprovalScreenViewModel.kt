@@ -116,7 +116,6 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     fun approveLoanTransaction(loanTransactionItem: LoanTransaction) = viewModelScope.launch {
         val updatedLoanTransaction = loanTransactionItem
         updatedLoanTransaction.totalBalance = totalPayment.value
-        updatedLoanTransaction.totalBalance = principal.value
         updatedLoanTransaction.totalInterestBalance = interestAmount.value
 
         updatedLoanTransaction.totalPayment = totalPayment.value
