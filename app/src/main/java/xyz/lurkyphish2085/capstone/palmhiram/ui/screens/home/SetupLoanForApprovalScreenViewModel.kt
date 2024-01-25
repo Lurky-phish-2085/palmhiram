@@ -10,7 +10,9 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.CalculationUtils
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import javax.inject.Inject
 
@@ -23,11 +25,19 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     private var _totalPayment = MutableStateFlow(0L)
     val totalPayment: StateFlow<Long> = _totalPayment
 
+    private var _principal = MutableStateFlow(0L)
+    val principal: StateFlow<Long> = _principal
+
     private var _interestAmount = MutableStateFlow(0L)
     val interestAmount: StateFlow<Long> = _interestAmount
 
     private var _numberOfPayments = MutableStateFlow(0)
     val numberOfPayments: StateFlow<Int> = _numberOfPayments
+
+    var startDate: String = ""
+    var dueDate: String = ""
+    var interestRatePerc: Int = 0
+    var frequencyPaymentMode: LoanRepaymentFrequencies = LoanRepaymentFrequencies.MONTHLY
 
     fun calculateTotalPaymentAsAnnual(
         principalAmount: Money,
@@ -86,6 +96,9 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
         calculateTotalPaymentAsMonthly(principalAmount, interestRatePercent, months)
         calculateNumberOfPayments(months, frequency)
         calculateInterestAmount(principalAmount, interestRatePercent, months)
+        _principal.value = principalAmount.centValue
+        interestRatePerc = interestRatePercent
+        frequencyPaymentMode = frequency
     }
 
     private var _retrievedLoanTransactionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
@@ -97,6 +110,26 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     fun declineLoanTransaction(transactionId: String) = viewModelScope.launch {
         _updatedLoanTransactionFlow.value = Resource.Loading
         val result = loanTransactionRepository?.declineLoanTransaction(transactionId)
+        _updatedLoanTransactionFlow.value = result
+    }
+
+    fun approveLoanTransaction(loanTransactionItem: LoanTransaction) = viewModelScope.launch {
+        val updatedLoanTransaction = loanTransactionItem
+        updatedLoanTransaction.totalBalance = totalPayment.value
+        updatedLoanTransaction.totalBalance = principal.value
+        updatedLoanTransaction.totalInterestBalance = interestAmount.value
+
+        updatedLoanTransaction.totalPayment = totalPayment.value
+        updatedLoanTransaction.principalAmount = principal.value
+        updatedLoanTransaction.interestRateInPercentage = interestRatePerc
+        updatedLoanTransaction.startDate = DateTimeUtils.convertLocalDateToTimestamp(DateTimeUtils.parseISO8601DateString(startDate))
+        updatedLoanTransaction.endDate = DateTimeUtils.convertLocalDateToTimestamp(DateTimeUtils.parseISO8601DateString(dueDate))
+        updatedLoanTransaction.status = LoanTransactionStatus.APPROVED.name
+
+        updatedLoanTransaction.repaymentFrequency = frequencyPaymentMode.name
+
+        _updatedLoanTransactionFlow.value = Resource.Loading
+        val result = loanTransactionRepository?.updateLoanTransaction(loanTransactionItem.id, updatedLoanTransaction)
         _updatedLoanTransactionFlow.value = result
     }
 }

@@ -95,9 +95,12 @@ class LoanTransactionRepositoryImpl @Inject constructor(
 
     override suspend fun updateLoanTransaction(loanTransactionId: String, loanTransactionUpdate: LoanTransaction): Resource<LoanTransaction> {
         return try {
+            val update = loanTransactionUpdate
+            update.modified = Timestamp.now()
+
             val document = firebaseFirestore.collection(LOAN_TRANSACTIONS_COLLECTIONS_PATH)
                 .document(loanTransactionId)
-                .set(loanTransactionUpdate)
+                .set(update)
                 .await()
 
             val result = firebaseFirestore.collection(LOAN_TRANSACTIONS_COLLECTIONS_PATH)

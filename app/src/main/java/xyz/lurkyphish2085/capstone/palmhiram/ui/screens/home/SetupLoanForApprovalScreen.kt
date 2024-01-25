@@ -72,6 +72,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.InputValidationUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.capitalized
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.replaceUnderscoresWithWhitespaces
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -173,7 +174,10 @@ fun SetupLoanForApprovalScreen(
     var isDeclineConfirmationDialogOpen by rememberSaveable {
         mutableStateOf(false)
     }
-    var isSuccessDialogModalOpen by rememberSaveable {
+    var isSuccessDialogForLoanApproveModalOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var isSuccessDialogForLoanDeclineModalOpen by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -200,7 +204,11 @@ fun SetupLoanForApprovalScreen(
                 }
 
                 isLoading = false
-                isSuccessDialogModalOpen = true
+
+                when(it.result.status) {
+                    LoanTransactionStatus.APPROVED.name -> isSuccessDialogForLoanApproveModalOpen = true
+                    LoanTransactionStatus.CANCELLED.name -> isSuccessDialogForLoanDeclineModalOpen = true
+                }
             }
 
             else -> {}
@@ -248,6 +256,10 @@ fun SetupLoanForApprovalScreen(
         mutableStateOf(LoanRepaymentFrequencies.MONTHLY.name)
     }
 
+    fun updateViewModelContents() {
+        viewModel?.startDate = startedOn
+        viewModel?.dueDate = dueOn
+    }
     fun calculateTotalPayment() {
         if (checkIfAllFieldsOkay()) {
             val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
@@ -262,6 +274,8 @@ fun SetupLoanForApprovalScreen(
                 ),
                 LoanRepaymentFrequencies.valueOf(repaymentFrequencyMode)
             )
+
+            updateViewModelContents()
         } else {
             viewModel.resetMoneyStuffFields()
         }
@@ -362,7 +376,9 @@ fun SetupLoanForApprovalScreen(
 
                 WideButton(
                     text = "SUBMIT",
-                    onclick = { /*TODO*/ },
+                    onclick = {
+                              viewModel?.approveLoanTransaction(globalState.selectedLoanTransactionItem)
+                    },
                     enabled = allFieldsValid
                 )
             }
@@ -387,22 +403,48 @@ fun SetupLoanForApprovalScreen(
             negativeButtonText = "NO",
         )
         ConfirmationDialog(
-            isOpen = isSuccessDialogModalOpen,
+            isOpen = isSuccessDialogForLoanApproveModalOpen,
             positiveButtonOnly = true,
             onPositiveClick = {
-                isSuccessDialogModalOpen = false
+                isSuccessDialogForLoanApproveModalOpen = false
                 onClose()
             },
             onNegativeClick = {
-                isSuccessDialogModalOpen = false
+                isSuccessDialogForLoanApproveModalOpen = false
                 onClose()
             },
             onDismissRequest = {
-                isSuccessDialogModalOpen = false
+                isSuccessDialogForLoanApproveModalOpen = false
                 onClose()
             },
             onClose = {
-                isSuccessDialogModalOpen = false
+                isSuccessDialogForLoanApproveModalOpen = false
+                onClose()
+            },
+            title = "Success",
+            icon = Icons.Default.Done,
+            headline = "Loan Approved",
+            description = "The loan has been successfully approved and is ongoing.",
+            positiveButtonText = "OKAY",
+            negativeButtonText = ""
+        )
+        ConfirmationDialog(
+            isOpen = isSuccessDialogForLoanDeclineModalOpen,
+            positiveButtonOnly = true,
+            onPositiveClick = {
+                isSuccessDialogForLoanDeclineModalOpen = false
+                onClose()
+            },
+            onNegativeClick = {
+                isSuccessDialogForLoanDeclineModalOpen = false
+                onClose()
+            },
+            onDismissRequest = {
+                isSuccessDialogForLoanDeclineModalOpen = false
+                onClose()
+            },
+            onClose = {
+                isSuccessDialogForLoanDeclineModalOpen = false
                 onClose()
             },
             title = "Success",
@@ -565,6 +607,8 @@ fun SetupLoanForApprovalScreen(
                                             ),
                                             LoanRepaymentFrequencies.valueOf(repaymentFrequencyMode)
                                         )
+
+                                        updateViewModelContents()
                                     } else {
                                         dueOn = "N/A"
                                         viewModel.resetMoneyStuffFields()

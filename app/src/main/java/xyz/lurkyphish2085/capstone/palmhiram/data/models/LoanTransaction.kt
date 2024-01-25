@@ -19,7 +19,6 @@ data class LoanTransaction(
     var totalPayment: Long = 0L,
     var principalAmount: Long = 0L,
     var interestRateInPercentage: Int = 0,
-    var timePeriodInYears: Float = 0.0F,
     var startDate: Timestamp? = null,
     var endDate: Timestamp? = null,
     var status: String = "",

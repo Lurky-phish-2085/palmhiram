@@ -1,6 +1,9 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.utils
 
+import com.google.firebase.Timestamp
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.Period
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -76,6 +79,14 @@ class DateTimeUtils {
         fun convertToDateToLocalDate(date: Date): LocalDate? {
             val instant = date.toInstant()
             return instant.atZone(ZoneId.systemDefault()).toLocalDate()
+        }
+
+        fun convertLocalDateToTimestamp(localDate: LocalDate?): Timestamp? {
+            // Combine LocalDate with a specific time (e.g., midnight)
+            val date = convertToLocalDateToDate(localDate!!)
+
+            // Convert LocalDateTime to Timestamp
+            return Timestamp(date!!)
         }
     }
 }
