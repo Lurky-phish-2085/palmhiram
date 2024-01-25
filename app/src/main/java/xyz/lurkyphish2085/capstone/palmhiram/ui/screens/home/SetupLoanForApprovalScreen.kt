@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -166,7 +167,7 @@ fun SetupLoanForApprovalScreen(
     }
 
     var expandBottomDetails by rememberSaveable {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     var isDeclineConfirmationDialogOpen by rememberSaveable {
@@ -588,8 +589,16 @@ fun SetupLoanForApprovalScreen(
                             )
                         }
                     }
-                }
 
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Remarks:", fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        BasicText(text = "${transactionDetails.remarks}", maxLines = 12)
+                    }
+                }
             }
         }
     }
