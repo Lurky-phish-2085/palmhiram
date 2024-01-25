@@ -26,6 +26,8 @@ data class LoanTransaction(
 
     var repaymentFrequency: String = "",
 
+    var remarks: String = "",
+
     @ServerTimestamp
     val created: Timestamp? = null,
     @ServerTimestamp

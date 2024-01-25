@@ -83,7 +83,7 @@ fun ApplyLoanScreen(
                 enabled = allFieldsValid,
                 text = "SUBMIT",
                 onclick = {
-                    viewModel?.submitLoanRequest(Money.valueOf(loanAmount))
+                    viewModel?.submitLoanRequest(Money.valueOf(loanAmount), remarks)
                 }
             )
         },

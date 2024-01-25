@@ -151,7 +151,7 @@ class BorrowerDashboardViewModel @Inject constructor(
     private val _submissionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
     val submissionFlow: StateFlow<Resource<LoanTransaction>?> = _submissionFlow
 
-    fun submitLoanRequest(amount: Money) = viewModelScope.launch {
+    fun submitLoanRequest(amount: Money, remarks: String) = viewModelScope.launch {
         val amountInCents = amount.centValue
         val loanRequestDetails = LoanTransaction(
             borrowerId = currentUser?.uid!!,
@@ -160,6 +160,7 @@ class BorrowerDashboardViewModel @Inject constructor(
             principalAmount = amountInCents,
             startDate = Timestamp.now(),
             status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString(),
+            remarks = remarks,
         )
 
         _submissionFlow.value = Resource.Loading
