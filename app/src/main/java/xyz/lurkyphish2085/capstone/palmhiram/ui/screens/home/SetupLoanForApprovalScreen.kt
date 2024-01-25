@@ -252,17 +252,6 @@ fun SetupLoanForApprovalScreen(
             val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
 
             when(repaymentFrequencies) {
-                LoanRepaymentFrequencies.ANNUALLY.toString() -> {
-                    viewModel.calculateTotalPaymentAsAnnual(
-                        Money.valueOf(principalAmount),
-                        Integer.valueOf(interestRate),
-                        DateTimeUtils.calculateYearsBetween(
-                            DateTimeUtils.convertToDateToLocalDate(startedDate),
-                            dueOnDate,
-                        )
-                    )
-                }
-
                 LoanRepaymentFrequencies.MONTHLY.toString() -> {
                     viewModel.calculateTotalPaymentAsMonthly(
                         Money.valueOf(principalAmount),
@@ -566,17 +555,6 @@ fun SetupLoanForApprovalScreen(
                                         dueOn = DateTimeUtils.formatToISO8601Date(dueOnDate)
 
                                         when(repaymentFrequencies) {
-                                            LoanRepaymentFrequencies.ANNUALLY.toString() -> {
-                                                viewModel.calculateTotalPaymentAsAnnual(
-                                                    Money.valueOf(principalAmount),
-                                                    Integer.valueOf(interestRate),
-                                                    DateTimeUtils.calculateYearsBetween(
-                                                        DateTimeUtils.convertToDateToLocalDate(startedDate),
-                                                        DateTimeUtils.convertToDateToLocalDate(dueOnDate),
-                                                    )
-                                                )
-                                            }
-
                                             LoanRepaymentFrequencies.MONTHLY.toString() -> {
                                                 viewModel.calculateTotalPaymentAsMonthly(
                                                     Money.valueOf(principalAmount),
