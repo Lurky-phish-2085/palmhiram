@@ -60,11 +60,13 @@ class DateTimeUtils {
         }
 
         fun addMonthsToDate(date: Date, monthsToAdd: Int): Date {
-            val calendar: Calendar = Calendar.getInstance()
-            calendar.setTime(date)
-            calendar.add(Calendar.MONTH, monthsToAdd)
+            var resultDate = date
 
-            return calendar.getTime()
+            repeat(monthsToAdd) {
+                resultDate = addDaysToDate(resultDate, 30)
+            }
+
+            return resultDate
         }
 
         fun addDaysToDate(date: Date, daysToAdd: Int): Date {
@@ -102,6 +104,20 @@ class DateTimeUtils {
 
             // Convert LocalDateTime to Timestamp
             return Timestamp(date!!)
+        }
+
+        fun setDateTimeToMidnight(date: Date): Date {
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar[Calendar.HOUR_OF_DAY] = 0
+            calendar[Calendar.MINUTE] = 0
+            calendar[Calendar.SECOND] = 0
+            calendar[Calendar.MILLISECOND] = 0
+
+            // Get the modified Date object
+            val modifiedDate = calendar.time
+
+            return modifiedDate
         }
     }
 }

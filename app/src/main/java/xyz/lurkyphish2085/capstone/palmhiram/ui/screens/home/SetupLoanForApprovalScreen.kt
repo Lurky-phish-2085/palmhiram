@@ -185,6 +185,32 @@ fun SetupLoanForApprovalScreen(
         mutableStateOf(false)
     }
 
+    val paymentScheduleDatesGenerationFlow = viewModel?.paymentScheduleDatesGenerationFlow?.collectAsState()
+    paymentScheduleDatesGenerationFlow?.value?.let {
+        when(it) {
+            is Resource.Failure -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
+                        .show()
+                }
+
+                isLoading = false
+            }
+            Resource.Loading -> { isLoading = true }
+            is Resource.Success -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "SUCCESS: transaction schedule generated: ${it.result.id}:${it.result.loanTransactionId}", Toast.LENGTH_LONG)
+                        .show()
+
+                    isLoading = false
+                    viewModel?.approveLoanTransaction(globalState.selectedLoanTransactionItem)
+                }
+            }
+
+            else -> {}
+        }
+    }
+
     val updatedTransactionFlow = viewModel?.updatedLoanTransactionFlow?.collectAsState()
     updatedTransactionFlow?.value?.let {
         when(it) {
@@ -377,7 +403,7 @@ fun SetupLoanForApprovalScreen(
                 WideButton(
                     text = "SUBMIT",
                     onclick = {
-                              viewModel?.approveLoanTransaction(globalState.selectedLoanTransactionItem)
+                        viewModel?.generatePaymentScheduleForApprovedLoan(globalState.selectedLoanTransactionItem)
                     },
                     enabled = allFieldsValid
                 )
@@ -658,7 +684,7 @@ fun SetupLoanForApprovalScreenPreview() {
                 globalState = FunniGlobalViewModel(),
                 balanceName = "Total amount to collect",
                 lenderDashboardViewModel = LenderDashboardViewModel(null, null, null),
-                viewModel = SetupLoanForApprovalScreenViewModel(null),
+                viewModel = SetupLoanForApprovalScreenViewModel(null, null),
                 transactionDetails = LoanTransaction(
                     borrowerName = "Bibong M",
                     principalAmount = 69420L,

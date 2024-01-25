@@ -2,15 +2,19 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.CalculationUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.LoanPaymentScheduleUtils
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
@@ -19,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SetupLoanForApprovalScreenViewModel @Inject constructor(
     private val loanTransactionRepository: LoanTransactionRepository?,
+    private val paymentScheduleRepository: PaymentScheduleRepository?,
 ): ViewModel() {
 
     // Note: Long types represents the cent value of a money
@@ -107,6 +112,9 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     private var _updatedLoanTransactionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
     val updatedLoanTransactionFlow:  StateFlow<Resource<LoanTransaction>?> = _updatedLoanTransactionFlow
 
+    private var _paymentScheduleDatesGenerationFlow = MutableStateFlow<Resource<PaymentSchedule>?>(null)
+    val paymentScheduleDatesGenerationFlow:  StateFlow<Resource<PaymentSchedule>?> = _paymentScheduleDatesGenerationFlow
+
     fun declineLoanTransaction(transactionId: String) = viewModelScope.launch {
         _updatedLoanTransactionFlow.value = Resource.Loading
         val result = loanTransactionRepository?.declineLoanTransaction(transactionId)
@@ -130,5 +138,26 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
         _updatedLoanTransactionFlow.value = Resource.Loading
         val result = loanTransactionRepository?.updateLoanTransaction(loanTransactionItem.id, updatedLoanTransaction)
         _updatedLoanTransactionFlow.value = result
+    }
+
+    fun generatePaymentScheduleForApprovedLoan(loanTransaction: LoanTransaction) = viewModelScope.launch {
+        _paymentScheduleDatesGenerationFlow.value = Resource.Loading
+
+        val result = paymentScheduleRepository?.addPaymentSchedule(
+            PaymentSchedule(
+                loanTransactionId = loanTransaction.id,
+                paymentDates =
+                    LoanPaymentScheduleUtils.generateDateSchedules(
+                        loanTransaction.startDate!!.toDate(),
+                        loanTransaction.endDate!!.toDate(),
+                        frequencyPaymentMode,
+                        numberOfPayments.value,
+                    ).map {
+                        Timestamp(it)
+                    }
+            )
+        )
+
+        _paymentScheduleDatesGenerationFlow.value = result
     }
 }

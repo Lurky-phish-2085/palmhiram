@@ -1,5 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.utils
 
+import android.util.Log
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
 import java.util.Date
 
@@ -13,9 +14,9 @@ class LoanPaymentScheduleUtils {
         fun generateDateSchedules(
             startDate: Date,
             dueDate: Date,
-            paymentFrequency: LoanRepaymentFrequencies
+            paymentFrequency: LoanRepaymentFrequencies,
+            numberOfPayments: Int,
         ): List<Date> {
-
             val paymentScheduleDates = arrayListOf<Date>()
             val daysToAdd =
                 when(paymentFrequency) {
@@ -24,15 +25,31 @@ class LoanPaymentScheduleUtils {
                     LoanRepaymentFrequencies.WEEKLY -> DAYS_PER_WEEK
                 }
 
-            while(paymentScheduleDates.lastOrNull() != dueDate) {
+            repeat(numberOfPayments) {
                 if (paymentScheduleDates.isEmpty()) {
-                    paymentScheduleDates.add(DateTimeUtils.addDaysToDate(startDate, daysToAdd))
-                    continue
+                    val newDate = DateTimeUtils.setDateTimeToMidnight(DateTimeUtils.addDaysToDate(startDate, daysToAdd))
+                    paymentScheduleDates.add(newDate)
+                    Log.e("PAYMENT GEN", "${newDate.toString()}")
+                } else {
+                    val lastDate = paymentScheduleDates.last()
+                    val newDate = DateTimeUtils.setDateTimeToMidnight(DateTimeUtils.addDaysToDate(lastDate, daysToAdd))
+                    paymentScheduleDates.add(newDate)
+                    Log.e("PAYMENT GEN", "${newDate.toString()}")
                 }
-
-                val lastDate = paymentScheduleDates.last()
-                paymentScheduleDates.add(DateTimeUtils.addDaysToDate(lastDate, daysToAdd))
             }
+//            do {
+//                if (paymentScheduleDates.isEmpty()) {
+//                    val newDate = DateTimeUtils.setDateTimeToMidnight(DateTimeUtils.addDaysToDate(startDate, daysToAdd))
+//                    paymentScheduleDates.add(newDate)
+//                    Log.e("PAYMENT GEN", "${newDate.toString()}")
+//                }
+//
+//                val lastDate = paymentScheduleDates.last()
+//                val newDate = DateTimeUtils.setDateTimeToMidnight(DateTimeUtils.addDaysToDate(lastDate, daysToAdd))
+//                paymentScheduleDates.add(newDate)
+//                Log.e("PAYMENT GEN", "${newDate.toString()}")
+//
+//            } while (paymentScheduleDates.last().compareTo(dueDate) > 0)
 
             return paymentScheduleDates
         }

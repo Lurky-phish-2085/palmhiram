@@ -3,7 +3,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.data
 import kotlinx.coroutines.flow.Flow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
 
-interface PaymentSchedulesRepository {
+interface PaymentScheduleRepository {
 
     val transactions: Flow<List<PaymentSchedule>>
 

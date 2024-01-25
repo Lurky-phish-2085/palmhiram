@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class PaymentSchedulesRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore
-) : PaymentSchedulesRepository {
+) : PaymentScheduleRepository {
 
     companion object {
         const val PAYMENT_SCHEDULES_COLLECTIONS_PATH = "payment-schedules"

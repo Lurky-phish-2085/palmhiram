@@ -11,6 +11,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.AuthRepositoryImpl
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepositoryImpl
+import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentSchedulesRepositoryImpl
 import xyz.lurkyphish2085.capstone.palmhiram.data.UserProfilesRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.UserProfilesRepositoryImpl
 import xyz.lurkyphish2085.capstone.palmhiram.observeconnectivity.ConnectivityObserver
@@ -34,6 +36,9 @@ class AppModule {
 
     @Provides
     fun provideUserProfilesRepository(impl: UserProfilesRepositoryImpl): UserProfilesRepository = impl
+
+    @Provides
+    fun providesPaymentScheduleRepository(impl: PaymentSchedulesRepositoryImpl): PaymentScheduleRepository = impl
 
     @Provides
     fun provideContext(context: Context): Context = context
