@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.Timestamp
@@ -160,12 +161,12 @@ fun SetupLoanForApprovalScreen(
     var expandRepaymentDropDown by rememberSaveable {
         mutableStateOf(false)
     }
-    var repaymentDropDownSelectedItem by rememberSaveable {
+    var repaymentDropDownSelectedItemDisplayText by rememberSaveable {
         mutableStateOf(LoanRepaymentFrequencies.values()[0].name.replaceUnderscoresWithWhitespaces().lowercase().capitalized())
     }
 
     var expandBottomDetails by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
 
     var isDeclineConfirmationDialogOpen by rememberSaveable {
@@ -242,7 +243,7 @@ fun SetupLoanForApprovalScreen(
         mutableStateOf(false)
     }
 
-    var repaymentFrequencies by rememberSaveable {
+    var repaymentFrequencyMode by rememberSaveable {
         mutableStateOf(LoanRepaymentFrequencies.MONTHLY.name)
     }
 
@@ -251,27 +252,27 @@ fun SetupLoanForApprovalScreen(
             val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
             val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
 
-            when(repaymentFrequencies) {
-                LoanRepaymentFrequencies.MONTHLY.toString() -> {
-                    viewModel.calculateTotalPaymentAsMonthly(
-                        Money.valueOf(principalAmount),
-                        Integer.valueOf(interestRate),
-                        DateTimeUtils.calculateMonthsBetween(
-                            DateTimeUtils.convertToDateToLocalDate(startedDate)!!,
-                            dueOnDate!!,
-                        )
-                    )
-                }
-            }
+            viewModel.calculateAll(
+                Money.valueOf(principalAmount),
+                Integer.valueOf(interestRate),
+                DateTimeUtils.calculateMonthsBetween(
+                    DateTimeUtils.convertToDateToLocalDate(startedDate)!!,
+                    dueOnDate!!,
+                ),
+                LoanRepaymentFrequencies.valueOf(repaymentFrequencyMode)
+            )
         } else {
-            viewModel.resetTotalPayment()
+            viewModel.resetMoneyStuffFields()
         }
     }
 
     fun updateRepaymentFrequencyField(frequency: LoanRepaymentFrequencies) {
-        repaymentDropDownSelectedItem = frequency.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()
-        repaymentFrequencies = frequency.name
+        repaymentDropDownSelectedItemDisplayText = frequency.name.replaceUnderscoresWithWhitespaces().lowercase().capitalized()
+        repaymentFrequencyMode = frequency.name
     }
+
+    val interestAmountFlow = viewModel.interestAmount.collectAsState()
+    val numberOfPaymentsFlow = viewModel.numberOfPayments.collectAsState()
 
     Scaffold(
         topBar = {
@@ -310,11 +311,11 @@ fun SetupLoanForApprovalScreen(
                         AnimatedVisibility(visible = expandBottomDetails) {
                             Box(modifier = Modifier.weight(1f, true)) {
                                 Column(
-                                    modifier = Modifier.align(Alignment.CenterStart)
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
                                 ) {
-                                    repeat(6) {
-                                        Text(text = "Term")
-                                    }
+                                    Text(text = "Amount payment", textAlign = TextAlign.Left)
+                                    Text(text = "Number of payments", textAlign = TextAlign.Left)
                                 }
                             }
                         }
@@ -331,11 +332,11 @@ fun SetupLoanForApprovalScreen(
                         AnimatedVisibility(visible = expandBottomDetails) {
                             Box(modifier = Modifier.weight(1f, true)) {
                                 Column(
-                                    modifier = Modifier.align(Alignment.CenterStart)
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
                                 ) {
-                                    repeat(6) {
-                                        Text(text = "₱ 0")
-                                    }
+                                    Text(text = "₱ ${Money.parseActualValue(interestAmountFlow.value)}", textAlign = TextAlign.Right)
+                                    Text(text = "${numberOfPaymentsFlow.value}", textAlign = TextAlign.Right)
                                 }
                             }
                         }
@@ -462,7 +463,7 @@ fun SetupLoanForApprovalScreen(
                     ) {
 
                         OutlinedTextField(
-                            value = repaymentDropDownSelectedItem,
+                            value = repaymentDropDownSelectedItemDisplayText,
                             label = { Text(text = "Repayment Frequency") },
                             onValueChange = {},
                             readOnly = true,
@@ -554,21 +555,18 @@ fun SetupLoanForApprovalScreen(
 
                                         dueOn = DateTimeUtils.formatToISO8601Date(dueOnDate)
 
-                                        when(repaymentFrequencies) {
-                                            LoanRepaymentFrequencies.MONTHLY.toString() -> {
-                                                viewModel.calculateTotalPaymentAsMonthly(
-                                                    Money.valueOf(principalAmount),
-                                                    Integer.valueOf(interestRate),
-                                                    DateTimeUtils.calculateMonthsBetween(
-                                                        DateTimeUtils.convertToDateToLocalDate(startedDate)!!,
-                                                        DateTimeUtils.convertToDateToLocalDate(dueOnDate)!!,
-                                                    )
-                                                )
-                                            }
-                                        }
+                                        viewModel.calculateAll(
+                                            Money.valueOf(principalAmount),
+                                            Integer.valueOf(interestRate),
+                                            DateTimeUtils.calculateMonthsBetween(
+                                                DateTimeUtils.convertToDateToLocalDate(startedDate)!!,
+                                                DateTimeUtils.convertToDateToLocalDate(dueOnDate)!!,
+                                            ),
+                                            LoanRepaymentFrequencies.valueOf(repaymentFrequencyMode)
+                                        )
                                     } else {
                                         dueOn = "N/A"
-                                        viewModel.resetTotalPayment()
+                                        viewModel.resetMoneyStuffFields()
                                     }
                                 },
                                 keyboardType = KeyboardType.NumberPassword,

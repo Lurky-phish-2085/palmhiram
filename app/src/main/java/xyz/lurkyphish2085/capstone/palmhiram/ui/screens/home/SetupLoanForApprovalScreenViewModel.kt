@@ -10,6 +10,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.CalculationUtils
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanRepaymentFrequencies
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import javax.inject.Inject
 
@@ -21,6 +22,12 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     // Note: Long types represents the cent value of a money
     private var _totalPayment = MutableStateFlow(0L)
     val totalPayment: StateFlow<Long> = _totalPayment
+
+    private var _interestAmount = MutableStateFlow(0L)
+    val interestAmount: StateFlow<Long> = _interestAmount
+
+    private var _numberOfPayments = MutableStateFlow(0)
+    val numberOfPayments: StateFlow<Int> = _numberOfPayments
 
     fun calculateTotalPaymentAsAnnual(
         principalAmount: Money,
@@ -40,8 +47,45 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
             principalAmount.centValue + CalculationUtils.calculateSimpleInterestMonthly(principalAmount, interestRatePercent, months).centValue
     }
 
-    fun resetTotalPayment() {
+    fun resetMoneyStuffFields() {
         _totalPayment.value = 0L
+        _interestAmount.value = 0
+        _numberOfPayments.value = 0
+    }
+
+    fun calculateNumberOfPayments(
+        months: Int,
+        frequency: LoanRepaymentFrequencies
+    ) {
+        val weeksPerMonth = 4
+        val numberOfPaymentsPerMonth =
+            when (frequency) {
+                LoanRepaymentFrequencies.MONTHLY -> 4
+                LoanRepaymentFrequencies.SEMI_MONTHLY -> 2
+                LoanRepaymentFrequencies.WEEKLY -> 1
+            }
+
+        _numberOfPayments.value =  months.times(weeksPerMonth).div(numberOfPaymentsPerMonth)
+    }
+
+    fun calculateInterestAmount(
+        principalAmount: Money,
+        interestRatePercent: Int,
+        months: Int,
+    ) {
+        val a = CalculationUtils.calculateSimpleInterestMonthly(principalAmount, interestRatePercent, months)
+        _interestAmount.value = a.centValue
+    }
+
+    fun calculateAll(
+        principalAmount: Money,
+        interestRatePercent: Int,
+        months: Int,
+        frequency: LoanRepaymentFrequencies,
+    ) {
+        calculateTotalPaymentAsMonthly(principalAmount, interestRatePercent, months)
+        calculateNumberOfPayments(months, frequency)
+        calculateInterestAmount(principalAmount, interestRatePercent, months)
     }
 
     private var _retrievedLoanTransactionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)

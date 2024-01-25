@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.data
 
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.snapshots
@@ -120,6 +121,7 @@ class LoanTransactionRepositoryImpl @Inject constructor(
 
             val modifiedData = initialData.toObject<LoanTransaction>()
             modifiedData?.status = LoanTransactionStatus.CANCELLED.toString()
+            modifiedData?.modified = Timestamp.now()
 
 
             firebaseFirestore.collection(LOAN_TRANSACTIONS_COLLECTIONS_PATH)
