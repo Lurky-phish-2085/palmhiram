@@ -2,8 +2,6 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.utils
 
 import com.google.firebase.Timestamp
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.Period
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -67,6 +65,23 @@ class DateTimeUtils {
             calendar.add(Calendar.MONTH, monthsToAdd)
 
             return calendar.getTime()
+        }
+
+        fun addDaysToDate(date: Date, daysToAdd: Int): Date {
+            // Create a Date object representing the current date
+            val currentDate = date
+
+            // Convert the Date to Calendar
+            val calendar = Calendar.getInstance()
+            calendar.time = currentDate
+
+            // Add days to the current date
+            calendar.add(Calendar.DAY_OF_YEAR, daysToAdd)
+
+            // Get the updated Date
+            val newDate = calendar.time
+
+            return newDate
         }
 
         fun convertToLocalDateToDate(localDate: LocalDate): Date? {
