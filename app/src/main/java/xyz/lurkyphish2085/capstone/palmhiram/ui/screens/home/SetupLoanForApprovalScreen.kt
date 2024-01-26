@@ -312,8 +312,9 @@ fun SetupLoanForApprovalScreen(
         repaymentFrequencyMode = frequency.name
     }
 
-    val interestAmountFlow = viewModel.interestAmount.collectAsState()
+    val interestAmountFlow = viewModel.totalInterestAmount.collectAsState()
     val numberOfPaymentsFlow = viewModel.numberOfPayments.collectAsState()
+    val amountPerPaymentFlow = viewModel.amountPerPayment.collectAsState()
 
     Scaffold(
         topBar = {
@@ -355,7 +356,8 @@ fun SetupLoanForApprovalScreen(
                                     modifier = Modifier
                                         .align(Alignment.CenterStart)
                                 ) {
-                                    Text(text = "Amount payment", textAlign = TextAlign.Left)
+                                    Text(text = "Total Interest", textAlign = TextAlign.Left)
+                                    Text(text = "Amount per payment", textAlign = TextAlign.Left)
                                     Text(text = "Number of payments", textAlign = TextAlign.Left)
                                 }
                             }
@@ -377,6 +379,7 @@ fun SetupLoanForApprovalScreen(
                                         .align(Alignment.CenterStart)
                                 ) {
                                     Text(text = "₱ ${Money.parseActualValue(interestAmountFlow.value)}", textAlign = TextAlign.Right)
+                                    Text(text = "₱ ${Money.parseActualValue(amountPerPaymentFlow.value)}", textAlign = TextAlign.Right)
                                     Text(text = "${numberOfPaymentsFlow.value}", textAlign = TextAlign.Right)
                                 }
                             }

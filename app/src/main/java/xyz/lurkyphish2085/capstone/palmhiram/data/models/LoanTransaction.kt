@@ -17,6 +17,7 @@ data class LoanTransaction(
     var totalInterestBalance: Long = 0L,
 
     var totalPayment: Long = 0L,
+    var paymentPerSchedule: Long = 0L,
     var principalAmount: Long = 0L,
     var interestRateInPercentage: Int = 0,
     var startDate: Timestamp? = null,

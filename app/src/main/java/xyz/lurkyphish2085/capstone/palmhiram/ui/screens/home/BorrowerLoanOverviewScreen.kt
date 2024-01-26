@@ -2,6 +2,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -18,20 +19,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.firebase.Timestamp
-import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
-import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
-import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 
 
 @Composable
@@ -88,9 +85,11 @@ fun BorrowerLoanOverviewScreen(
 }
 
 @Composable
-fun PaymentScheduleItemCard(
+fun PaymentScheduleDateItemCard(
     onClick: () -> Unit,
-    details: PaymentSchedule,
+    globalState: FunniGlobalViewModel,
+    viewModel: BorrowerLoanOverviewViewModel,
+    details: PaymentScheduleDate,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -102,8 +101,11 @@ fun PaymentScheduleItemCard(
             .fillMaxWidth()
             .clickable { onClick() }
     ) {
-        Column {
-
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "${details.date}", modifier = Modifier.align(Alignment.CenterStart))
+//            Text(text = "${globalState.selectedLoanTransactionItem.}", modifier = Modifier.align(Alignment.CenterStart))
         }
     }
 }

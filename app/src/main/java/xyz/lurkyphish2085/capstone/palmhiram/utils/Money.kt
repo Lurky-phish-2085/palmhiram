@@ -1,6 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.utils
 
 import java.text.NumberFormat
+import kotlin.math.round
 
 
 class Money(amount: Double) {
@@ -22,7 +23,7 @@ class Money(amount: Double) {
     }
 
     val centValue: Long = amount.times(DIVISOR).toLong()
-    val value: Double = centValue / DIVISOR
+    val value: Double = round(centValue / DIVISOR)
 
     override fun toString(): String {
         val formatter = NumberFormat.getInstance()

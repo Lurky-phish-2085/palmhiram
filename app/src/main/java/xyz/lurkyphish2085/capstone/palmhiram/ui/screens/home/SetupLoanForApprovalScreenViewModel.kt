@@ -34,8 +34,11 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     private var _principal = MutableStateFlow(0L)
     val principal: StateFlow<Long> = _principal
 
-    private var _interestAmount = MutableStateFlow(0L)
-    val interestAmount: StateFlow<Long> = _interestAmount
+    private var _totalInterestAmount = MutableStateFlow(0L)
+    val totalInterestAmount: StateFlow<Long> = _totalInterestAmount
+
+    private var _amountPerPayment = MutableStateFlow(0L)
+    val amountPerPayment: StateFlow<Long> = _amountPerPayment
 
     private var _numberOfPayments = MutableStateFlow(0)
     val numberOfPayments: StateFlow<Int> = _numberOfPayments
@@ -65,7 +68,7 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
 
     fun resetMoneyStuffFields() {
         _totalPayment.value = 0L
-        _interestAmount.value = 0
+        _totalInterestAmount.value = 0
         _numberOfPayments.value = 0
     }
 
@@ -90,7 +93,7 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
         months: Int,
     ) {
         val a = CalculationUtils.calculateSimpleInterestMonthly(principalAmount, interestRatePercent, months)
-        _interestAmount.value = a.centValue
+        _totalInterestAmount.value = a.centValue
     }
 
     fun calculateAll(
@@ -105,6 +108,7 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
         _principal.value = principalAmount.centValue
         interestRatePerc = interestRatePercent
         frequencyPaymentMode = frequency
+        _amountPerPayment.value = _totalPayment.value / _numberOfPayments.value
     }
 
     private var _retrievedLoanTransactionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
@@ -125,9 +129,10 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     fun approveLoanTransaction(loanTransactionItem: LoanTransaction) = viewModelScope.launch {
         val updatedLoanTransaction = loanTransactionItem
         updatedLoanTransaction.totalBalance = totalPayment.value
-        updatedLoanTransaction.totalInterestBalance = interestAmount.value
+        updatedLoanTransaction.totalInterestBalance = totalInterestAmount.value
 
         updatedLoanTransaction.totalPayment = totalPayment.value
+        updatedLoanTransaction.paymentPerSchedule = amountPerPayment.value
         updatedLoanTransaction.principalAmount = principal.value
         updatedLoanTransaction.interestRateInPercentage = interestRatePerc
         updatedLoanTransaction.startDate = DateTimeUtils.convertLocalDateToTimestamp(DateTimeUtils.parseISO8601DateString(startDate))
