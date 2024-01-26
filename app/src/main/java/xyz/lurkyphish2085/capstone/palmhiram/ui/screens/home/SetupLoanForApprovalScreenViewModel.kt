@@ -12,6 +12,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.CalculationUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.LoanPaymentScheduleUtils
@@ -153,7 +154,9 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
                         frequencyPaymentMode,
                         numberOfPayments.value,
                     ).map {
-                        Timestamp(it)
+                        PaymentScheduleDate(
+                            date = Timestamp(it),
+                        )
                     }
             )
         )
