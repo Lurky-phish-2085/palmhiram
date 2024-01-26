@@ -160,7 +160,7 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
                         numberOfPayments.value,
                     ).map {
                         PaymentScheduleDate(
-                            date = Timestamp(it),
+                            date = it,
                         )
                     }
             )

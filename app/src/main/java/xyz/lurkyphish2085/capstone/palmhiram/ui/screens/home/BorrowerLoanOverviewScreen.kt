@@ -5,15 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -29,6 +33,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCa
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
+import xyz.lurkyphish2085.capstone.palmhiram.utils.PaymentScheduleDateStatus
 
 
 @Composable
@@ -81,7 +87,7 @@ fun BorrowerLoanOverviewScreen(
                     .fillMaxWidth()
                     .height(512.dp)
             ) {
-                items(items = paymentSchedulesDatesFlow.value.filter { it.settled == false }, key = { it.date.toString() }) { scheduleDate ->
+                items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }, key = { it.date.toString() }) { scheduleDate ->
                     PaymentScheduleDateItemCard(
                         onClick = { /*TODO*/ },
                         globalState = globalState,
@@ -90,7 +96,7 @@ fun BorrowerLoanOverviewScreen(
                 }
             }
             Text(
-                text = "Settled",
+                text = "Approved",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
@@ -102,7 +108,28 @@ fun BorrowerLoanOverviewScreen(
                     .fillMaxWidth()
                     .height(512.dp)
             ) {
-                items(items = paymentSchedulesDatesFlow.value.filter { it.settled == true }, key = { it.date.toString() }) { scheduleDate ->
+                items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }, key = { it.date.toString() }) { scheduleDate ->
+                    PaymentScheduleDateItemCard(
+                        onClick = { /*TODO*/ },
+                        globalState = globalState,
+                        details = scheduleDate
+                    )
+                }
+            }
+            Text(
+                text = "Under Approval",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(512.dp)
+            ) {
+                items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }, key = { it.date.toString() }) { scheduleDate ->
                     PaymentScheduleDateItemCard(
                         onClick = { /*TODO*/ },
                         globalState = globalState,
@@ -136,25 +163,11 @@ fun PaymentScheduleDateItemCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "${details.date}", modifier = Modifier.align(Alignment.CenterStart))
-            Text(text = "${globalState.selectedLoanTransactionItem.paymentPerSchedule}", modifier = Modifier.align(Alignment.CenterStart))
-        }
-    }
-}
 
-@Preview
-@ExperimentalMaterial3Api
-@Composable
-fun BorrowerPaymentScreenPreview() {
-    PalmHiramTheme {
-        Surface {
-            BorrowerLoanOverviewScreen(
-                onClose = {},
-                globalState = FunniGlobalViewModel(),
-                viewModel = BorrowerLoanOverviewViewModel(null, null),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
-            )
+            Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                Text(text = "${Money.parseActualValue(globalState.selectedLoanTransactionItem.paymentPerSchedule)}")
+                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = null)
+            }
         }
     }
 }

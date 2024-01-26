@@ -19,9 +19,8 @@ fun BorrowerLoanOverviewScreenRoute(
     globalState: FunniGlobalViewModel,
     viewModel: BorrowerLoanOverviewViewModel,
 ) {
-
     LaunchedEffect(Unit) {
-        viewModel.collectPaymentScheduleOfLoan(globalState.selectedLoanTransactionItem.id)
+        viewModel.selectedLoanTransaction = globalState.selectedLoanTransactionItem
     }
 
     BorrowerLoanOverviewScreen(

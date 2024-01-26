@@ -2,22 +2,28 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import javax.inject.Inject
 
 
+@HiltViewModel
 class BorrowerLoanOverviewViewModel @Inject constructor(
     private val loanTransactionRepository: LoanTransactionRepository?,
     private val paymentScheduleRepository: PaymentScheduleRepository?,
 ): ViewModel() {
+
+    var selectedLoanTransaction = LoanTransaction()
 
     val paymentSchedules: Flow<List<PaymentSchedule>>
         get() = paymentScheduleRepository?.paymentSchedules!!
@@ -43,13 +49,19 @@ class BorrowerLoanOverviewViewModel @Inject constructor(
                 }
 
                 _paymentSchedulesOfSelectedTransaction.value = collectedSchedules
-                collectPaymentScheduleDatesOfLoan()
             }
     }
 
     private fun collectPaymentScheduleDatesOfLoan() = viewModelScope.launch {
-        paymentSchedulesOfSelectedTransaction.value.forEach {
-            _paymentSchedulesDatesOfSelectedTransaction.value = it.paymentDates
+        paymentSchedulesOfSelectedTransaction.collectLatest {
+            it.forEach {
+                _paymentSchedulesDatesOfSelectedTransaction.value = it.paymentDates
+            }
         }
+    }
+
+    init {
+        collectPaymentScheduleOfLoan(selectedLoanTransactionId = selectedLoanTransaction.id)
+        collectPaymentScheduleDatesOfLoan()
     }
 }

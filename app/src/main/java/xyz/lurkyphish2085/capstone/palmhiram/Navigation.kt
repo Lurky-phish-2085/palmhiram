@@ -27,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerLoanOverviewScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
@@ -57,6 +58,7 @@ private object Destinations {
             const val LOANS_ROUTE = "${DASHBOARD_ROUTE}/loans"
             const val SETUP_LOAN_ROUTE = "${DASHBOARD_ROUTE}/setup-loan"
             const val BORROWER_PROFILES_ROUTE = "${DASHBOARD_ROUTE}/borrower_profiles"
+            const val BORROWER_LOAN_OVERVIEW_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-overview"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -223,7 +225,7 @@ fun PalmHiramNavHost(
                 onSelectedLoanTransactionRequestedItemAsLender = { navController.navigate(Destinations.SETUP_LOAN_ROUTE) },
                 onSelectedLoanTransactionApprovedItemAsLender = { /*TODO*/ },
                 onSelectedLoanTransactionCancelledOrSettledItemAsLender = { /*TODO*/ },
-                onSelectedLoanTransactionAsBorrower = { /*TODO*/ },
+                onSelectedLoanTransactionAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
                 onUserProfilesClickAsLender = { navController.navigate(Destinations.BORROWER_PROFILES_ROUTE) },
             )
         }
@@ -295,6 +297,15 @@ fun PalmHiramNavHost(
                 authViewModel = it.sharedViewModel(navController),
                 onClose = { navController.navigateUp() },
                 lenderDashboardViewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.BORROWER_LOAN_OVERVIEW_ROUTE
+        ) {
+            BorrowerLoanOverviewScreenRoute(
+                globalState = globalState!!,
+                viewModel = it.sharedViewModel(navController),
+                onClose = { navController.navigateUp() },
             )
         }
     }

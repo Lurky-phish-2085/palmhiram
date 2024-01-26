@@ -137,7 +137,12 @@ fun DashboardScreen(
                     else -> onSelectedLoanTransactionCancelledOrSettledItemAsLender()
                 }
             },
-            onSelectLoanTransactionItemAsBorrower = onSelectedLoanTransactionItemAsBorrower,
+            onSelectLoanTransactionItemAsBorrower = {
+                when (LoanTransactionStatus.valueOf(globalState.selectedLoanTransactionItem.status)) {
+                    LoanTransactionStatus.APPROVED -> onSelectedLoanTransactionItemAsBorrower()
+                    else -> {}
+                }
+            },
             modifier = Modifier.padding(padding)
         )
     }
