@@ -17,7 +17,7 @@ class PaymentSchedulesRepositoryImpl @Inject constructor(
         const val PAYMENT_SCHEDULES_COLLECTIONS_PATH = "payment-schedules"
     }
 
-    override val transactions: Flow<List<PaymentSchedule>>
+    override val paymentSchedules: Flow<List<PaymentSchedule>>
         get() = firebaseFirestore.collection(PAYMENT_SCHEDULES_COLLECTIONS_PATH)
             .snapshots().map { snapshots ->
                 snapshots.toObjects(PaymentSchedule::class.java)

@@ -37,19 +37,6 @@ class LoanPaymentScheduleUtils {
                     Log.e("PAYMENT GEN", "${newDate.toString()}")
                 }
             }
-//            do {
-//                if (paymentScheduleDates.isEmpty()) {
-//                    val newDate = DateTimeUtils.setDateTimeToMidnight(DateTimeUtils.addDaysToDate(startDate, daysToAdd))
-//                    paymentScheduleDates.add(newDate)
-//                    Log.e("PAYMENT GEN", "${newDate.toString()}")
-//                }
-//
-//                val lastDate = paymentScheduleDates.last()
-//                val newDate = DateTimeUtils.setDateTimeToMidnight(DateTimeUtils.addDaysToDate(lastDate, daysToAdd))
-//                paymentScheduleDates.add(newDate)
-//                Log.e("PAYMENT GEN", "${newDate.toString()}")
-//
-//            } while (paymentScheduleDates.last().compareTo(dueDate) > 0)
 
             return paymentScheduleDates
         }
