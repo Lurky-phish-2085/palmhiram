@@ -38,7 +38,7 @@ fun BorrowerLoanOverviewScreen(
     viewModel: BorrowerLoanOverviewViewModel,
     modifier: Modifier = Modifier
 ) {
-    val paymentSchedulesFlow = viewModel.paymentSchedulesOfSelectedTransaction.collectAsState()
+    val paymentSchedulesDatesFlow = viewModel.paymentSchedulesDatesOfSelectedTransaction.collectAsState()
 
     Scaffold(
         topBar = {
@@ -57,7 +57,7 @@ fun BorrowerLoanOverviewScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             LoanTransactionItemCard(
-                onClick = { /*TODO*/ },
+                onClick = {},
                 balanceName = "Total amount to pay",
                 transactionDetails = globalState.selectedLoanTransactionItem
             )
@@ -68,14 +68,46 @@ fun BorrowerLoanOverviewScreen(
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
+            Text(
+                text = "Pending",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(bottom = 16.dp),
-                modifier = modifier
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(512.dp)
             ) {
-                items(items = paymentSchedulesFlow.value, key = { it.id }) { schedule ->
-
+                items(items = paymentSchedulesDatesFlow.value.filter { it.settled == false }, key = { it.date.toString() }) { scheduleDate ->
+                    PaymentScheduleDateItemCard(
+                        onClick = { /*TODO*/ },
+                        globalState = globalState,
+                        details = scheduleDate
+                    )
+                }
+            }
+            Text(
+                text = "Settled",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(512.dp)
+            ) {
+                items(items = paymentSchedulesDatesFlow.value.filter { it.settled == true }, key = { it.date.toString() }) { scheduleDate ->
+                    PaymentScheduleDateItemCard(
+                        onClick = { /*TODO*/ },
+                        globalState = globalState,
+                        details = scheduleDate
+                    )
                 }
             }
 
@@ -88,7 +120,6 @@ fun BorrowerLoanOverviewScreen(
 fun PaymentScheduleDateItemCard(
     onClick: () -> Unit,
     globalState: FunniGlobalViewModel,
-    viewModel: BorrowerLoanOverviewViewModel,
     details: PaymentScheduleDate,
     modifier: Modifier = Modifier
 ) {
@@ -105,7 +136,7 @@ fun PaymentScheduleDateItemCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "${details.date}", modifier = Modifier.align(Alignment.CenterStart))
-//            Text(text = "${globalState.selectedLoanTransactionItem.}", modifier = Modifier.align(Alignment.CenterStart))
+            Text(text = "${globalState.selectedLoanTransactionItem.paymentPerSchedule}", modifier = Modifier.align(Alignment.CenterStart))
         }
     }
 }
