@@ -159,6 +159,7 @@ class BorrowerDashboardViewModel @Inject constructor(
             totalBalance = amountInCents,
             principalAmount = amountInCents,
             startDate = Timestamp.now(),
+            endDate = Timestamp.now(),
             status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER.toString(),
             remarks = remarks,
         )

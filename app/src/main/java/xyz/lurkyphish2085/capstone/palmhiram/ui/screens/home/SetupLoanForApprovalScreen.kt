@@ -111,7 +111,7 @@ fun SetupLoanForApprovalScreen(
     var dueOn by rememberSaveable {
         mutableStateOf(
             when(transactionDetails.endDate) {
-                null -> "N/A"
+                transactionDetails.startDate -> "N/A"
                 else -> DateTimeUtils.formatToISO8601Date(transactionDetails.endDate?.toDate()!!)
             }
         )
@@ -271,7 +271,7 @@ fun SetupLoanForApprovalScreen(
             isPrincipalAmountFieldValid() &&
             isInterestRateFieldValid() &&
             isDurationInMonthsFieldValid()
-            //&& isStartOnAndDueDateValid() // For some reason this crashes lmao!
+//            && isStartOnAndDueDateValid() // For some reason this crashes lmao!
     }
 
     var allFieldsValid by rememberSaveable {
@@ -288,15 +288,15 @@ fun SetupLoanForApprovalScreen(
     }
     fun calculateTotalPayment() {
         if (checkIfAllFieldsOkay()) {
-            val startedDate = DateTimeUtils.convertToLocalDateToDate(DateTimeUtils.parseISO8601DateString(startedOn)!!)!!
-            val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)
+            val startedDate = DateTimeUtils.parseISO8601DateString(startedOn)!!
+            val dueOnDate = DateTimeUtils.parseISO8601DateString(dueOn)!!
 
             viewModel.calculateAll(
                 Money.valueOf(principalAmount),
                 Integer.valueOf(interestRate),
                 DateTimeUtils.calculateMonthsBetween(
-                    DateTimeUtils.convertToDateToLocalDate(startedDate)!!,
-                    dueOnDate!!,
+                    startedDate,
+                    dueOnDate,
                 ),
                 LoanRepaymentFrequencies.valueOf(repaymentFrequencyMode)
             )

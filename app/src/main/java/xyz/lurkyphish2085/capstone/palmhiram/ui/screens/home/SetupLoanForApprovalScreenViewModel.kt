@@ -155,7 +155,6 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
                 paymentDates =
                     LoanPaymentScheduleUtils.generateDateSchedules(
                         loanTransaction.startDate!!.toDate(),
-                        loanTransaction.endDate!!.toDate(),
                         frequencyPaymentMode,
                         numberOfPayments.value,
                     ).map {

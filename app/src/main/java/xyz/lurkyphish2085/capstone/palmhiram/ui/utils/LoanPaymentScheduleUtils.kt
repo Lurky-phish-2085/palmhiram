@@ -13,7 +13,6 @@ class LoanPaymentScheduleUtils {
 
         fun generateDateSchedules(
             startDate: Date,
-            dueDate: Date,
             paymentFrequency: LoanRepaymentFrequencies,
             numberOfPayments: Int,
         ): List<Date> {
