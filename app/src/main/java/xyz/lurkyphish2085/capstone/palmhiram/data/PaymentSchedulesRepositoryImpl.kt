@@ -91,7 +91,7 @@ class PaymentSchedulesRepositoryImpl @Inject constructor(
             val batch: WriteBatch = firebaseFirestore.batch()
 
             paymentDates.forEach { doc ->
-                val docRef = firebaseFirestore.collection(PAYMENT_DATES_PATH).document(doc.id)
+                val docRef = firebaseFirestore.collection(PAYMENT_DATES_PATH).document()
                 batch.set(docRef, doc)
             }
 

@@ -185,7 +185,7 @@ fun SetupLoanForApprovalScreen(
         mutableStateOf(false)
     }
 
-    val paymentScheduleDatesGenerationFlow = viewModel?.paymentScheduleGenerationFlow?.collectAsState()
+    val paymentScheduleDatesGenerationFlow = viewModel?.paymentScheduleGeneratedDatesFlow?.collectAsState()
     paymentScheduleDatesGenerationFlow?.value?.let {
         when(it) {
             is Resource.Failure -> {
@@ -199,7 +199,7 @@ fun SetupLoanForApprovalScreen(
             Resource.Loading -> { isLoading = true }
             is Resource.Success -> {
                 LaunchedEffect(Unit) {
-                    Toast.makeText(context, "SUCCESS: transaction schedule generated: ${it.result.id}:${it.result.loanTransactionId}", Toast.LENGTH_LONG)
+                    Toast.makeText(context, "SUCCESS: transaction schedule dates generated: Arrray Size: ${it.result.size} for transaction: ${globalState?.selectedLoanTransactionItem?.id}", Toast.LENGTH_LONG)
                         .show()
 
                     isLoading = false
@@ -406,7 +406,7 @@ fun SetupLoanForApprovalScreen(
                 WideButton(
                     text = "SUBMIT",
                     onclick = {
-                        viewModel?.generatePaymentScheduleForApprovedLoan(globalState.selectedLoanTransactionItem)
+                        viewModel?.generatePaymentScheduleDatesForApprovedLoan(globalState.selectedLoanTransactionItem)
                     },
                     enabled = allFieldsValid
                 )
