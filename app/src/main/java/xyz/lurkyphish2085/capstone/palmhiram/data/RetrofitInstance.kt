@@ -7,7 +7,7 @@ object RetrofitInstance {
 
     val api: PalmhiramAPI by lazy {
         Retrofit.Builder()
-            .baseUrl("http://159.138.82.138:4000")
+            .baseUrl("https://psychic-enigma-449r967g6wcgrv-4000.app.github.dev/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(PalmhiramAPI::class.java)
