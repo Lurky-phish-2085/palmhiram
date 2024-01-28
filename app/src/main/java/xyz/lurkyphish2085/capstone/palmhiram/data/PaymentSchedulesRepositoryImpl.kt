@@ -86,7 +86,7 @@ class PaymentSchedulesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addPaymentDates(paymentDates: List<PaymentScheduleDate>, paymentScheduleId: String): Resource<List<PaymentScheduleDate>> {
+    override suspend fun addPaymentDates(paymentDates: List<PaymentScheduleDate>, loanTransactionId: String): Resource<List<PaymentScheduleDate>> {
         return try {
             val batch: WriteBatch = firebaseFirestore.batch()
 
@@ -106,7 +106,7 @@ class PaymentSchedulesRepositoryImpl @Inject constructor(
             val result = collectionContents
                 .toObjects(PaymentScheduleDate::class.java)
                 .filter {
-                    it.paymentScheduleId == paymentScheduleId
+                    it.loanTransactionId == loanTransactionId
                 }
 
             return Resource.Success(result)

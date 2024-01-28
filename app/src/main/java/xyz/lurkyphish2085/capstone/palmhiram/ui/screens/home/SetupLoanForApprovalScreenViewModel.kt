@@ -2,6 +2,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -157,6 +158,8 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
             )
         )
 
+        _paymentScheduleGenerationFlow.value = result
+
 //        val result = paymentScheduleRepository?.addPaymentSchedule(
 //            PaymentSchedule(
 //                loanTransactionId = loanTransaction.id,
@@ -183,8 +186,6 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
 //                    paymentScheduleId =
 //                )
 //            }
-
-        _paymentScheduleGenerationFlow.value = result
     }
 
 //    fun generatePaymentDates() = viewModelScope.launch {
@@ -201,4 +202,24 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
 //
 //        _paymentScheduleGeneratedDatesFlow.value = result
 //    }
+
+    fun generatePaymentScheduleDatesForApprovedLoan(loanTransaction: LoanTransaction) = viewModelScope.launch {
+        _paymentScheduleGeneratedDatesFlow.value = Resource.Loading
+
+        val generatedDates =
+            LoanPaymentScheduleUtils.generateDateSchedules(
+                loanTransaction.startDate!!.toDate(),
+                frequencyPaymentMode,
+                numberOfPayments.value,
+            ).map {
+                PaymentScheduleDate(
+                    loanTransactionId = loanTransaction.id,
+                    date = Timestamp(it)
+                )
+            }
+
+        val result = paymentScheduleRepository?.addPaymentDates(generatedDates, loanTransaction.id)
+
+        _paymentScheduleGeneratedDatesFlow.value = result
+    }
 }

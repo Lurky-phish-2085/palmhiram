@@ -12,6 +12,6 @@ interface PaymentScheduleRepository {
     suspend fun addPaymentSchedule(paymentSchedule: PaymentSchedule): Resource<PaymentSchedule>
     suspend fun updatePaymentSchedule(paymentScheduleId: String, updateSchedule: PaymentSchedule): Resource<PaymentSchedule>
     suspend fun addPaymentDate(paymentDate: PaymentScheduleDate): Resource<PaymentScheduleDate>
-    suspend fun addPaymentDates(paymentDates: List<PaymentScheduleDate>, paymentScheduleId: String): Resource<List<PaymentScheduleDate>>
+    suspend fun addPaymentDates(paymentDates: List<PaymentScheduleDate>, loanTransactionId: String): Resource<List<PaymentScheduleDate>>
     suspend fun updatePaymentDate(paymentScheduleDateId: String, update: PaymentScheduleDate): Resource<PaymentScheduleDate>
 }

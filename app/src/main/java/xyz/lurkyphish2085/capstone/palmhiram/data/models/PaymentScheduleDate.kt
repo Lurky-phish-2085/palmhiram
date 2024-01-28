@@ -12,7 +12,7 @@ data class PaymentScheduleDate(
     @ServerTimestamp
     val created: Timestamp? = null,
 
-    val paymentScheduleId: String = "",
+    val loanTransactionId: String = "",
     var date: Timestamp? = null,
     var status: String = "PENDING"
 )
