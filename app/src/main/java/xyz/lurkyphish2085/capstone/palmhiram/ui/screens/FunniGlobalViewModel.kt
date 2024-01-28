@@ -3,6 +3,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.Payment
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import javax.inject.Inject
@@ -23,4 +24,6 @@ class FunniGlobalViewModel @Inject constructor(
 
     // Payment selection on Loan Payment Confirm Screens
     var selectedPaymentDateItem: PaymentScheduleDate = PaymentScheduleDate()
+
+    var selectedPaymentItem: Payment = Payment()
 }
