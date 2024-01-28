@@ -14,8 +14,9 @@ fun BorrowerConfirmLoanPaymentRoute(
     onCloseClick: () -> Unit,
 ) {
     BorrowerConfirmLoanPaymentScreen(
+        globalState = globalState,
         viewModel = viewModel,
-        onSubmit = onSubmit,
+        onSubmitSuccess = onSubmit,
         onClose = onCloseClick,
         modifier = Modifier.padding(16.dp)
     )

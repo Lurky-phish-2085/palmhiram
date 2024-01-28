@@ -319,7 +319,11 @@ fun PalmHiramNavHost(
             BorrowerConfirmLoanPaymentRoute(
                 globalState = globalState!!,
                 viewModel = it.sharedViewModel(navController),
-                onSubmit = { /*TODO*/ },
+                onSubmit = {
+                           navController.navigate(Destinations.DASHBOARD_ROUTE) {
+                               popUpTo(Destinations.DASHBOARD_ROUTE) { inclusive = true }
+                           }
+                },
                 onCloseClick = { navController.navigateUp() }
             )
         }
