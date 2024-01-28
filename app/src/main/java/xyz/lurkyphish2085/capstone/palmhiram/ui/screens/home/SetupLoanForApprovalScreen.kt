@@ -663,7 +663,6 @@ fun SetupLoanForApprovalScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -671,6 +670,8 @@ fun SetupLoanForApprovalScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         BasicText(text = "${transactionDetails.remarks}", maxLines = 12)
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

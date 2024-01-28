@@ -35,4 +35,20 @@ class PaymentRepositoryImpl @Inject constructor(
             Resource.Failure(e)
         }
     }
+
+    override suspend fun getPayment(paymentId: String): Resource<Payment> {
+        return try {
+            val document = firebaseFirestore.collection(PAYMENTS_COLLECTIONS_PATH)
+                .get()
+                .await()
+
+            val list = document.toObjects(Payment::class.java)
+            val result = list.filter { it.id == paymentId }.get(0)
+
+            Resource.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
 }

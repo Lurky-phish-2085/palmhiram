@@ -10,4 +10,5 @@ interface PaymentRepository {
     val payments: Flow<List<Payment>>
 
     suspend fun addPayment(payment: Payment): Resource<Payment>
+    suspend fun getPayment(paymentId: String): Resource<Payment>
 }

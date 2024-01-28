@@ -73,6 +73,8 @@ class BorrowerConfirmLoanPaymentViewModel @Inject constructor(
         submissionFlow.value = Resource.Loading
         val result = paymentRepository.addPayment(
             Payment(
+                amount = loanTransactionItem.paymentPerSchedule,
+                date = paymentScheduleDateItem.date,
                 dateRequested = DateTimeUtils.formatToISO8601Date(Date()),
                 paymentScheduleDateId = paymentScheduleDateItem.id,
                 loanTransactionId = loanTransactionItem.id,

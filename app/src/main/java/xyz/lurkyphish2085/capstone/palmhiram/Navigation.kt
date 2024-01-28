@@ -33,6 +33,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScr
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.PaymentDetailsRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.SetupLoanApprovalScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
@@ -61,6 +62,7 @@ private object Destinations {
             const val BORROWER_PROFILES_ROUTE = "${DASHBOARD_ROUTE}/borrower_profiles"
             const val BORROWER_LOAN_OVERVIEW_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-overview"
             const val BORROWER_LOAN_PAYMENT_CONFIRMATION_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-payment-confirmation-route"
+            const val BORROWER_LOAN_PAYMENT_DETAILS_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-payment-details-route"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -307,8 +309,11 @@ fun PalmHiramNavHost(
             BorrowerLoanOverviewScreenRoute(
                 globalState = globalState!!,
                 viewModel = it.sharedViewModel(navController),
-                onSelectedPaymentItemClick = {
+                onSelectedPendingPaymentItemClick = {
                     navController.navigate(Destinations.BORROWER_LOAN_PAYMENT_CONFIRMATION_ROUTE)
+                },
+                onSelectedNonPendingPaymentItemClick = {
+                    navController.navigate(Destinations.BORROWER_LOAN_PAYMENT_DETAILS_ROUTE)
                 },
                 onClose = { navController.navigateUp() },
             )
@@ -325,6 +330,15 @@ fun PalmHiramNavHost(
                            }
                 },
                 onCloseClick = { navController.navigateUp() }
+            )
+        }
+        composable(
+            route = Destinations.BORROWER_LOAN_PAYMENT_DETAILS_ROUTE
+        ) {
+            PaymentDetailsRoute(
+                globalState = globalState!!,
+                onClose = { navController.navigateUp() },
+                viewModel = it.sharedViewModel(navController)
             )
         }
     }

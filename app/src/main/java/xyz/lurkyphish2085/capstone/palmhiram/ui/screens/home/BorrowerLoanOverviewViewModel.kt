@@ -10,8 +10,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentSchedulesRepositoryImpl
+import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.Payment
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import javax.inject.Inject
@@ -21,6 +25,7 @@ import javax.inject.Inject
 class BorrowerLoanOverviewViewModel @Inject constructor(
     private val loanTransactionRepository: LoanTransactionRepository?,
     private val paymentScheduleRepository: PaymentScheduleRepository?,
+    private val paymentRepository: PaymentRepository,
 ): ViewModel() {
 
     var selectedLoanTransaction = LoanTransaction()
@@ -30,6 +35,9 @@ class BorrowerLoanOverviewViewModel @Inject constructor(
 
     val paymentDates: Flow<List<PaymentScheduleDate>>
         get() = paymentScheduleRepository?.paymentDates!!
+
+    val payments: Flow<List<Payment>>
+        get() = paymentRepository.payments
 
     private var _paymentSchedulesOfSelectedTransaction = MutableStateFlow<List<PaymentSchedule>>(
         listOf(
@@ -43,6 +51,8 @@ class BorrowerLoanOverviewViewModel @Inject constructor(
         MutableStateFlow<List<PaymentScheduleDate>>(listOf(PaymentScheduleDate()))
     val paymentSchedulesDatesOfSelectedTransaction: StateFlow<List<PaymentScheduleDate>> =
         _paymentSchedulesDatesOfSelectedTransaction
+
+    var paymentForSelectedDate: Payment = Payment()
 
     fun collectPaymentScheduleOfLoan(selectedLoanTransactionId: String) = viewModelScope.launch {
         paymentSchedules
@@ -68,5 +78,15 @@ class BorrowerLoanOverviewViewModel @Inject constructor(
     init {
         collectPaymentScheduleOfLoan(selectedLoanTransactionId = selectedLoanTransaction.id)
         collectPaymentScheduleDatesOfLoan()
+    }
+
+    fun getPaymentForSelectedPaymentDate(paymentDate: PaymentScheduleDate) = viewModelScope.launch {
+        payments.collectLatest {
+            val filteredPayment = it.filter {  payment ->
+                payment.date == paymentDate.date
+            }.get(0)
+
+            paymentForSelectedDate = filteredPayment
+        }
     }
 }
