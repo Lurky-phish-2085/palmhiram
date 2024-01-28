@@ -2,7 +2,6 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -117,8 +116,11 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     private var _updatedLoanTransactionFlow = MutableStateFlow<Resource<LoanTransaction>?>(null)
     val updatedLoanTransactionFlow:  StateFlow<Resource<LoanTransaction>?> = _updatedLoanTransactionFlow
 
-    private var _paymentScheduleDatesGenerationFlow = MutableStateFlow<Resource<PaymentSchedule>?>(null)
-    val paymentScheduleDatesGenerationFlow:  StateFlow<Resource<PaymentSchedule>?> = _paymentScheduleDatesGenerationFlow
+    private var _paymentScheduleGenerationFlow = MutableStateFlow<Resource<PaymentSchedule>?>(null)
+    val paymentScheduleGenerationFlow:  StateFlow<Resource<PaymentSchedule>?> = _paymentScheduleGenerationFlow
+
+    private var _paymentScheduleGeneratedDatesFlow = MutableStateFlow<Resource<List<PaymentScheduleDate>>?>(null)
+    val paymentScheduleGeneratedDatesFlow:  StateFlow<Resource<List<PaymentScheduleDate>>?> = _paymentScheduleGeneratedDatesFlow
 
     fun declineLoanTransaction(transactionId: String) = viewModelScope.launch {
         _updatedLoanTransactionFlow.value = Resource.Loading
@@ -147,24 +149,56 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
     }
 
     fun generatePaymentScheduleForApprovedLoan(loanTransaction: LoanTransaction) = viewModelScope.launch {
-        _paymentScheduleDatesGenerationFlow.value = Resource.Loading
+        _paymentScheduleGenerationFlow.value = Resource.Loading
 
         val result = paymentScheduleRepository?.addPaymentSchedule(
             PaymentSchedule(
                 loanTransactionId = loanTransaction.id,
-                paymentDates =
-                    LoanPaymentScheduleUtils.generateDateSchedules(
-                        loanTransaction.startDate!!.toDate(),
-                        frequencyPaymentMode,
-                        numberOfPayments.value,
-                    ).map {
-                        PaymentScheduleDate(
-                            date = it,
-                        )
-                    }
             )
         )
 
-        _paymentScheduleDatesGenerationFlow.value = result
+//        val result = paymentScheduleRepository?.addPaymentSchedule(
+//            PaymentSchedule(
+//                loanTransactionId = loanTransaction.id,
+//                paymentDates =
+//                LoanPaymentScheduleUtils.generateDateSchedules(
+//                    loanTransaction.startDate!!.toDate(),
+//                    frequencyPaymentMode,
+//                    numberOfPayments.value,
+//                ).map {
+//                    PaymentScheduleDate(
+//                        date = it,
+//                    )
+//                }
+//            )
+//        )
+
+//        val result2 =
+//            LoanPaymentScheduleUtils.generateDateSchedules(
+//                loanTransaction.startDate!!.toDate(),
+//                frequencyPaymentMode,
+//                numberOfPayments.value,
+//            ).map {
+//                PaymentScheduleDate(
+//                    paymentScheduleId =
+//                )
+//            }
+
+        _paymentScheduleGenerationFlow.value = result
     }
+
+//    fun generatePaymentDates() = viewModelScope.launch {
+//        val result =
+//            LoanPaymentScheduleUtils.generateDateSchedules(
+//                loanTransaction.startDate!!.toDate(),
+//                frequencyPaymentMode,
+//                numberOfPayments.value,
+//            ).map {
+//                PaymentScheduleDate(
+//                    paymentScheduleId = _paymentScheduleGenerationFlow.value.to
+//                )
+//            }
+//
+//        _paymentScheduleGeneratedDatesFlow.value = result
+//    }
 }

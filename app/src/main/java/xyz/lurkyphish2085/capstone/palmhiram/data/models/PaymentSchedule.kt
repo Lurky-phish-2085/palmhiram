@@ -13,5 +13,4 @@ data class PaymentSchedule(
     var modified: Timestamp? = null,
 
     val loanTransactionId: String = "",
-    val paymentDates: List<PaymentScheduleDate> = listOf(PaymentScheduleDate())
 )

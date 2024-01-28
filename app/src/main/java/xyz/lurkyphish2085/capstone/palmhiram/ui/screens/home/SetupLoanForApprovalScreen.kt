@@ -185,7 +185,7 @@ fun SetupLoanForApprovalScreen(
         mutableStateOf(false)
     }
 
-    val paymentScheduleDatesGenerationFlow = viewModel?.paymentScheduleDatesGenerationFlow?.collectAsState()
+    val paymentScheduleDatesGenerationFlow = viewModel?.paymentScheduleGenerationFlow?.collectAsState()
     paymentScheduleDatesGenerationFlow?.value?.let {
         when(it) {
             is Resource.Failure -> {
