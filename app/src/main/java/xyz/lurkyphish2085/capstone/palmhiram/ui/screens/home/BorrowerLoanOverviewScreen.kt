@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Card
@@ -30,9 +32,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import xyz.lurkyphish2085.capstone.palmhiram.utils.PaymentScheduleDateStatus
 
@@ -59,6 +63,7 @@ fun BorrowerLoanOverviewScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -68,6 +73,11 @@ fun BorrowerLoanOverviewScreen(
                 transactionDetails = globalState.selectedLoanTransactionItem
             )
 
+            Text(
+                text = "Payment Frequency: ${globalState.selectedLoanTransactionItem.repaymentFrequency}",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
             Text(
                 text = "Payment Schedules",
                 style = MaterialTheme.typography.headlineMedium,
@@ -79,20 +89,24 @@ fun BorrowerLoanOverviewScreen(
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(bottom = 16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(512.dp)
-            ) {
-                items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }, key = { it.date.toString() }) { scheduleDate ->
-                    PaymentScheduleDateItemCard(
-                        onClick = { /*TODO*/ },
-                        globalState = globalState,
-                        details = scheduleDate
-                    )
+            if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.isEmpty()) {
+                NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(256.dp)
+                ) {
+                    items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                        PaymentScheduleDateItemCard(
+                            onClick = { /*TODO*/ },
+                            globalState = globalState,
+                            details = scheduleDate
+                        )
+                    }
                 }
             }
             Text(
@@ -100,41 +114,50 @@ fun BorrowerLoanOverviewScreen(
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(bottom = 16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(512.dp)
-            ) {
-                items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }, key = { it.date.toString() }) { scheduleDate ->
-                    PaymentScheduleDateItemCard(
-                        onClick = { /*TODO*/ },
-                        globalState = globalState,
-                        details = scheduleDate
-                    )
+            if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.isEmpty()) {
+                NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(256.dp)
+                ) {
+                    items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                        PaymentScheduleDateItemCard(
+                            onClick = { /*TODO*/ },
+                            globalState = globalState,
+                            details = scheduleDate
+                        )
+                    }
                 }
             }
+
             Text(
                 text = "Under Approval",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(bottom = 16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(512.dp)
-            ) {
-                items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }, key = { it.date.toString() }) { scheduleDate ->
-                    PaymentScheduleDateItemCard(
-                        onClick = { /*TODO*/ },
-                        globalState = globalState,
-                        details = scheduleDate
-                    )
+            if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVAL }.isEmpty()) {
+                NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(256.dp)
+                ) {
+                    items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVAL }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                        PaymentScheduleDateItemCard(
+                            onClick = { /*TODO*/ },
+                            globalState = globalState,
+                            details = scheduleDate
+                        )
+                    }
                 }
             }
 
@@ -150,6 +173,9 @@ fun PaymentScheduleDateItemCard(
     details: PaymentScheduleDate,
     modifier: Modifier = Modifier
 ) {
+    val a = details.date?.toDate()
+    val b = DateTimeUtils.formatToISO8601NullDate(a)
+
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp,
@@ -162,7 +188,7 @@ fun PaymentScheduleDateItemCard(
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "${details.date}", modifier = Modifier.align(Alignment.CenterStart))
+            Text(text = b ?: "Null LMAO XD" , modifier = Modifier.align(Alignment.CenterStart))
 
             Row(modifier = Modifier.align(Alignment.CenterEnd)) {
                 Text(text = "${Money.parseActualValue(globalState.selectedLoanTransactionItem.paymentPerSchedule)}")

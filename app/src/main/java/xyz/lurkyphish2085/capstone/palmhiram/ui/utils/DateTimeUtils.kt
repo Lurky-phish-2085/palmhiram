@@ -22,6 +22,14 @@ class DateTimeUtils {
             return zonedDateTime.toLocalDateTime().format(DateTimeFormatter.ISO_DATE)
         }
 
+        fun formatToISO8601NullDate(date: Date?): String? {
+            val instant = date?.toInstant()
+            val zoneId = ZoneId.systemDefault()
+            val zonedDateTime = instant?.atZone(zoneId)
+
+            return zonedDateTime?.toLocalDateTime()?.format(DateTimeFormatter.ISO_DATE)
+        }
+
         fun formatToISO8601Date(date: LocalDate): String {
 
             return date.format(DateTimeFormatter.ISO_DATE)
