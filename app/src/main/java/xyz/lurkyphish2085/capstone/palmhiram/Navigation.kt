@@ -27,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerConfirmLoanPaymentRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerLoanOverviewScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
@@ -59,6 +60,7 @@ private object Destinations {
             const val SETUP_LOAN_ROUTE = "${DASHBOARD_ROUTE}/setup-loan"
             const val BORROWER_PROFILES_ROUTE = "${DASHBOARD_ROUTE}/borrower_profiles"
             const val BORROWER_LOAN_OVERVIEW_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-overview"
+            const val BORROWER_LOAN_PAYMENT_CONFIRMATION_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-payment-confirmation-route"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -305,7 +307,20 @@ fun PalmHiramNavHost(
             BorrowerLoanOverviewScreenRoute(
                 globalState = globalState!!,
                 viewModel = it.sharedViewModel(navController),
+                onSelectedPaymentItemClick = {
+                    navController.navigate(Destinations.BORROWER_LOAN_PAYMENT_CONFIRMATION_ROUTE)
+                },
                 onClose = { navController.navigateUp() },
+            )
+        }
+        composable(
+            route = Destinations.BORROWER_LOAN_PAYMENT_CONFIRMATION_ROUTE
+        ) {
+            BorrowerConfirmLoanPaymentRoute(
+                globalState = globalState!!,
+                viewModel = it.sharedViewModel(navController),
+                onSubmit = { /*TODO*/ },
+                onCloseClick = { navController.navigateUp() }
             )
         }
     }

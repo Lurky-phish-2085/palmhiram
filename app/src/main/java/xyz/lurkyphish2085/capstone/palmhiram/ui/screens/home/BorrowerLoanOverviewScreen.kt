@@ -44,11 +44,17 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.PaymentScheduleDateStatus
 @Composable
 fun BorrowerLoanOverviewScreen(
     onClose: () -> Unit,
+    onSelectedPaymentItemClick: () -> Unit,
     globalState: FunniGlobalViewModel,
     viewModel: BorrowerLoanOverviewViewModel,
     modifier: Modifier = Modifier
 ) {
     val paymentSchedulesDatesFlow = viewModel.paymentSchedulesDatesOfSelectedTransaction.collectAsState()
+
+    fun onSelectItem(item: PaymentScheduleDate) {
+        globalState.selectedPaymentDateItem = item
+        onSelectedPaymentItemClick()
+    }
 
     Scaffold(
         topBar = {
@@ -102,7 +108,7 @@ fun BorrowerLoanOverviewScreen(
                 ) {
                     items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
                         PaymentScheduleDateItemCard(
-                            onClick = { /*TODO*/ },
+                            onClick = { onSelectItem(scheduleDate) },
                             globalState = globalState,
                             details = scheduleDate
                         )
@@ -127,7 +133,7 @@ fun BorrowerLoanOverviewScreen(
                 ) {
                     items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
                         PaymentScheduleDateItemCard(
-                            onClick = { /*TODO*/ },
+                            onClick = { onSelectItem(scheduleDate) },
                             globalState = globalState,
                             details = scheduleDate
                         )
@@ -153,7 +159,7 @@ fun BorrowerLoanOverviewScreen(
                 ) {
                     items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVAL }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
                         PaymentScheduleDateItemCard(
-                            onClick = { /*TODO*/ },
+                            onClick = { onSelectItem(scheduleDate) },
                             globalState = globalState,
                             details = scheduleDate
                         )

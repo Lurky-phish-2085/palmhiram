@@ -16,6 +16,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 @Composable
 fun BorrowerLoanOverviewScreenRoute(
     onClose: () -> Unit,
+    onSelectedPaymentItemClick: () -> Unit,
     globalState: FunniGlobalViewModel,
     viewModel: BorrowerLoanOverviewViewModel,
 ) {
@@ -25,6 +26,7 @@ fun BorrowerLoanOverviewScreenRoute(
 
     BorrowerLoanOverviewScreen(
         onClose = onClose,
+        onSelectedPaymentItemClick = onSelectedPaymentItemClick,
         globalState = globalState,
         viewModel = viewModel,
         modifier = Modifier

@@ -3,6 +3,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
+import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import javax.inject.Inject
 
@@ -19,4 +20,7 @@ class FunniGlobalViewModel @Inject constructor(
 
     // Used to keep and pass clicked user data to other screens
     var selectedUserProfileItem: User = User()
+
+    // Payment selection on Loan Payment Confirm Screens
+    var selectedPaymentDateItem: PaymentScheduleDate = PaymentScheduleDate()
 }
