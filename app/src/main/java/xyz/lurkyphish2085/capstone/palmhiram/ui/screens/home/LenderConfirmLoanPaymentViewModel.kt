@@ -2,6 +2,7 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -55,6 +56,7 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
     var submissionFlow: MutableStateFlow<Resource<Payment>?> = MutableStateFlow(null)
     var updatePaymentDateFlow: MutableStateFlow<Resource<PaymentScheduleDate>?> = MutableStateFlow(null)
     var updateLoanTransactionFlow: MutableStateFlow<Resource<LoanTransaction>?> = MutableStateFlow(null)
+    var declinePaymentDateFlow: MutableStateFlow<Resource<PaymentScheduleDate>?> = MutableStateFlow(null)
 
     fun updateImageBox(context: Context, uri: Uri?) = viewModelScope.launch {
         selectedImageUri?.value = uri
@@ -88,6 +90,15 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
         val result = paymentRepository.updatePayment(paymentItem.id, paymentItem)
 
         submissionFlow.value = result
+    }
+
+    fun declinePaymentConfirmation() = viewModelScope.launch {
+        declinePaymentDateFlow.value = Resource.Loading
+
+        paymentScheduleDateItem.status = PaymentScheduleDateStatus.PENDING.name
+        val result = paymentScheduleRepository.updatePaymentDate(paymentScheduleDateItem.id, paymentScheduleDateItem)
+
+        declinePaymentDateFlow.value = result
     }
 
     fun updatePaymentScheduleDateStatus(status: PaymentScheduleDateStatus) = viewModelScope.launch {

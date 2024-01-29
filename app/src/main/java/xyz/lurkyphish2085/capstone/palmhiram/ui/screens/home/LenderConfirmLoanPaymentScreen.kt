@@ -16,11 +16,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CancelPresentation
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -61,6 +64,12 @@ fun LenderConfirmLoanPaymentScreen(
     var isLoading by rememberSaveable {
         mutableStateOf(false)
     }
+    var isDeclineDialogOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var isDeclineSuccessDialogOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
     var isSuccessDialogOpen by rememberSaveable {
         mutableStateOf(false)
     }
@@ -83,6 +92,12 @@ fun LenderConfirmLoanPaymentScreen(
 
     val goToGallery = { launcher.launch("image/*") }
 
+    val declinePaymentConfirmation = {
+        viewModel.loanTransactionItem = globalState.selectedLoanTransactionItem
+        viewModel.paymentScheduleDateItem = globalState.selectedPaymentDateItem
+        viewModel.paymentItem = globalState.selectedPaymentItem
+        viewModel.declinePaymentConfirmation()
+    }
     val submitPaymentConfirmation = {
         viewModel.loanTransactionItem = globalState.selectedLoanTransactionItem
         viewModel.paymentScheduleDateItem = globalState.selectedPaymentDateItem
@@ -169,8 +184,69 @@ fun LenderConfirmLoanPaymentScreen(
             null -> {}
         }
     }
+    val declinePaymentFlow = viewModel.declinePaymentDateFlow.collectAsState()
+    declinePaymentFlow.value.let {
+        when(it) {
+            is Resource.Failure -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
+                        .show()
+
+                    isLoading = false
+                    isFailDialogOpen = true
+                }
+            }
+            Resource.Loading -> { isLoading = true }
+            is Resource.Success -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "SUCCESS: Payment Date Status: ${it.result.status}", Toast.LENGTH_SHORT)
+                        .show()
+
+                    isLoading = false
+                    isDeclineSuccessDialogOpen = true
+                }
+            }
+            null -> {}
+        }
+    }
 
     CircularProgressLoadingIndicator(isOpen = isLoading)
+    ConfirmationDialog(
+        isOpen = isDeclineDialogOpen,
+        onPositiveClick = {
+            declinePaymentConfirmation()
+            isDeclineDialogOpen = false
+        },
+        onNegativeClick = { isDeclineDialogOpen = false },
+        onDismissRequest = { isDeclineDialogOpen = false },
+        onClose = { isDeclineDialogOpen = false  },
+        title = "Warning",
+        icon = Icons.Default.CancelPresentation,
+        headline = "Decline Payment Confirmation Request?",
+        description = "This action cannot be undone.",
+        positiveButtonText = "YES",
+        negativeButtonText = "NO",
+    )
+    ConfirmationDialog(
+        isOpen = isDeclineSuccessDialogOpen,
+        onPositiveClick = {
+            isDeclineDialogOpen = false
+            onClose()
+        },
+        positiveButtonOnly = true,
+        onNegativeClick = {},
+        onDismissRequest = {},
+        onClose = {
+            isDeclineDialogOpen = false
+            onClose()
+        },
+        title = "Declined Successfully",
+        icon = Icons.Default.Check,
+        headline = "Payment Confirmation Request Declined",
+        description = "The borrower has to send another payment confirmation again",
+        positiveButtonText = "OK",
+        negativeButtonText = ""
+    )
     ConfirmationDialog(
         isOpen = isSuccessDialogOpen,
         positiveButtonOnly = true,
@@ -208,7 +284,14 @@ fun LenderConfirmLoanPaymentScreen(
             TopBarWithBackButton(
                 text = "Confirm Payment",
                 onClose = onClose
-            )
+            ) {
+                IconButton(onClick = { isDeclineDialogOpen = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Cancel,
+                        contentDescription = null
+                    )
+                }
+            }
         },
         bottomBar = {
             WideButton(
