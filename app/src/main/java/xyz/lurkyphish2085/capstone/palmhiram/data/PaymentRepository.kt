@@ -11,4 +11,5 @@ interface PaymentRepository {
 
     suspend fun addPayment(payment: Payment): Resource<Payment>
     suspend fun getPayment(paymentId: String): Resource<Payment>
+    suspend fun updatePayment(paymentId: String, update: Payment): Resource<Payment>
 }

@@ -11,7 +11,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
@@ -20,6 +23,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.models.Payment
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ImageUtils
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.PaymentScheduleDateStatus
 import java.util.Date
 import javax.inject.Inject
@@ -27,6 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LenderConfirmLoanPaymentViewModel @Inject constructor(
+    private val loanTransactionRepository: LoanTransactionRepository,
     private val paymentRepository: PaymentRepository,
     private val paymentScheduleRepository: PaymentScheduleRepository
 ): ViewModel() {
@@ -34,8 +39,11 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
     val payments: Flow<List<Payment>>
         get() = paymentRepository.payments
 
+    var paymentsForSelectedScheduleDate: MutableStateFlow<List<Payment>?>? = MutableStateFlow(null)
+
     var paymentScheduleDateItem: PaymentScheduleDate = PaymentScheduleDate()
     var loanTransactionItem: LoanTransaction = LoanTransaction()
+    var paymentItem: Payment = Payment()
 
     var selectedImageUri: MutableStateFlow<Uri?>? = MutableStateFlow(null)
     var selectedBitmap: MutableStateFlow<ImageBitmap?>? = MutableStateFlow(null)
@@ -46,6 +54,7 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
 
     var submissionFlow: MutableStateFlow<Resource<Payment>?> = MutableStateFlow(null)
     var updatePaymentDateFlow: MutableStateFlow<Resource<PaymentScheduleDate>?> = MutableStateFlow(null)
+    var updateLoanTransactionFlow: MutableStateFlow<Resource<LoanTransaction>?> = MutableStateFlow(null)
 
     fun updateImageBox(context: Context, uri: Uri?) = viewModelScope.launch {
         selectedImageUri?.value = uri
@@ -71,17 +80,13 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
 
     fun submitPaymentConfirmation() = viewModelScope.launch {
         submissionFlow.value = Resource.Loading
-        val result = paymentRepository.addPayment(
-            Payment(
-                amount = loanTransactionItem.paymentPerSchedule,
-                date = paymentScheduleDateItem.date,
-                dateRequested = DateTimeUtils.formatToISO8601Date(Date()),
-                paymentScheduleDateId = paymentScheduleDateItem.id,
-                loanTransactionId = loanTransactionItem.id,
-                borrowerProofImage = bitmapBase64String.value,
-                borrowerRemarks = remarks.value
-            )
-        )
+
+        paymentItem.lenderProofImage = bitmapBase64String.value
+        paymentItem.lenderRemarks = remarks.value
+        paymentItem.dateConfirmed = DateTimeUtils.formatToISO8601Date(Date())
+
+        val result = paymentRepository.updatePayment(paymentItem.id, paymentItem)
+
         submissionFlow.value = result
     }
 
@@ -97,5 +102,33 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
         )
 
         updatePaymentDateFlow.value = result
+    }
+
+    fun collectPaymentsForSelectedDate() = viewModelScope.launch {
+        payments.collectLatest {
+            val collectedValues = it.filter { payment ->
+                payment.id == paymentScheduleDateItem.id
+            }
+
+            paymentsForSelectedScheduleDate?.value = collectedValues
+        }
+    }
+    fun updateLoanTransaction() = viewModelScope.launch {
+        updateLoanTransactionFlow.value = Resource.Loading
+
+        loanTransactionItem.totalBalance = loanTransactionItem.totalBalance - paymentItem.amount
+
+        if (paymentsForSelectedScheduleDate?.value?.isNullOrEmpty()!!) {
+            loanTransactionItem.status = LoanTransactionStatus.SETTLED.name
+            loanTransactionItem.totalBalance = 0L
+        }
+
+        val result = loanTransactionRepository.updateLoanTransaction(loanTransactionItem.id, loanTransactionItem)
+
+        updateLoanTransactionFlow.value = result
+    }
+
+    init {
+        collectPaymentsForSelectedDate()
     }
 }

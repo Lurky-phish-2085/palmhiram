@@ -86,6 +86,7 @@ fun LenderConfirmLoanPaymentScreen(
     val submitPaymentConfirmation = {
         viewModel.loanTransactionItem = globalState.selectedLoanTransactionItem
         viewModel.paymentScheduleDateItem = globalState.selectedPaymentDateItem
+        viewModel.paymentItem = globalState.selectedPaymentItem
         viewModel.submitPaymentConfirmation()
     }
 
@@ -109,7 +110,7 @@ fun LenderConfirmLoanPaymentScreen(
 
                     isLoading = false
 
-                    viewModel.updatePaymentScheduleDateStatus(PaymentScheduleDateStatus.APPROVAL)
+                    viewModel.updatePaymentScheduleDateStatus(PaymentScheduleDateStatus.APPROVED)
                 }
             }
             else -> {}
@@ -135,10 +136,37 @@ fun LenderConfirmLoanPaymentScreen(
                         .show()
 
                     isLoading = false
-                    isSuccessDialogOpen = true
+
+                    viewModel.updateLoanTransaction()
                 }
             }
             else -> {}
+        }
+    }
+
+    val updateLoanTransactionFlow = viewModel.updateLoanTransactionFlow.collectAsState()
+    updateLoanTransactionFlow.value.let {
+        when(it) {
+            is Resource.Failure -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "FAIL: ${it.exception.message}", Toast.LENGTH_LONG)
+                        .show()
+
+                    isLoading = false
+                    isFailDialogOpen = true
+                }
+            }
+            Resource.Loading -> { isLoading = true }
+            is Resource.Success -> {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "SUCCESS: New loan total balance: ${it.result.totalBalance} Status: ${it.result.status}", Toast.LENGTH_SHORT)
+                        .show()
+
+                    isLoading = false
+                    isSuccessDialogOpen = true
+                }
+            }
+            null -> {}
         }
     }
 
@@ -153,10 +181,10 @@ fun LenderConfirmLoanPaymentScreen(
         onNegativeClick = {},
         onDismissRequest = {},
         onClose = { isSuccessDialogOpen = false },
-        title = "Confirmation Submitted",
+        title = "Payment Confirmed",
         icon = Icons.Default.Check,
-        headline = "Your payment is now under approval.",
-        description = "Please wait for the lender's response",
+        headline = "You have approved the Payment",
+        description = "Details about the loan are now updated as well.",
         positiveButtonText = "OKAY",
         negativeButtonText = ""
     )
