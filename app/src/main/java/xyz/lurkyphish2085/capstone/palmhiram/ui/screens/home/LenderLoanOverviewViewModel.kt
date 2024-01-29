@@ -7,22 +7,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
-import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentSchedulesRepositoryImpl
-import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.Payment
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 import javax.inject.Inject
 
-
 @HiltViewModel
-class BorrowerLoanOverviewViewModel @Inject constructor(
+class LenderLoanOverviewViewModel @Inject constructor(
     private val loanTransactionRepository: LoanTransactionRepository?,
     private val paymentScheduleRepository: PaymentScheduleRepository?,
     private val paymentRepository: PaymentRepository,
@@ -82,11 +79,19 @@ class BorrowerLoanOverviewViewModel @Inject constructor(
 
     fun getPaymentForSelectedPaymentDate(paymentDate: PaymentScheduleDate) = viewModelScope.launch {
         payments.collectLatest {
-            val filteredPayment = it.filter {  payment ->
+            val isEmpty = it.filter {  payment ->
                 (payment.date == paymentDate.date) && (payment.paymentScheduleDateId == paymentDate.id)
-            }.get(0)
+            }.isEmpty()
 
-            paymentForSelectedDate = filteredPayment
+            paymentForSelectedDate = if (isEmpty) {
+                Payment(
+                    date = paymentDate.date
+                )
+            } else {
+                it.filter { payment ->
+                    (payment.date == paymentDate.date) && (payment.paymentScheduleDateId == paymentDate.id)
+                }.get(0)
+            }
         }
     }
 }

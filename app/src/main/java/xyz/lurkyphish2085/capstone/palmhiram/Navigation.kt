@@ -32,6 +32,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerLoanOvervie
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderLoanOverviewRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.PaymentDetailsRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.SetupLoanApprovalScreenRoute
@@ -42,6 +43,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.Verificatio
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.WelcomeRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.splash.SplashRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.splash.SplashScreenViewModel
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 
 private object Destinations {
     const val SPLASH_ROUTE = "splash"
@@ -63,6 +65,8 @@ private object Destinations {
             const val BORROWER_LOAN_OVERVIEW_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-overview"
             const val BORROWER_LOAN_PAYMENT_CONFIRMATION_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-payment-confirmation-route"
             const val BORROWER_LOAN_PAYMENT_DETAILS_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-payment-details-route"
+            const val LENDER_LOAN_OVERVIEW_ROUTE = "${DASHBOARD_ROUTE}/lender-loan-overview"
+            const val LENDER_LOAN_PAYMENT_CONFIRMATION_ROUTE = "${DASHBOARD_ROUTE}/lender-loan-payment-confirmation-route"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -227,7 +231,7 @@ fun PalmHiramNavHost(
                 borrowerDashboardViewModel = it.sharedViewModel(navController),
                 lenderDashboardViewModel = it.sharedViewModel(navController),
                 onSelectedLoanTransactionRequestedItemAsLender = { navController.navigate(Destinations.SETUP_LOAN_ROUTE) },
-                onSelectedLoanTransactionApprovedItemAsLender = { /*TODO*/ },
+                onSelectedLoanTransactionApprovedItemAsLender = { navController.navigate(Destinations.LENDER_LOAN_OVERVIEW_ROUTE) },
                 onSelectedLoanTransactionCancelledOrSettledItemAsLender = { /*TODO*/ },
                 onSelectedLoanTransactionAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
                 onUserProfilesClickAsLender = { navController.navigate(Destinations.BORROWER_PROFILES_ROUTE) },
@@ -340,6 +344,22 @@ fun PalmHiramNavHost(
                 onClose = { navController.navigateUp() },
                 viewModel = it.sharedViewModel(navController)
             )
+        }
+        composable(
+            route = Destinations.LENDER_LOAN_OVERVIEW_ROUTE
+        ) {
+            LenderLoanOverviewRoute(
+                onClose = { navController.navigateUp() },
+                onSelectedUnderApprovalPaymentItemClick = { navController.navigate(Destinations.LENDER_LOAN_PAYMENT_CONFIRMATION_ROUTE) },
+                onSelectedNonUnderApprovalPaymentItemClick = { navController.navigate(Destinations.BORROWER_LOAN_PAYMENT_DETAILS_ROUTE) },
+                globalState = globalState!!,
+                viewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.LENDER_LOAN_PAYMENT_CONFIRMATION_ROUTE
+        ) {
+
         }
     }
 }

@@ -60,7 +60,7 @@ fun HomeNavigation(
                 onRightButtonClickAsBorrower = onRightButtonClickAsBorrower,
                 onLoansClickAsLender = onLoansClickAsLender,
                 onLoansClickAsBorrower = onLoansClickAsBorrower,
-                onTransactionsClickAsLender = onSelectLoanTransactionItemAsLender,
+                onTransactionsClickAsLender = { /*TODO*/ },
                 onTransactionsClickAsBorrower = { /*TODO*/ },
                 onProfilesClickAsLender = onProfilesClickAsLender,
                 onSelectLoanTransactionItemAsLender = onSelectLoanTransactionItemAsLender,
