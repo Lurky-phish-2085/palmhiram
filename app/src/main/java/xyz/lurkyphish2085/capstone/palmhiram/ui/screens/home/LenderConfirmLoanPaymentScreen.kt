@@ -7,11 +7,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -32,8 +34,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
@@ -41,14 +45,16 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ConfirmationDialog
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.WideButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
+import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ImageUtils
 import xyz.lurkyphish2085.capstone.palmhiram.utils.PaymentScheduleDateStatus
 
+
 @Composable
-fun BorrowerConfirmLoanPaymentScreen(
-    globalState: FunniGlobalViewModel,
-    viewModel: BorrowerConfirmLoanPaymentViewModel,
+fun LenderConfirmLoanPaymentScreen(
     onClose: () -> Unit,
     onSubmitSuccess: () -> Unit,
+    globalState: FunniGlobalViewModel,
+    viewModel: LenderConfirmLoanPaymentViewModel,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -71,7 +77,7 @@ fun BorrowerConfirmLoanPaymentScreen(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri: Uri? ->
-              viewModel?.updateImageBox(context, uri)
+            viewModel?.updateImageBox(context, uri)
         }
     )
 
@@ -194,11 +200,32 @@ fun BorrowerConfirmLoanPaymentScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(text = "To confirm the payment, submit photos as proof.")
-            
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Review the borrower's confirmation request.")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            val borrowerProofBitmap =  ImageUtils.decodeBase64ToBitmap(globalState.selectedPaymentItem.borrowerProofImage)
+            Text(text = "Borrower's Proof Image:", fontWeight = FontWeight.Bold)
+            Image(
+                painter = BitmapPainter(borrowerProofBitmap?.asImageBitmap()!!),
+                contentDescription = null,
+                modifier = Modifier.size(512.dp)
+            )
+
+            Row {
+                Text(text = "Remarks:", fontWeight = FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            BasicText(text = "${globalState.selectedPaymentItem.borrowerRemarks}", maxLines = 12)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = "To confirm the payment confirmation request, upload proof that you have received the payment already")
+
+            Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = goToGallery) {
                 Text(text = "SELECT IMAGE")
             }
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (selectedImageUriFlow?.value == null) {
                 Icon(
@@ -225,6 +252,8 @@ fun BorrowerConfirmLoanPaymentScreen(
             )
 
             Text("${remarksFlow.value.length}/256", color = if (remarksFlow?.value?.length in 1..257) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.error)
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         Spacer(modifier = Modifier.height(16.dp))

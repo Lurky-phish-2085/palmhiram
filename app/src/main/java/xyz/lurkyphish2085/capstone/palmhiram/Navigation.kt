@@ -32,6 +32,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerLoanOvervie
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderConfirmLoanPaymentRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderConfirmLoanPaymentScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderLoanOverviewRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.PaymentDetailsRoute
@@ -359,7 +361,12 @@ fun PalmHiramNavHost(
         composable(
             route = Destinations.LENDER_LOAN_PAYMENT_CONFIRMATION_ROUTE
         ) {
-
+            LenderConfirmLoanPaymentRoute(
+                onSubmit = { /*TODO*/ },
+                onCloseClick = { navController.navigateUp() },
+                globalState = globalState!!,
+                viewModel = it.sharedViewModel(navController)
+            )
         }
     }
 }

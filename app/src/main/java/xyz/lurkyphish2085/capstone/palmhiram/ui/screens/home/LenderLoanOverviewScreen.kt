@@ -40,8 +40,13 @@ fun LenderLoanOverviewScreen(
     val paymentSchedulesDatesFlow = viewModel.paymentSchedulesDatesOfSelectedTransaction.collectAsState()
 
     fun onSelectItemOnUnderApprovalPaymentItem(item: PaymentScheduleDate) {
+        viewModel?.getPaymentForSelectedPaymentDate(item)
         globalState.selectedPaymentDateItem = item
-        onSelectedUnderApprovalPaymentItemClick()
+        globalState.selectedPaymentItem = viewModel?.paymentForSelectedDate!!
+
+        if (globalState.selectedPaymentItem.date != null) {
+            onSelectedUnderApprovalPaymentItemClick()
+        }
     }
     fun onSelectItemOnOtherPendingItem(item: PaymentScheduleDate) {
         viewModel?.getPaymentForSelectedPaymentDate(item)
