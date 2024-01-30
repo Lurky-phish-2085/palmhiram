@@ -11,11 +11,13 @@ import kotlinx.coroutines.launch
 import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.PaymentScheduleRepository
+import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.Payment
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentSchedule
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +28,9 @@ class LenderLoanOverviewViewModel @Inject constructor(
 ): ViewModel() {
 
     var selectedLoanTransaction = LoanTransaction()
+
+    var cancelLoanFlow: MutableStateFlow<Resource<LoanTransaction>?> = MutableStateFlow(null)
+    var cancellationRemarks: MutableStateFlow<String> = MutableStateFlow("")
 
     val paymentSchedules: Flow<List<PaymentSchedule>>
         get() = paymentScheduleRepository?.paymentSchedules!!
@@ -93,5 +98,20 @@ class LenderLoanOverviewViewModel @Inject constructor(
                 }.get(0)
             }
         }
+    }
+
+    fun cancelLoanTransaction() = viewModelScope.launch {
+        cancelLoanFlow.value = Resource.Loading
+
+        selectedLoanTransaction.status = LoanTransactionStatus.CANCELLED.name
+        selectedLoanTransaction.cancellationReason = cancellationRemarks.value
+
+        val result = loanTransactionRepository?.updateLoanTransaction(selectedLoanTransaction.id, selectedLoanTransaction)
+
+        cancelLoanFlow.value = result
+    }
+
+    fun updateCancellationRemarksField(input: String) {
+        cancellationRemarks.value = input
     }
 }

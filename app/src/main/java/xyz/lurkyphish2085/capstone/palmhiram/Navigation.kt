@@ -34,6 +34,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderConfirmLoanPaymentRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderConfirmLoanPaymentScreen
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderDeclineRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderLoanOverviewRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.PaymentDetailsRoute
@@ -69,6 +70,7 @@ private object Destinations {
             const val BORROWER_LOAN_PAYMENT_DETAILS_ROUTE = "${DASHBOARD_ROUTE}/borrower-loan-payment-details-route"
             const val LENDER_LOAN_OVERVIEW_ROUTE = "${DASHBOARD_ROUTE}/lender-loan-overview"
             const val LENDER_LOAN_PAYMENT_CONFIRMATION_ROUTE = "${DASHBOARD_ROUTE}/lender-loan-payment-confirmation-route"
+            const val LENDER_DECLINE_LOAN_ROUTE = "${DASHBOARD_ROUTE}/lender-decline-loan-route"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -354,6 +356,7 @@ fun PalmHiramNavHost(
                 onClose = { navController.navigateUp() },
                 onSelectedUnderApprovalPaymentItemClick = { navController.navigate(Destinations.LENDER_LOAN_PAYMENT_CONFIRMATION_ROUTE) },
                 onSelectedNonUnderApprovalPaymentItemClick = { navController.navigate(Destinations.BORROWER_LOAN_PAYMENT_DETAILS_ROUTE) },
+                onDeclineLoanAccept = { navController.navigate(Destinations.LENDER_DECLINE_LOAN_ROUTE) },
                 globalState = globalState!!,
                 viewModel = it.sharedViewModel(navController)
             )
@@ -368,6 +371,20 @@ fun PalmHiramNavHost(
                     }
                 },
                 onCloseClick = { navController.navigateUp() },
+                globalState = globalState!!,
+                viewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.LENDER_DECLINE_LOAN_ROUTE
+        ) {
+            LenderDeclineRoute(
+                onClose = { navController.navigateUp() },
+                onSubmit = {
+                    navController.navigate(Destinations.DASHBOARD_ROUTE) {
+                        popUpTo(Destinations.DASHBOARD_ROUTE) { inclusive = true }
+                    }
+                },
                 globalState = globalState!!,
                 viewModel = it.sharedViewModel(navController)
             )

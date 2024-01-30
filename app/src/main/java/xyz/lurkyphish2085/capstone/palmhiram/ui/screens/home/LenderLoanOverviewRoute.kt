@@ -12,6 +12,7 @@ fun LenderLoanOverviewRoute (
     onClose: () -> Unit,
     onSelectedUnderApprovalPaymentItemClick: () -> Unit,
     onSelectedNonUnderApprovalPaymentItemClick: () -> Unit,
+    onDeclineLoanAccept: () -> Unit,
     globalState: FunniGlobalViewModel,
     viewModel: LenderLoanOverviewViewModel,
 ) {
@@ -23,6 +24,7 @@ fun LenderLoanOverviewRoute (
         onClose = onClose,
         onSelectedUnderApprovalPaymentItemClick = onSelectedUnderApprovalPaymentItemClick,
         onSelectedNonUnderApprovalPaymentItemClick = onSelectedNonUnderApprovalPaymentItemClick,
+        onDeclineLoanAccept = onDeclineLoanAccept,
         globalState = globalState,
         viewModel = viewModel,
         modifier = Modifier

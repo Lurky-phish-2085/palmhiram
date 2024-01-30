@@ -24,6 +24,8 @@ class FunniGlobalViewModel @Inject constructor(
 
     // Payment selection on Loan Payment Confirm Screens
     var selectedPaymentDateItem: PaymentScheduleDate = PaymentScheduleDate()
-
     var selectedPaymentItem: Payment = Payment()
+
+    // used on loan decline screen of lender
+    var cancellationRemarks: String = ""
 }

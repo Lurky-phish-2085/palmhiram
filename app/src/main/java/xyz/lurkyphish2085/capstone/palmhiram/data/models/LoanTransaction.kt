@@ -12,6 +12,8 @@ data class LoanTransaction(
     val borrowerId: String = "",
     val borrowerName: String = "",
 
+    var cancellationReason: String = "",
+
     var totalBalance: Long = 0L,
     var totalPrincipalBalance: Long = 0L,
     var totalInterestBalance: Long = 0L,

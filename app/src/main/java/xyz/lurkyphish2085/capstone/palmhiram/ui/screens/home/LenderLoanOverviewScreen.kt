@@ -11,15 +11,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CancelPresentation
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
+import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ConfirmationDialog
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.PaymentScheduleDateItemCard
@@ -32,6 +44,7 @@ fun LenderLoanOverviewScreen(
     onClose: () -> Unit,
     onSelectedUnderApprovalPaymentItemClick: () -> Unit,
     onSelectedNonUnderApprovalPaymentItemClick: () -> Unit,
+    onDeclineLoanAccept: () -> Unit,
     globalState: FunniGlobalViewModel,
     viewModel: LenderLoanOverviewViewModel,
     modifier: Modifier = Modifier
@@ -57,12 +70,47 @@ fun LenderLoanOverviewScreen(
         }
     }
 
+    var isLoading by rememberSaveable {
+        mutableStateOf(false)
+    }
+    CircularProgressLoadingIndicator(isLoading)
+
+    val onCancelLoanClick = {
+        viewModel.selectedLoanTransaction = globalState.selectedLoanTransactionItem
+        onDeclineLoanAccept()
+    }
+
+    var isCancellationDialogOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    ConfirmationDialog(
+        isOpen = isCancellationDialogOpen,
+        onPositiveClick = {
+            onCancelLoanClick()
+            isCancellationDialogOpen = false
+        },
+        onNegativeClick = { isCancellationDialogOpen = false },
+        onDismissRequest = {},
+        onClose = { isCancellationDialogOpen = false },
+        title = "Warning",
+        icon = Icons.Default.CancelPresentation,
+        headline = "Are you sure to decline this loan?",
+        description = "This action cannot be undone.",
+        positiveButtonText = "YES",
+        negativeButtonText = "NO"
+    )
+
+
     Scaffold(
         topBar = {
             TopBarWithBackButton(
                 text = "Loan Overview",
                 onClose = onClose
-            )
+            ) {
+                IconButton(onClick = { isCancellationDialogOpen = true }) {
+                    Icon(imageVector = Icons.Default.Cancel, contentDescription = null)
+                }
+            }
         },
         modifier = modifier
     ) { padding ->
