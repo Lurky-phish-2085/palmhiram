@@ -246,6 +246,7 @@ fun WelcomeScreen(
                                     .show()
                                 onLoginSuccess()
                                 viewModel.userDetails = user
+                                globalState?.user = user
                                 enableComponents = true
                             } else {
                                 Toast.makeText(context, "Sorry, please get verified first", Toast.LENGTH_LONG)

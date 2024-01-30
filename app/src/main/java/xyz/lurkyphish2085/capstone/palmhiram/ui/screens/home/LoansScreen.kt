@@ -4,16 +4,11 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,6 +55,12 @@ fun LoansScreen(
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
     lenderDashboardViewModel: LenderDashboardViewModel?,
     onClose: () -> Unit,
+    onSelectOngoingLoanAsBorrower: () -> Unit,
+    onSelectSettledLoanAsBorrower: () -> Unit,
+    onSelectCancelledLoanAsBorrower: () -> Unit,
+    onSelectOngoingLoanAsLender: () -> Unit,
+    onSelectSettledLoanAsLender: () -> Unit,
+    onSelectCancelledLoanAsLender: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val balanceName: String =
@@ -135,6 +136,12 @@ fun LoansScreen(
     ) { padding ->
         LoansScreenContent(
             globalState = globalState,
+            onSelectOngoingLoanAsBorrower = onSelectOngoingLoanAsBorrower,
+            onSelectSettledLoanAsBorrower = onSelectSettledLoanAsBorrower,
+            onSelectCancelledLoanAsBorrower = onSelectCancelledLoanAsBorrower,
+            onSelectOngoingLoanAsLender = onSelectOngoingLoanAsLender,
+            onSelectSettledLoanAsLender = onSelectSettledLoanAsLender,
+            onSelectCancelledLoanAsLender = onSelectCancelledLoanAsLender,
             approvalLoanTransactionState = approvalLoanTransactionFlow,
             settledLoanTransactionState = settledLoanTransactionFlow,
             ongoingLoanTransactionState = ongoingLoanTransactionFlow,
@@ -152,6 +159,12 @@ fun LoansScreen(
 @Composable
 fun LoansScreenContent(
     globalState: FunniGlobalViewModel,
+    onSelectOngoingLoanAsBorrower: () -> Unit,
+    onSelectSettledLoanAsBorrower: () -> Unit,
+    onSelectCancelledLoanAsBorrower: () -> Unit,
+    onSelectOngoingLoanAsLender: () -> Unit,
+    onSelectSettledLoanAsLender: () -> Unit,
+    onSelectCancelledLoanAsLender: () -> Unit,
     approvalLoanTransactionState: State<List<LoanTransaction>>,
     settledLoanTransactionState: State<List<LoanTransaction>>,
     ongoingLoanTransactionState: State<List<LoanTransaction>>,
@@ -171,6 +184,12 @@ fun LoansScreenContent(
 
             LoanTransactionList(
                 globalState = globalState,
+                onSelectOngoingLoanAsBorrower = onSelectOngoingLoanAsBorrower,
+                onSelectSettledLoanAsBorrower = onSelectSettledLoanAsBorrower,
+                onSelectCancelledLoanAsBorrower = onSelectCancelledLoanAsBorrower,
+                onSelectOngoingLoanAsLender = onSelectOngoingLoanAsLender,
+                onSelectSettledLoanAsLender = onSelectSettledLoanAsLender,
+                onSelectCancelledLoanAsLender = onSelectCancelledLoanAsLender,
                 approvalLoanTransactionState = approvalLoanTransactionState,
                 settledLoanTransactionState = settledLoanTransactionState,
                 ongoingLoanTransactionState = ongoingLoanTransactionState,
@@ -234,6 +253,12 @@ fun LoanScreenTabRow(
 @Composable
 fun LoanTransactionList(
     globalState: FunniGlobalViewModel,
+    onSelectOngoingLoanAsBorrower: () -> Unit,
+    onSelectSettledLoanAsBorrower: () -> Unit,
+    onSelectCancelledLoanAsBorrower: () -> Unit,
+    onSelectOngoingLoanAsLender: () -> Unit,
+    onSelectSettledLoanAsLender: () -> Unit,
+    onSelectCancelledLoanAsLender: () -> Unit,
     approvalLoanTransactionState: State<List<LoanTransaction>>,
     settledLoanTransactionState: State<List<LoanTransaction>>,
     ongoingLoanTransactionState: State<List<LoanTransaction>>,
@@ -253,6 +278,16 @@ fun LoanTransactionList(
             else -> ongoingLoanTransactionState.value
         }
 
+    val navToDesignatedScreen = {
+        when(selectedList) {
+            "approval" -> {}
+            "ongoing" -> { if (globalState.user.role == UserRoles.BORROWER.name.lowercase()) onSelectOngoingLoanAsBorrower() else onSelectOngoingLoanAsLender() }
+            "settled" -> { if (globalState.user.role == UserRoles.BORROWER.name.lowercase()) onSelectSettledLoanAsBorrower() else onSelectSettledLoanAsLender() }
+            "cancelled" -> { if (globalState.user.role == UserRoles.BORROWER.name.lowercase()) onSelectCancelledLoanAsBorrower() else onSelectCancelledLoanAsLender() }
+            else -> {}
+        }
+    }
+
     AnimatedContent(
         targetState = selectedList,
         label = "AnimatedAppearanceOfList",
@@ -268,12 +303,14 @@ fun LoanTransactionList(
                 contentPadding = PaddingValues(bottom = 16.dp),
                 modifier = modifier
             ) {
-                items(loanTransactionList, key = { it.id }) { transaction ->
+                items(loanTransactionList.asReversed(), key = { it.id }) { transaction ->
                     LoanTransactionItemCard(
                         onClick = {
-                                  globalState.selectedLoanTransactionItem = transaction
+                            globalState.selectedLoanTransactionItem = transaction
                             //TODO: Navigate to detail screen or something
                             Log.e("LoanT Item Select", "LoanTransactionList: ${transaction.totalBalance}")
+                            navToDesignatedScreen()
+                            Log.e("AAAAAA", "LoanTransactionList: ${globalState.user.role}")
                         },
                         balanceName = balanceName,
                         transactionDetails = transaction,
@@ -300,6 +337,12 @@ fun LoansScreenPreview() {
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null,null),
                 lenderDashboardViewModel = LenderDashboardViewModel(null,null, null),
                 onClose = {},
+                onSelectCancelledLoanAsBorrower = {},
+                onSelectOngoingLoanAsBorrower = {},
+                onSelectSettledLoanAsBorrower = {},
+                onSelectCancelledLoanAsLender = {},
+                onSelectOngoingLoanAsLender = {},
+                onSelectSettledLoanAsLender = {},
                 modifier = Modifier
                     .padding(top = 16.dp)
             )

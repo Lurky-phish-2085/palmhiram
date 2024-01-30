@@ -33,7 +33,6 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScr
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderConfirmLoanPaymentRoute
-import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderConfirmLoanPaymentScreen
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderDeclineRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderLoanOverviewRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
@@ -46,7 +45,6 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.Verificatio
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.WelcomeRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.splash.SplashRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.splash.SplashScreenViewModel
-import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.DateTimeUtils
 
 private object Destinations {
     const val SPLASH_ROUTE = "splash"
@@ -286,6 +284,12 @@ fun PalmHiramNavHost(
             LoansScreenRoute(
                 globalState = globalState!!,
                 onClose = { navController.navigateUp() },
+                onSelectCancelledLoanAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
+                onSelectSettledLoanAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
+                onSelectOngoingLoanAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
+                onSelectCancelledLoanAsLender = { navController.navigate(Destinations.LENDER_LOAN_OVERVIEW_ROUTE) },
+                onSelectSettledLoanAsLender = { navController.navigate(Destinations.LENDER_LOAN_OVERVIEW_ROUTE) },
+                onSelectOngoingLoanAsLender = { navController.navigate(Destinations.LENDER_LOAN_OVERVIEW_ROUTE) },
                 authViewModel = globalAuthViewModel!!,
                 borrowerDashboardViewModel = it.sharedViewModel(navController),
                 lenderDashboardViewModel = it.sharedViewModel(navController)

@@ -53,6 +53,7 @@ class BorrowerLoanOverviewViewModel @Inject constructor(
         _paymentSchedulesDatesOfSelectedTransaction
 
     var paymentForSelectedDate: Payment = Payment()
+    var paymentForSelectedDateFlow = MutableStateFlow(Payment())
 
     fun collectPaymentScheduleOfLoan(selectedLoanTransactionId: String) = viewModelScope.launch {
         paymentSchedules
@@ -87,6 +88,7 @@ class BorrowerLoanOverviewViewModel @Inject constructor(
             }.get(0)
 
             paymentForSelectedDate = filteredPayment
+            paymentForSelectedDateFlow.value = filteredPayment
         }
     }
 }
