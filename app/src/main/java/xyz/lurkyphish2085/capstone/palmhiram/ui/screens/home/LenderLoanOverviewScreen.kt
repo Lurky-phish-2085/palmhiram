@@ -57,7 +57,7 @@ fun LenderLoanOverviewScreen(
         globalState.selectedPaymentDateItem = item
         globalState.selectedPaymentItem = viewModel?.paymentForSelectedDate!!
 
-        if (globalState.selectedPaymentItem.date != null) {
+        if (globalState.selectedPaymentItem.date != null && globalState.selectedPaymentItem.borrowerProofImage.isNotBlank()) {
             onSelectedUnderApprovalPaymentItemClick()
         }
     }

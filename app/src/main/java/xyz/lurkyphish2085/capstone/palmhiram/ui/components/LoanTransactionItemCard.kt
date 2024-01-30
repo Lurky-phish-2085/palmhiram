@@ -1,5 +1,5 @@
-package xyz.lurkyphish2085.capstone.palmhiram.ui.components
 
+package xyz.lurkyphish2085.capstone.palmhiram.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -75,7 +77,7 @@ fun LoanTransactionItemCard(
             Text(
                 text =
                 when(LoanTransactionStatus.valueOf(transactionDetails.status.uppercase())) {
-                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER -> "APPROVAL"
+                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER -> "FOR APPROVAL"
                     LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER -> "APPROVAL"
                     LoanTransactionStatus.APPROVED -> "ONGOING"
                     LoanTransactionStatus.SETTLED -> "SETTLED"
@@ -101,11 +103,17 @@ fun LoanTransactionItemCard(
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = "$currencySymbol ${Money.parseActualValue(transactionDetails.totalBalance)}",
+                text = when(transactionDetails.status) {
+                    LoanTransactionStatus.SETTLED.name -> "$currencySymbol ${Money.parseActualValue(transactionDetails.totalPayment)}"
+                    else -> "$currencySymbol ${Money.parseActualValue(transactionDetails.totalBalance)}"
+                },
                 style = MaterialTheme.typography.displayMedium
             )
             Text(
-                text = balanceName,
+                text = when(transactionDetails.status) {
+                    LoanTransactionStatus.SETTLED.name -> "Total amount paid"
+                    else -> balanceName
+                },
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = Color.Gray)
             )
 

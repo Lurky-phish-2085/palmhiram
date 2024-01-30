@@ -10,6 +10,8 @@ data class Payment(
     @ServerTimestamp
     val created: Timestamp? = null,
 
+    var hasConfirmed: Boolean = false,
+
     val amount: Long = 0L,
     var date: Timestamp? = null,
 

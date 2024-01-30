@@ -112,13 +112,17 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
             update = update
         )
 
+        paymentItem.hasConfirmed = true
+        paymentRepository.updatePayment(paymentItem.id, paymentItem)
+
+        collectPaymentsForSelectedDate()
         updatePaymentDateFlow.value = result
     }
 
     fun collectPaymentsForSelectedDate() = viewModelScope.launch {
         payments.collectLatest {
             val collectedValues = it.filter { payment ->
-                payment.id == paymentScheduleDateItem.id
+                payment.paymentScheduleDateId == paymentScheduleDateItem.id
             }
 
             paymentsForSelectedScheduleDate?.value = collectedValues
@@ -129,7 +133,7 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
 
         loanTransactionItem.totalBalance = loanTransactionItem.totalBalance - paymentItem.amount
 
-        if (paymentsForSelectedScheduleDate?.value?.isNullOrEmpty()!!) {
+        if (loanTransactionItem.totalBalance <= 0) {
             loanTransactionItem.status = LoanTransactionStatus.SETTLED.name
             loanTransactionItem.totalBalance = 0L
         }
