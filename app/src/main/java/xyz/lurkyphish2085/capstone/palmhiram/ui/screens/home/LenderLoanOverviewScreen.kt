@@ -66,7 +66,8 @@ fun LenderLoanOverviewScreen(
             onSelectedUnderApprovalPaymentItemClick()
         }
     }
-    fun onSelectItemOnOtherPendingItem(item: PaymentScheduleDate) {
+
+    fun onSelectItemOnOtherPaymentItem(item: PaymentScheduleDate) {
         viewModel?.getPaymentForSelectedPaymentDate(item)
         globalState.selectedPaymentItem = viewModel?.paymentForSelectedDate!!
 
@@ -140,89 +141,125 @@ fun LenderLoanOverviewScreen(
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
-            Text(
-                text = "Payment Schedules",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
+            when(globalState.selectedLoanTransactionItem.status) {
+                LoanTransactionStatus.SETTLED.name -> {
+                    Text(
+                        text = "Approved Payments",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                }
+                else -> {
+                    Text(
+                        text = "Payment Schedules",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
 
-            Text(
-                text = "Under Approval",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-            if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVAL }.isEmpty()) {
-                NothingToSeeHere(modifier = Modifier.fillMaxWidth())
-            } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(256.dp)
-                ) {
-                    items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVAL }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
-                        PaymentScheduleDateItemCard(
-                            onClick = { onSelectItemOnUnderApprovalPaymentItem(scheduleDate) },
-                            globalState = globalState,
-                            details = scheduleDate
-                        )
-                    }
                 }
             }
 
-            Text(
-                text = "Pending",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-            if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.isEmpty()) {
-                NothingToSeeHere(modifier = Modifier.fillMaxWidth())
-            } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(256.dp)
-                ) {
-                    items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
-                        PaymentScheduleDateItemCard(
-                            onClick = {},
-                            globalState = globalState,
-                            details = scheduleDate
+            when(globalState.selectedLoanTransactionItem.status) {
+                LoanTransactionStatus.SETTLED.name -> {
+                    if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.isEmpty()) {
+                        NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentPadding = PaddingValues(bottom = 16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(256.dp)
+                        ) {
+                            items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                                PaymentScheduleDateItemCard(
+                                    onClick = { onSelectItemOnOtherPaymentItem(scheduleDate)},
+                                    globalState = globalState,
+                                    details = scheduleDate
+                                )
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    Text(
+                        text = "Under Approval",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                    if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVAL }.isEmpty()) {
+                        NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentPadding = PaddingValues(bottom = 16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(256.dp)
+                        ) {
+                            items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVAL }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                                PaymentScheduleDateItemCard(
+                                    onClick = { if (globalState.selectedLoanTransactionItem.status == LoanTransactionStatus.CANCELLED.name) onSelectItemOnOtherPaymentItem(scheduleDate) else onSelectItemOnUnderApprovalPaymentItem(scheduleDate) },
+                                    globalState = globalState,
+                                    details = scheduleDate
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        text = "Pending",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                    if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.isEmpty()) {
+                        NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentPadding = PaddingValues(bottom = 16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(256.dp)
+                        ) {
+                            items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                                PaymentScheduleDateItemCard(
+                                    onClick = {},
+                                    globalState = globalState,
+                                    details = scheduleDate
+                                )
+                            }
+                        }
+                        Text(
+                            text = "Approved",
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.padding(vertical = 16.dp)
                         )
+                        if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.isEmpty()) {
+                            NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+                        } else {
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                contentPadding = PaddingValues(bottom = 16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(256.dp)
+                            ) {
+                                items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                                    PaymentScheduleDateItemCard(
+                                        onClick = { onSelectItemOnOtherPaymentItem(scheduleDate)},
+                                        globalState = globalState,
+                                        details = scheduleDate
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
-            Text(
-                text = "Approved",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-            if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.isEmpty()) {
-                NothingToSeeHere(modifier = Modifier.fillMaxWidth())
-            } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(256.dp)
-                ) {
-                    items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.APPROVED }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
-                        PaymentScheduleDateItemCard(
-                            onClick = { onSelectItemOnOtherPendingItem(scheduleDate) },
-                            globalState = globalState,
-                            details = scheduleDate
-                        )
-                    }
-                }
-            }
-
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
