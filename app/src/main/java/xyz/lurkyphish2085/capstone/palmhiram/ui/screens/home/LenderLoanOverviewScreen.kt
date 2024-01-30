@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.PaymentScheduleDate
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.CircularProgressLoadingIndicator
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ConfirmationDialog
@@ -52,12 +51,17 @@ fun LenderLoanOverviewScreen(
 
     val paymentSchedulesDatesFlow = viewModel.paymentSchedulesDatesOfSelectedTransaction.collectAsState()
 
+    fun noBlankFieldsInPaymentItem(): Boolean {
+        return globalState.selectedPaymentItem.date != null &&
+        globalState.selectedPaymentItem.borrowerProofImage.isNotBlank() || globalState.selectedPaymentItem.lenderProofImage.isNotBlank()
+    }
+
     fun onSelectItemOnUnderApprovalPaymentItem(item: PaymentScheduleDate) {
         viewModel?.getPaymentForSelectedPaymentDate(item)
         globalState.selectedPaymentDateItem = item
         globalState.selectedPaymentItem = viewModel?.paymentForSelectedDate!!
 
-        if (globalState.selectedPaymentItem.date != null && globalState.selectedPaymentItem.borrowerProofImage.isNotBlank()) {
+        if (noBlankFieldsInPaymentItem()) {
             onSelectedUnderApprovalPaymentItemClick()
         }
     }
@@ -65,7 +69,7 @@ fun LenderLoanOverviewScreen(
         viewModel?.getPaymentForSelectedPaymentDate(item)
         globalState.selectedPaymentItem = viewModel?.paymentForSelectedDate!!
 
-        if (globalState.selectedPaymentItem.date != null) {
+        if (noBlankFieldsInPaymentItem()) {
             onSelectedNonUnderApprovalPaymentItemClick()
         }
     }

@@ -86,6 +86,8 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
         paymentItem.lenderProofImage = bitmapBase64String.value
         paymentItem.lenderRemarks = remarks.value
         paymentItem.dateConfirmed = DateTimeUtils.formatToISO8601Date(Date())
+        paymentItem.hasConfirmed = true
+
 
         val result = paymentRepository.updatePayment(paymentItem.id, paymentItem)
 
@@ -111,9 +113,6 @@ class LenderConfirmLoanPaymentViewModel @Inject constructor(
             paymentScheduleDateId = paymentScheduleDateItem.id,
             update = update
         )
-
-        paymentItem.hasConfirmed = true
-        paymentRepository.updatePayment(paymentItem.id, paymentItem)
 
         collectPaymentsForSelectedDate()
         updatePaymentDateFlow.value = result

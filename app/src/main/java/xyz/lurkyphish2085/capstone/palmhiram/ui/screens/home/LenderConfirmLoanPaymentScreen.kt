@@ -125,6 +125,7 @@ fun LenderConfirmLoanPaymentScreen(
 
                     isLoading = false
 
+                    globalState.selectedPaymentItem = it.result
                     viewModel.updatePaymentScheduleDateStatus(PaymentScheduleDateStatus.APPROVED)
                 }
             }
@@ -152,6 +153,7 @@ fun LenderConfirmLoanPaymentScreen(
 
                     isLoading = false
 
+                    globalState.selectedPaymentDateItem = it.result
                     viewModel.updateLoanTransaction()
                 }
             }
@@ -176,6 +178,8 @@ fun LenderConfirmLoanPaymentScreen(
                 LaunchedEffect(Unit) {
                     Toast.makeText(context, "SUCCESS: New loan total balance: ${it.result.totalBalance} Status: ${it.result.status}", Toast.LENGTH_SHORT)
                         .show()
+
+                    globalState.selectedLoanTransactionItem = it.result
 
                     isLoading = false
                     isSuccessDialogOpen = true

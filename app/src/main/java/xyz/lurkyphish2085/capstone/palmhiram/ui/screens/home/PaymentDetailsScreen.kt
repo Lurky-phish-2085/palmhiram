@@ -2,7 +2,9 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -48,22 +50,7 @@ fun PaymentDetailsScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(
-                text = "Payment Status",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-            val paymentStatus =
-                when(PaymentScheduleDateStatus.valueOf(globalState.selectedPaymentDateItem.status)) {
-                    PaymentScheduleDateStatus.APPROVED -> "APPROVED"
-                    PaymentScheduleDateStatus.APPROVAL -> "UNDER APPROVAL"
-                    PaymentScheduleDateStatus.PENDING -> "PENDING"
-                }
-            Text(
-                text = paymentStatus,
-                style = MaterialTheme.typography.headlineSmall,
-            )
-
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Amount",
                 style = MaterialTheme.typography.headlineMedium,
@@ -114,6 +101,7 @@ fun PaymentDetailsScreen(
                     modifier = Modifier.size(512.dp)
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
