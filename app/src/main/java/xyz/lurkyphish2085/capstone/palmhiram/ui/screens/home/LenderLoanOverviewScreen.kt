@@ -36,6 +36,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.PaymentScheduleDateItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.PaymentScheduleDateStatus
 
 @Composable
@@ -111,8 +112,10 @@ fun LenderLoanOverviewScreen(
                 text = "Loan Overview",
                 onClose = onClose
             ) {
-                IconButton(onClick = { isCancellationDialogOpen = true }) {
-                    Icon(imageVector = Icons.Default.Cancel, contentDescription = null)
+                if (viewModel.selectedLoanTransaction.status == LoanTransactionStatus.APPROVED.name) {
+                    IconButton(onClick = { isCancellationDialogOpen = true }) {
+                        Icon(imageVector = Icons.Default.Cancel, contentDescription = null)
+                    }
                 }
             }
         },
