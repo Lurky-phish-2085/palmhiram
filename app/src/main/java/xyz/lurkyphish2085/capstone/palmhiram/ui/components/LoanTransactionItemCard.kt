@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.Timestamp
@@ -77,8 +78,8 @@ fun LoanTransactionItemCard(
             Text(
                 text =
                 when(LoanTransactionStatus.valueOf(transactionDetails.status.uppercase())) {
-                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER -> "FOR APPROVAL"
-                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER -> "APPROVAL"
+                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER -> "FOR LENDER APPROVAL"
+                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER -> "FOR LENDEE APPROVAL"
                     LoanTransactionStatus.APPROVED -> "ONGOING"
                     LoanTransactionStatus.SETTLED -> "SETTLED"
                     LoanTransactionStatus.CANCELLED -> "CANCELLED"
@@ -92,7 +93,8 @@ fun LoanTransactionItemCard(
                         LoanTransactionStatus.APPROVED -> MaterialTheme.colorScheme.secondary
                         LoanTransactionStatus.SETTLED -> MaterialTheme.colorScheme.primary
                         LoanTransactionStatus.CANCELLED -> MaterialTheme.colorScheme.error
-                    }
+                    },
+                    textAlign = TextAlign.Right
                 ),
             )
         }

@@ -79,6 +79,7 @@ class LenderDashboardViewModel @Inject constructor(
     private var _settledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
     private var _cancelledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
 
+    val borrowerApprovalLoanTransactions = MutableStateFlow<List<LoanTransaction>>(listOf())
     val approvalLoanTransactions: StateFlow<List<LoanTransaction>> = _approvalLoanTransactions
     val ongoingLoanTransactions: StateFlow<List<LoanTransaction>> = _ongoingLoanTransactions
     val settledLoanTransactions: StateFlow<List<LoanTransaction>> = _settledLoanTransactions
@@ -86,18 +87,27 @@ class LenderDashboardViewModel @Inject constructor(
 
     init {
         collectApprovalLoanTransaction()
+        collectBorrowerApprovalLoanTransactions()
         collectOngoingLoanTransaction()
         collectSettledLoanTransaction()
         collectCancelledLoanTransaction()
     }
 
+    private fun collectBorrowerApprovalLoanTransactions() = viewModelScope.launch {
+        allLoanTransactionsOrderedByStartDate
+            .collectLatest {
+                val borrowerApprovalTransactions = it.filter { transaction ->
+                    LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER
+                }
+
+                borrowerApprovalLoanTransactions.value = borrowerApprovalTransactions
+            }
+    }
     private fun collectApprovalLoanTransaction() = viewModelScope.launch {
         allLoanTransactionsOrderedByStartDate
             .collectLatest {
                 val approvalTransactions = it.filter { transaction ->
-                    (LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER)
-                            ||
-                            (LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER)
+                    LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER
                 }
 
                 _approvalLoanTransactions.value = approvalTransactions

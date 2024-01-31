@@ -203,7 +203,7 @@ fun SetupLoanForApprovalScreen(
                         .show()
 
                     isLoading = false
-                    viewModel?.approveLoanTransaction(globalState.selectedLoanTransactionItem)
+                    viewModel?.setupLoanTransactionForBorrowerToApprove(globalState.selectedLoanTransactionItem)
                 }
             }
 
@@ -232,7 +232,7 @@ fun SetupLoanForApprovalScreen(
                 isLoading = false
 
                 when(it.result.status) {
-                    LoanTransactionStatus.APPROVED.name -> isSuccessDialogForLoanApproveModalOpen = true
+                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER.name -> isSuccessDialogForLoanApproveModalOpen = true
                     LoanTransactionStatus.CANCELLED.name -> isSuccessDialogForLoanDeclineModalOpen = true
                 }
             }
@@ -452,8 +452,8 @@ fun SetupLoanForApprovalScreen(
             },
             title = "Success",
             icon = Icons.Default.Done,
-            headline = "Loan Approved",
-            description = "The loan has been successfully approved and is ongoing.",
+            headline = "Loan Submitted to Borrower",
+            description = "Wait for the borrower's response.",
             positiveButtonText = "OKAY",
             negativeButtonText = ""
         )

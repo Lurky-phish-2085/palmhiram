@@ -16,6 +16,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
+import java.lang.Thread.State
 import javax.inject.Inject
 
 @HiltViewModel
@@ -82,6 +83,7 @@ class BorrowerDashboardViewModel @Inject constructor(
     private var _settledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
     private var _cancelledLoanTransactions = MutableStateFlow<List<LoanTransaction>>(ArrayList<LoanTransaction>())
 
+    val borrowerApprovalLoanTransactions = MutableStateFlow<List<LoanTransaction>>(listOf())
     val approvalLoanTransactions: StateFlow<List<LoanTransaction>> = _approvalLoanTransactions
     val ongoingLoanTransactions: StateFlow<List<LoanTransaction>> = _ongoingLoanTransactions
     val settledLoanTransactions: StateFlow<List<LoanTransaction>> = _settledLoanTransactions
@@ -89,9 +91,25 @@ class BorrowerDashboardViewModel @Inject constructor(
 
     init {
         collectApprovalLoanTransaction()
+        collectBorrowerApprovalLoanTransactions()
         collectOngoingLoanTransaction()
         collectSettledLoanTransaction()
         collectCancelledLoanTransaction()
+    }
+
+    private fun collectBorrowerApprovalLoanTransactions() = viewModelScope.launch {
+        allLoanTransactionsOrderedByStartDate
+            .collectLatest {
+                val borrowerApprovalTransactions = it.filter { transaction ->
+                    val ownedByCurrentUser = transaction.borrowerId == currentUser?.uid
+                    val isPendingByApproval =
+                        LoanTransactionStatus.valueOf(transaction.status.uppercase()) == LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER
+
+                    ownedByCurrentUser && isPendingByApproval
+                }
+
+                borrowerApprovalLoanTransactions.value = borrowerApprovalTransactions
+            }
     }
 
     private fun collectApprovalLoanTransaction() = viewModelScope.launch {

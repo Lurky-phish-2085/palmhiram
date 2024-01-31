@@ -116,9 +116,15 @@ fun OverviewScreen(
             UserRoles.BORROWER -> borrowerDashboardViewModel?.approvalLoanTransactions!!
             UserRoles.LENDER -> lenderDashboardViewModel?.approvalLoanTransactions!!
         }
+    val borrowerApprovalLoanTransactionListRef: StateFlow<List<LoanTransaction>> =
+        when(role) {
+            UserRoles.BORROWER -> borrowerDashboardViewModel?.borrowerApprovalLoanTransactions!!
+            UserRoles.LENDER -> lenderDashboardViewModel?.borrowerApprovalLoanTransactions!!
+        }
 
     val ongoingLoanTransactionListFlow = ongoingLoanTransactionListRef.collectAsState()
     val approvalLoanTransactionListFlow = approvalLoanTransactionListRef.collectAsState()
+    val borrowerApprovalTransactionListFlow = borrowerApprovalLoanTransactionListRef.collectAsState()
 
     Scaffold(
         topBar = {},
@@ -130,6 +136,7 @@ fun OverviewScreen(
             amount = balanceAmountFlow.value.toString(),
             ongoingTransactionList = ongoingLoanTransactionListFlow.value,
             approvalTransactionList = approvalLoanTransactionListFlow.value,
+            borrowerApprovalTransactionList = borrowerApprovalTransactionListFlow.value,
             balanceName =
                 when(role) {
                     UserRoles.BORROWER -> borrowerDashboardViewModel?.balanceName!!
@@ -194,6 +201,7 @@ fun OverviewScreenContent(
     balanceName: String,
     ongoingTransactionList: List<LoanTransaction>,
     approvalTransactionList: List<LoanTransaction>,
+    borrowerApprovalTransactionList: List<LoanTransaction>,
     leftButtonName: String,
     rightButtonName: String,
     actionItems: List<ActionItem>,
@@ -251,6 +259,15 @@ fun OverviewScreenContent(
                 lenderDashboardViewModel = lenderDashboardViewModel,
                 modifier = Modifier
                     .fillMaxWidth()
+            )
+            LoanTransactionsHorizontalPager(
+                globalState = globalState,
+                onClickItem = { /*TODO*/ },
+                role = role,
+                borrowerDashboardViewModel = borrowerDashboardViewModel,
+                lenderDashboardViewModel = lenderDashboardViewModel,
+                transactionList = borrowerApprovalTransactionList,
+                balanceName = balanceName
             )
             ActionSection(
                 onLoansClick = onLoansClick,

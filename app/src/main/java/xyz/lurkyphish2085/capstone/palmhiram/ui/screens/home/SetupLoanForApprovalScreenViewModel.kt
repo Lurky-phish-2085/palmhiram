@@ -129,7 +129,7 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
         _updatedLoanTransactionFlow.value = result
     }
 
-    fun approveLoanTransaction(loanTransactionItem: LoanTransaction) = viewModelScope.launch {
+    fun setupLoanTransactionForBorrowerToApprove(loanTransactionItem: LoanTransaction) = viewModelScope.launch {
         val updatedLoanTransaction = loanTransactionItem
         updatedLoanTransaction.totalBalance = totalPayment.value
         updatedLoanTransaction.totalInterestBalance = totalInterestAmount.value
@@ -140,7 +140,7 @@ class SetupLoanForApprovalScreenViewModel @Inject constructor(
         updatedLoanTransaction.interestRateInPercentage = interestRatePerc
         updatedLoanTransaction.startDate = DateTimeUtils.convertLocalDateToTimestamp(DateTimeUtils.parseISO8601DateString(startDate))
         updatedLoanTransaction.endDate = DateTimeUtils.convertLocalDateToTimestamp(DateTimeUtils.parseISO8601DateString(dueDate))
-        updatedLoanTransaction.status = LoanTransactionStatus.APPROVED.name
+        updatedLoanTransaction.status = LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER.name
 
         updatedLoanTransaction.repaymentFrequency = frequencyPaymentMode.name
 
