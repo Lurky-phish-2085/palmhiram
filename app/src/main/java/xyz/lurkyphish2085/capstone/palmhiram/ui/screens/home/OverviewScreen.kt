@@ -260,10 +260,10 @@ fun OverviewScreenContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             )
-            TransactionListSection(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-            )
+//            TransactionListSection(
+//                modifier = Modifier
+//                    .padding(horizontal = 16.dp)
+//            )
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -579,11 +579,11 @@ private val borrowerActionItems = listOf(
         actionName = ActionButtonTypes.LOANS.toString().lowercase().capitalized(),
         type = ActionButtonTypes.LOANS,
     ),
-    ActionItem(
-        icon = Icons.Outlined.Dataset,
-        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
-        type = ActionButtonTypes.TRANSACTIONS,
-    ),
+//    ActionItem(
+//        icon = Icons.Outlined.Dataset,
+//        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
+//        type = ActionButtonTypes.TRANSACTIONS,
+//    ),
 )
 
 private val lenderActionItems = listOf(
@@ -592,11 +592,11 @@ private val lenderActionItems = listOf(
         actionName = ActionButtonTypes.LOANS.toString().lowercase().capitalized(),
         type = ActionButtonTypes.LOANS,
     ),
-    ActionItem(
-        icon = Icons.Outlined.Dataset,
-        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
-        type = ActionButtonTypes.TRANSACTIONS,
-    ),
+//    ActionItem(
+//        icon = Icons.Outlined.Dataset,
+//        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
+//        type = ActionButtonTypes.TRANSACTIONS,
+//    ),
     ActionItem(
         icon = Icons.Outlined.AccountBox,
         actionName = ActionButtonTypes.PROFILES.toString().lowercase().capitalized(),
