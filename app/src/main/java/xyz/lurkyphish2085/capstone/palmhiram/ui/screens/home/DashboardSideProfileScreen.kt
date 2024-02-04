@@ -113,7 +113,7 @@ fun DashboardSideProfileScreenContent(
                 MenuButton(
                     menuName = "Settings",
                     icon = Icons.Outlined.Settings,
-                    onClick = { /*TODO*/ },
+                    onClick = onSettingsClick,
                     modifier = Modifier
                         .fillMaxWidth()
                 )

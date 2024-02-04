@@ -31,9 +31,9 @@ class AuthViewModel @Inject constructor(
 
     var changePasswordFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
 
-    fun changePassword(password: String) = viewModelScope.launch {
+    fun changePassword(oldPassword: String, password: String) = viewModelScope.launch {
         changePasswordFlow.value = Resource.Loading
-        val result = repository.changePassword(newPassword = password)
+        val result = repository.changePassword(oldPassword = oldPassword, newPassword = password)
         changePasswordFlow.value = result
     }
 

@@ -1,5 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -28,6 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
@@ -72,6 +78,7 @@ fun SettingsScreen(
             is Resource.Success -> {
                 LaunchedEffect(Unit) {
                     Toast.makeText(context, "SUCCESS: ${it.result.uid}:${it.result.displayName}", Toast.LENGTH_SHORT)
+                        .show()
 
                     isLoading = false
                 }
@@ -102,14 +109,24 @@ fun SettingsScreen(
         OutlinedTextField(
             label = { Text(text = "Old Password") },
             value = oldPassword,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+            ),
             onValueChange = { oldPassword = it }
         )
         OutlinedTextField(
             label = { Text(text = "New Password") },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+            ),
             value = newPassword,
             onValueChange = { newPassword = it }
         )
-        Button(onClick = { globalAuthViewModel.changePassword(newPassword) } ) {
+        Button( onClick = { globalAuthViewModel.changePassword(oldPassword, newPassword) } ) {
             Text(text = "Apply password")
         }
 

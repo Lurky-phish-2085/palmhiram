@@ -38,6 +38,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderDeclineRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderLoanOverviewRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.PaymentDetailsRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.SettingsRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.SetupLoanApprovalScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
@@ -59,6 +60,7 @@ private object Destinations {
 
         const val DASHBOARD_ROUTE = "dashboard"
             const val PROFILE_DRAWER_ROUTE = "${DASHBOARD_ROUTE}/profile-drawer"
+                const val SETTINGS_ROUTE = "${DASHBOARD_ROUTE}/profile-drawer/settings"
             const val NOTIFICATIONS_ROUTE = "${DASHBOARD_ROUTE}/notifications"
 
             const val APPLY_LOAN_ROUTE = "${DASHBOARD_ROUTE}/apply-loan"
@@ -265,7 +267,7 @@ fun PalmHiramNavHost(
                         popUpTo(Destinations.DASHBOARD_ROUTE) { inclusive = true }
                     }
                 },
-                onSettingsClick = { /*TODO*/ },
+                onSettingsClick = { navController.navigate(Destinations.SETTINGS_ROUTE) },
                 onQuickHelpClick = { /*TODO*/ },
                 onAboutClick = { /*TODO*/ },
                 viewModel = globalAuthViewModel!!
@@ -387,6 +389,15 @@ fun PalmHiramNavHost(
                 },
                 globalState = globalState!!,
                 viewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.SETTINGS_ROUTE
+        ) {
+            SettingsRoute(
+                onClose = { navController.navigateUp() },
+                globalState = globalState!!,
+                globalAuthViewModel = it.sharedViewModel(navController)
             )
         }
     }
