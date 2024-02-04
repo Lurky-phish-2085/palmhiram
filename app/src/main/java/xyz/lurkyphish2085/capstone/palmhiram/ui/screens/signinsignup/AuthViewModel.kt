@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.oAuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,14 @@ class AuthViewModel @Inject constructor(
 
     val fields = UserCredentials("", "", "", "")
     var userDetails = User()
+
+    var changePasswordFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
+
+    fun changePassword(password: String) = viewModelScope.launch {
+        changePasswordFlow.value = Resource.Loading
+        val result = repository.changePassword(newPassword = password)
+        changePasswordFlow.value = result
+    }
 
     private val _loginFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val loginFlow: StateFlow<Resource<FirebaseUser>?> = _loginFlow

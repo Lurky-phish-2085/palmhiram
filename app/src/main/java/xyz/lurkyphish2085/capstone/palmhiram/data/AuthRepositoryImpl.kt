@@ -32,6 +32,16 @@ class AuthRepositoryImpl @Inject constructor(
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
 
+    override suspend fun changePassword(newPassword: String): Resource<FirebaseUser> {
+        return try {
+            val result = currentUser?.updatePassword(newPassword)?.await()
+            Resource.Success(currentUser!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
     override suspend fun login(email: String, password: String): Resource<FirebaseUser> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()

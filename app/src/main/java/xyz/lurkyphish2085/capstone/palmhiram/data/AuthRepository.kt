@@ -28,4 +28,5 @@ interface AuthRepository {
     suspend fun checkExistingAccount(email: String): Resource<User>
     suspend fun verifyAccount(userId: String): Resource<User>
     suspend fun getUser(userId: String): Resource<User>
+    suspend fun changePassword(newPassword: String): Resource<FirebaseUser>
 }
