@@ -77,7 +77,7 @@ fun LoanTransactionItemCard(
             Text(
                 text =
                 when(LoanTransactionStatus.valueOf(transactionDetails.status.uppercase())) {
-                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER -> "FOR APPROVAL"
+                    LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_LENDER -> "PENDING"
                     LoanTransactionStatus.PENDING_FOR_APPROVAL_BY_BORROWER -> "APPROVAL"
                     LoanTransactionStatus.APPROVED -> "ONGOING"
                     LoanTransactionStatus.SETTLED -> "SETTLED"
