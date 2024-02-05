@@ -83,13 +83,13 @@ fun DashboardScreen(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f, true))
-                    IconButton(onClick = onNotificationsClick) {
-                        Icon(
-                            imageVector = Icons.Outlined.Notifications,
-                            contentDescription = null,
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
+//                    IconButton(onClick = onNotificationsClick) {
+//                        Icon(
+//                            imageVector = Icons.Outlined.Notifications,
+//                            contentDescription = null,
+//                            modifier = Modifier.size(36.dp)
+//                        )
+//                    }
                 }
 //                DashBoardScreenTabRow(
 //                    onHomeClick = {

@@ -25,6 +25,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.NothingToSeeHere
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.PaymentScheduleDateItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.PaymentScheduleDateStatus
 
 
@@ -110,7 +111,7 @@ fun BorrowerLoanOverviewScreen(
                 ) {
                     items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
                         PaymentScheduleDateItemCard(
-                            onClick = { onSelectItemOnPendingPaymentItem(scheduleDate) },
+                            onClick = { if (globalState.selectedLoanTransactionItem.status != LoanTransactionStatus.CANCELLED.name) onSelectItemOnPendingPaymentItem(scheduleDate) },
                             globalState = globalState,
                             details = scheduleDate
                         )
