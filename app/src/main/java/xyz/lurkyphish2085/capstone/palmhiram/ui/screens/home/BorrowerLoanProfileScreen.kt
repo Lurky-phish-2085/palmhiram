@@ -34,6 +34,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 @Composable
 fun BorrowerLoanProfileScreen(
     onClose: () -> Unit,
+    onItemClick: () -> Unit,
     globalState: FunniGlobalViewModel,
     viewModel: BorrowerLoanProfileViewModel,
     modifier: Modifier = Modifier
@@ -112,6 +113,7 @@ fun BorrowerLoanProfileScreen(
                     LoanTransactionItemCard(
                         onClick = {
                             globalState.selectedLoanTransactionItem = loan
+                            onItemClick()
                         },
                         balanceName = "Total amount to collect",
                         transactionDetails = loan,
@@ -140,6 +142,7 @@ fun BorrowerLoanProfileScreen(
                     LoanTransactionItemCard(
                         onClick = {
                             globalState.selectedLoanTransactionItem = loan
+                            onItemClick()
                         },
                         balanceName = "Total amount to collect",
                         transactionDetails = loan,

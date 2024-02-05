@@ -12,6 +12,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 @Composable
 fun BorrowerLoanProfileRoute(
     onClose: () -> Unit,
+    onItemClick: () -> Unit,
     globalState: FunniGlobalViewModel,
     viewModel: BorrowerLoanProfileViewModel
 ) {
@@ -22,6 +23,7 @@ fun BorrowerLoanProfileRoute(
 
     BorrowerLoanProfileScreen(
         onClose = onClose,
+        onItemClick = onItemClick,
         globalState = globalState,
         viewModel = viewModel,
         modifier = Modifier.padding(all = 16.dp)
