@@ -288,6 +288,8 @@ fun PalmHiramNavHost(
             route = Destinations.LOANS_ROUTE
         ) {
             LoansScreenRoute(
+                onClickItemAsLender = { navController.navigate(Destinations.LENDER_LOAN_OVERVIEW_ROUTE) },
+                onClickItemAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
                 globalState = globalState!!,
                 onClose = { navController.navigateUp() },
                 authViewModel = globalAuthViewModel!!,
