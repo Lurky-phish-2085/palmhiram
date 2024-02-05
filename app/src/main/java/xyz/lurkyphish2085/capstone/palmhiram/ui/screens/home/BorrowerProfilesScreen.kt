@@ -74,6 +74,7 @@ fun BorrowerProfilesScreen(
     verificationCodeFlow: State<Resource<VerificationCode>?>?,
     retrievedVerificationCodeFlow: State<Resource<VerificationCode>?>?,
     onClose: () -> Unit,
+    onClickVerifiedProfile: () -> Unit,
     onSendVerificationCodeViaEmail: () -> Unit,
     onSendVerificationCodeViaSMS: () -> Unit,
     onSendVerificationCodeSuccess: (code: String) -> Unit,
@@ -218,7 +219,7 @@ fun BorrowerProfilesScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BorrowerProfileList(
-                        onClickItem = { /*TODO*/ },
+                        onClickItem = onClickVerifiedProfile,
                         globalState = globalState,
                         state = listState,
                         profiles = verifiedProfiles.value,
@@ -636,6 +637,7 @@ fun BorrowerProfilesScreenPreview() {
                 verificationCodeFlow = null,
                 retrievedVerificationCodeFlow = null,
                 onClose = {},
+                onClickVerifiedProfile = {},
                 onSendVerificationCodeViaEmail = {},
                 onSendVerificationCodeViaSMS = {},
                 onSendVerificationCodeSuccess = {},

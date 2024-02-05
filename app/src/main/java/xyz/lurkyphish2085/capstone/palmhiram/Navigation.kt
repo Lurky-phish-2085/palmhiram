@@ -312,6 +312,7 @@ fun PalmHiramNavHost(
                 globalState = globalState!!,
                 authViewModel = it.sharedViewModel(navController),
                 onClose = { navController.navigateUp() },
+                onClickVerifiedProfile = { navController.navigate(Destinations.LOAN_PROFILE_OF_BORROWER) },
                 lenderDashboardViewModel = it.sharedViewModel(navController)
             )
         }

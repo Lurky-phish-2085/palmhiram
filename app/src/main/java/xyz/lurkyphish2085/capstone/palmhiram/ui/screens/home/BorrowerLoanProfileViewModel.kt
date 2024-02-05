@@ -9,6 +9,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.data.LoanTransactionRepository
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
+import xyz.lurkyphish2085.capstone.palmhiram.utils.Money
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +18,7 @@ class BorrowerLoanProfileViewModel @Inject constructor(
 ): ViewModel() {
 
     val borrowerUser = MutableStateFlow<User?>(null)
+    val totalAmountPayment = MutableStateFlow<Money>(Money(0.00))
 
     val transactions
         get() = repository.transactions
@@ -35,6 +37,35 @@ class BorrowerLoanProfileViewModel @Inject constructor(
         collectPendingLoans(userId)
         collectSettledLoans(userId)
         collectCancelledLoans(userId)
+        collectTotalPayment(userId)
+    }
+
+    fun collectTotalPayment(userId: String) = viewModelScope.launch {
+        var total = Money(0.00)
+
+        transactionsOrderedByEndDateAsc
+            .collect { transactions ->
+                total = Money(0.00)
+
+                transactions.forEach { transaction ->
+                    val transactionOwnerId = transaction.borrowerId
+                    val transactionStatus = LoanTransactionStatus.valueOf(transaction.status.uppercase())
+                    val balanceInCentValue = transaction.totalBalance
+
+                    val isTransactionApproved = transactionStatus == LoanTransactionStatus.APPROVED
+                    val doesCurrentUserOwnsTransaction = transactionOwnerId == userId
+
+                    if (isTransactionApproved && doesCurrentUserOwnsTransaction) {
+                        total += Money.parseActualValue(transaction.totalBalance)
+                    }
+                }
+
+                totalAmountPayment.value = total
+
+                if (transactions.isEmpty()) {
+                    totalAmountPayment.value = Money(0.00)
+                }
+            }
     }
 
     fun collectPendingLoans(userId: String) = viewModelScope.launch {
