@@ -29,6 +29,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.ApplyLoanRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerConfirmLoanPaymentRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerLoanOverviewScreenRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerLoanProfileRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.BorrowerProfilesScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.DashboardSideProfileScreenRoute
@@ -37,6 +38,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderDeclineRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LenderLoanOverviewRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.LoansScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.PaymentDetailsRoute
+import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.SettingsRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home.SetupLoanApprovalScreenRoute
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.AuthViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.signinsignup.OTPRoute
@@ -57,6 +59,7 @@ private object Destinations {
 
         const val DASHBOARD_ROUTE = "dashboard"
             const val PROFILE_DRAWER_ROUTE = "${DASHBOARD_ROUTE}/profile-drawer"
+                const val SETTINGS_ROUTE = "${DASHBOARD_ROUTE}/profile-drawer/settings"
             const val NOTIFICATIONS_ROUTE = "${DASHBOARD_ROUTE}/notifications"
 
             const val APPLY_LOAN_ROUTE = "${DASHBOARD_ROUTE}/apply-loan"
@@ -69,6 +72,7 @@ private object Destinations {
             const val LENDER_LOAN_OVERVIEW_ROUTE = "${DASHBOARD_ROUTE}/lender-loan-overview"
             const val LENDER_LOAN_PAYMENT_CONFIRMATION_ROUTE = "${DASHBOARD_ROUTE}/lender-loan-payment-confirmation-route"
             const val LENDER_DECLINE_LOAN_ROUTE = "${DASHBOARD_ROUTE}/lender-decline-loan-route"
+            const val LOAN_PROFILE_OF_BORROWER = "${DASHBOARD_ROUTE}/loan-profile-of-borrower"
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -263,7 +267,7 @@ fun PalmHiramNavHost(
                         popUpTo(Destinations.DASHBOARD_ROUTE) { inclusive = true }
                     }
                 },
-                onSettingsClick = { /*TODO*/ },
+                onSettingsClick = { navController.navigate(Destinations.SETTINGS_ROUTE) },
                 onQuickHelpClick = { /*TODO*/ },
                 onAboutClick = { /*TODO*/ },
                 viewModel = globalAuthViewModel!!
@@ -282,6 +286,8 @@ fun PalmHiramNavHost(
             route = Destinations.LOANS_ROUTE
         ) {
             LoansScreenRoute(
+                onClickItemAsLender = { navController.navigate(Destinations.LENDER_LOAN_OVERVIEW_ROUTE) },
+                onClickItemAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
                 globalState = globalState!!,
                 onClose = { navController.navigateUp() },
                 onSelectCancelledLoanAsBorrower = { navController.navigate(Destinations.BORROWER_LOAN_OVERVIEW_ROUTE) },
@@ -312,6 +318,7 @@ fun PalmHiramNavHost(
                 globalState = globalState!!,
                 authViewModel = it.sharedViewModel(navController),
                 onClose = { navController.navigateUp() },
+                onClickVerifiedProfile = { navController.navigate(Destinations.LOAN_PROFILE_OF_BORROWER) },
                 lenderDashboardViewModel = it.sharedViewModel(navController)
             )
         }
@@ -391,6 +398,25 @@ fun PalmHiramNavHost(
                 },
                 globalState = globalState!!,
                 viewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.SETTINGS_ROUTE
+        ) {
+            SettingsRoute(
+                onClose = { navController.navigateUp() },
+                globalState = globalState!!,
+                globalAuthViewModel = it.sharedViewModel(navController)
+            )
+        }
+        composable(
+            route = Destinations.LOAN_PROFILE_OF_BORROWER
+        ) {
+            BorrowerLoanProfileRoute(
+                onClose = { navController.navigateUp() },
+                onItemClick = { navController.navigate(Destinations.LENDER_LOAN_OVERVIEW_ROUTE) },
+                globalState = globalState!!,
+                viewModel = it.sharedViewModel(navController )
             )
         }
     }

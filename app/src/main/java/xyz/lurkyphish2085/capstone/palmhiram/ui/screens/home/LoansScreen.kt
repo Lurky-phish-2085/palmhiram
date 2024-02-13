@@ -43,6 +43,7 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopBarWithBackButton
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TopNavigationTab
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
+import xyz.lurkyphish2085.capstone.palmhiram.utils.LoanTransactionStatus
 import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 
 @ExperimentalAnimationApi
@@ -50,6 +51,8 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 @ExperimentalMaterial3Api
 @Composable
 fun LoansScreen(
+    onClickItemAsBorrower: () -> Unit,
+    onClickItemAsLender: () -> Unit,
     globalState: FunniGlobalViewModel,
     role: UserRoles,
     borrowerDashboardViewModel: BorrowerDashboardViewModel?,
@@ -135,6 +138,11 @@ fun LoansScreen(
         modifier = modifier
     ) { padding ->
         LoansScreenContent(
+            onClickItem =
+            when (role) {
+                UserRoles.BORROWER -> onClickItemAsBorrower
+                UserRoles.LENDER -> onClickItemAsLender
+            },
             globalState = globalState,
             onSelectOngoingLoanAsBorrower = onSelectOngoingLoanAsBorrower,
             onSelectSettledLoanAsBorrower = onSelectSettledLoanAsBorrower,
@@ -158,6 +166,7 @@ fun LoansScreen(
 @ExperimentalFoundationApi
 @Composable
 fun LoansScreenContent(
+    onClickItem: () -> Unit,
     globalState: FunniGlobalViewModel,
     onSelectOngoingLoanAsBorrower: () -> Unit,
     onSelectSettledLoanAsBorrower: () -> Unit,
@@ -183,6 +192,7 @@ fun LoansScreenContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             LoanTransactionList(
+                onClickItem = onClickItem,
                 globalState = globalState,
                 onSelectOngoingLoanAsBorrower = onSelectOngoingLoanAsBorrower,
                 onSelectSettledLoanAsBorrower = onSelectSettledLoanAsBorrower,
@@ -252,6 +262,7 @@ fun LoanScreenTabRow(
 @ExperimentalFoundationApi
 @Composable
 fun LoanTransactionList(
+    onClickItem: () -> Unit,
     globalState: FunniGlobalViewModel,
     onSelectOngoingLoanAsBorrower: () -> Unit,
     onSelectSettledLoanAsBorrower: () -> Unit,
@@ -307,6 +318,7 @@ fun LoanTransactionList(
                     LoanTransactionItemCard(
                         onClick = {
                             globalState.selectedLoanTransactionItem = transaction
+                            onClickItem()
                             //TODO: Navigate to detail screen or something
                             Log.e("LoanT Item Select", "LoanTransactionList: ${transaction.totalBalance}")
                             navToDesignatedScreen()
@@ -332,6 +344,8 @@ fun LoansScreenPreview() {
     PalmHiramTheme {
         Surface {
             LoansScreen(
+                onClickItemAsBorrower = {},
+                onClickItemAsLender = {},
                 globalState = FunniGlobalViewModel(),
                 role = UserRoles.LENDER,
                 borrowerDashboardViewModel = BorrowerDashboardViewModel(null,null),

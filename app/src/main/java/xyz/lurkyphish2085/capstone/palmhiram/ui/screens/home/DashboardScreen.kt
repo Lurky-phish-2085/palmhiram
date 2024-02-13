@@ -83,30 +83,30 @@ fun DashboardScreen(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f, true))
-                    IconButton(onClick = onNotificationsClick) {
-                        Icon(
-                            imageVector = Icons.Outlined.Notifications,
-                            contentDescription = null,
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
+//                    IconButton(onClick = onNotificationsClick) {
+//                        Icon(
+//                            imageVector = Icons.Outlined.Notifications,
+//                            contentDescription = null,
+//                            modifier = Modifier.size(36.dp)
+//                        )
+//                    }
                 }
-                DashBoardScreenTabRow(
-                    onHomeClick = {
-                        navController.navigate(OVERVIEW_ROUTE)
-                        selectedTab = navController.currentDestination?.route!!
-                    },
-                    onCalendarClick = {
-                        navController.navigate(CALENDAR_ROUTE)
-                        selectedTab = navController.currentDestination?.route!!
-                    },
-                    onReportsClick = {
-                        navController.navigate(REPORTS_ROUTE)
-                        selectedTab = navController.currentDestination?.route!!
-                    },
-                    selectedTab = selectedTab,
-                    modifier = Modifier.fillMaxWidth()
-                )
+//                DashBoardScreenTabRow(
+//                    onHomeClick = {
+//                        navController.navigate(OVERVIEW_ROUTE)
+//                        selectedTab = navController.currentDestination?.route!!
+//                    },
+//                    onCalendarClick = {
+//                        navController.navigate(CALENDAR_ROUTE)
+//                        selectedTab = navController.currentDestination?.route!!
+//                    },
+//                    onReportsClick = {
+//                        navController.navigate(REPORTS_ROUTE)
+//                        selectedTab = navController.currentDestination?.route!!
+//                    },
+//                    selectedTab = selectedTab,
+//                    modifier = Modifier.fillMaxWidth()
+//                )
             }
         },
         modifier = modifier

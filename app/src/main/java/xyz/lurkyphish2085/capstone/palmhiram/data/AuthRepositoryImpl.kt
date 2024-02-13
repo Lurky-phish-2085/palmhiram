@@ -1,5 +1,6 @@
 package xyz.lurkyphish2085.capstone.palmhiram.data
 
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -31,6 +32,18 @@ class AuthRepositoryImpl @Inject constructor(
 
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
+
+    override suspend fun changePassword(oldPassword: String,newPassword: String): Resource<FirebaseUser> {
+        return try {
+            val credential = EmailAuthProvider.getCredential(currentUser?.email!!, oldPassword)
+            currentUser?.reauthenticate(credential)?.await()
+            val result = currentUser?.updatePassword(newPassword)?.await()
+            Resource.Success(currentUser!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
 
     override suspend fun login(email: String, password: String): Resource<FirebaseUser> {
         return try {

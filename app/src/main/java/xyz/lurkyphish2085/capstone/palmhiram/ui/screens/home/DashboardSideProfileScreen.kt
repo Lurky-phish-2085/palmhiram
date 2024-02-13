@@ -3,17 +3,20 @@ package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import xyz.lurkyphish2085.capstone.palmhiram.data.Resource
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.User
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.UserCredentials
@@ -88,6 +93,11 @@ fun DashboardSideProfileScreenContent(
     onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var aboutDialogOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    AboutDialog(isOpen = aboutDialogOpen, onDismissRequest = { aboutDialogOpen = false })
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -113,21 +123,21 @@ fun DashboardSideProfileScreenContent(
                 MenuButton(
                     menuName = "Settings",
                     icon = Icons.Outlined.Settings,
-                    onClick = { /*TODO*/ },
+                    onClick = onSettingsClick,
                     modifier = Modifier
                         .fillMaxWidth()
                 )
-                MenuButton(
-                    menuName = "Quick Help",
-                    icon = Icons.Outlined.HelpOutline,
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+//                MenuButton(
+//                    menuName = "Quick Help",
+//                    icon = Icons.Outlined.HelpOutline,
+//                    onClick = { /*TODO*/ },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                )
                 MenuButton(
                     menuName = "About",
                     icon = Icons.Outlined.Info,
-                    onClick = { /*TODO*/ },
+                    onClick = { aboutDialogOpen = true },
                     modifier = Modifier
                         .fillMaxWidth()
                 )
@@ -142,6 +152,57 @@ fun DashboardSideProfileScreenContent(
                     ),
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun AboutDialog(
+    isOpen: Boolean,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (isOpen) {
+        Dialog(onDismissRequest) {
+            Card(
+                shape = MaterialTheme.shapes.large,
+                modifier = modifier
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                ) {
+                    Text(
+                        text = "Palm Hiram",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
+                        modifier = Modifier
+                            .padding(vertical = 24.dp)
+                    )
+
+                    Text(
+                        text = "A Money Lender's Transaction Tracking Mobile Application",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun AboutDialogPreview() {
+    PalmHiramTheme {
+        Surface {
+            AboutDialog(isOpen = true, onDismissRequest = {})
         }
     }
 }

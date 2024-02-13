@@ -18,17 +18,15 @@ import xyz.lurkyphish2085.capstone.palmhiram.utils.UserRoles
 fun LoansScreenRoute(
     globalState: FunniGlobalViewModel,
     onClose: () -> Unit,
-    onSelectOngoingLoanAsBorrower: () -> Unit,
-    onSelectSettledLoanAsBorrower: () -> Unit,
-    onSelectCancelledLoanAsBorrower: () -> Unit,
-    onSelectOngoingLoanAsLender: () -> Unit,
-    onSelectSettledLoanAsLender: () -> Unit,
-    onSelectCancelledLoanAsLender: () -> Unit,
+    onClickItemAsBorrower: () -> Unit,
+    onClickItemAsLender: () -> Unit,
     authViewModel: AuthViewModel,
     borrowerDashboardViewModel: BorrowerDashboardViewModel,
     lenderDashboardViewModel: LenderDashboardViewModel,
 ) {
     LoansScreen(
+        onClickItemAsBorrower = onClickItemAsBorrower,
+        onClickItemAsLender = onClickItemAsLender,
         globalState = globalState,
         onSelectOngoingLoanAsBorrower = onSelectOngoingLoanAsBorrower,
         onSelectSettledLoanAsBorrower = onSelectSettledLoanAsBorrower,

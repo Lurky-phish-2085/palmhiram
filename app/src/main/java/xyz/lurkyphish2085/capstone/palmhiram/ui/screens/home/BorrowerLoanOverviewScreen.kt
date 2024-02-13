@@ -90,13 +90,35 @@ fun BorrowerLoanOverviewScreen(
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
-            when(globalState.selectedLoanTransactionItem.status) {
-                LoanTransactionStatus.SETTLED.name -> {
-                    Text(
-                        text = "Approved Payments",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(vertical = 16.dp)
-                    )
+            Text(
+                text = "Payment Schedules",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+
+            Text(
+                text = "Pending",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            if (paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.isEmpty()) {
+                NothingToSeeHere(modifier = Modifier.fillMaxWidth())
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(256.dp)
+                ) {
+                    items(items = paymentSchedulesDatesFlow.value.filter { PaymentScheduleDateStatus.valueOf(it.status) == PaymentScheduleDateStatus.PENDING }.asReversed(), key = { it.date.toString() }) { scheduleDate ->
+                        PaymentScheduleDateItemCard(
+                            onClick = { if (globalState.selectedLoanTransactionItem.status != LoanTransactionStatus.CANCELLED.name) onSelectItemOnPendingPaymentItem(scheduleDate) },
+                            globalState = globalState,
+                            details = scheduleDate
+                        )
+                    }
                 }
                 else -> {
                     Text(

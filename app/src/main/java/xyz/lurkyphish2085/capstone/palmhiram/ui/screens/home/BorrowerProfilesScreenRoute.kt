@@ -16,6 +16,7 @@ fun BorrowerProfilesScreenRoute(
     globalState: FunniGlobalViewModel,
     authViewModel: AuthViewModel,
     onClose: () -> Unit,
+    onClickVerifiedProfile: () -> Unit,
     lenderDashboardViewModel: LenderDashboardViewModel,
 ) {
     val verifiedProfilesFlow = lenderDashboardViewModel.verifiedBorrowerUserProfiles.collectAsState()
@@ -65,6 +66,7 @@ fun BorrowerProfilesScreenRoute(
         verificationCodeFlow = verificationCodeFlow,
         retrievedVerificationCodeFlow = retrievedVerificationCodeFlow,
         onClose = onClose,
+        onClickVerifiedProfile = onClickVerifiedProfile,
         onSendVerificationCodeViaEmail = {
             Log.e("CALLED", "BorrowerProfilesScreenRoute: SEND VER CODE EMAIL")
             sendVerificationCodeEmail = true

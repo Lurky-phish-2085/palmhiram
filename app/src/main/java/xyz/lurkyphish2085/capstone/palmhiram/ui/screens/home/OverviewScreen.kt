@@ -1,9 +1,7 @@
 package xyz.lurkyphish2085.capstone.palmhiram.ui.screens.home
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,34 +11,28 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.AddHomeWork
 import androidx.compose.material.icons.outlined.AirplanemodeActive
-import androidx.compose.material.icons.outlined.Dataset
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Man
 import androidx.compose.material.icons.outlined.Money
 import androidx.compose.material.icons.outlined.Woman2
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -49,7 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
@@ -57,7 +48,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import xyz.lurkyphish2085.capstone.palmhiram.data.models.LoanTransaction
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ActionButton
@@ -65,7 +55,6 @@ import xyz.lurkyphish2085.capstone.palmhiram.ui.components.Balance
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.ContentSection
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.LoanTransactionItemCard
 import xyz.lurkyphish2085.capstone.palmhiram.ui.components.PagerScrollIndicatorDots
-import xyz.lurkyphish2085.capstone.palmhiram.ui.components.TwoRowButtonsWithIcon
 import xyz.lurkyphish2085.capstone.palmhiram.ui.screens.FunniGlobalViewModel
 import xyz.lurkyphish2085.capstone.palmhiram.ui.theme.PalmHiramTheme
 import xyz.lurkyphish2085.capstone.palmhiram.ui.utils.ActionButtonTypes
@@ -132,6 +121,7 @@ fun OverviewScreen(
         modifier = modifier
     ) { paddingValues ->
         OverviewScreenContent(
+            enableBalanceButtons = role == UserRoles.BORROWER && ongoingLoanTransactionListFlow.value.isNullOrEmpty() && approvalLoanTransactionListFlow.value.isNullOrEmpty(),
             globalState = globalState,
             amount = balanceAmountFlow.value.toString(),
             ongoingTransactionList = ongoingLoanTransactionListFlow.value,
@@ -196,6 +186,7 @@ fun OverviewScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun OverviewScreenContent(
+    enableBalanceButtons: Boolean,
     globalState: FunniGlobalViewModel,
     amount: String,
     balanceName: String,
@@ -227,6 +218,7 @@ fun OverviewScreenContent(
         ) {
             Spacer(modifier = Modifier.height(4.dp))
             BalanceSection(
+                enableButtons = enableBalanceButtons,
                 currencySymbol = '₱',
                 amount = amount,
                 balanceName = balanceName,
@@ -277,10 +269,10 @@ fun OverviewScreenContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             )
-            TransactionListSection(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-            )
+//            TransactionListSection(
+//                modifier = Modifier
+//                    .padding(horizontal = 16.dp)
+//            )
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -288,6 +280,7 @@ fun OverviewScreenContent(
 
 @Composable
 fun BalanceSection(
+    enableButtons: Boolean,
     currencySymbol: Char,
     amount: String,
     balanceName: String,
@@ -300,6 +293,7 @@ fun BalanceSection(
     Column(modifier) {
         ContentSection() {
             BalanceSectionContent(
+                enableButtons = enableButtons,
                 onLeftButtonClick = onLeftButtonClick,
                 onRightButtonClick = onRightButtonClick,
                 leftButtonName = leftButtonName,
@@ -314,6 +308,7 @@ fun BalanceSection(
 
 @Composable
 fun BalanceSectionContent(
+    enableButtons: Boolean,
     onLeftButtonClick: () -> Unit,
     onRightButtonClick: () -> Unit,
     currencySymbol: Char,
@@ -335,24 +330,42 @@ fun BalanceSectionContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TwoRowButtonsWithIcon(
-            onClickLeft = onLeftButtonClick,
-            onClickRight = onRightButtonClick,
-            leftIcon = Icons.Default.ArrowDownward,
-            rightIcon = Icons.Default.ArrowOutward,
-            leftContent = {
+        if (enableButtons) {
+            FilledTonalButton(
+                onClick = onLeftButtonClick,
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                shape = MaterialTheme.shapes.large,
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 Text(
                     text = leftButtonName,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                 )
-            },
-            rightContent = {
-                Text(
-                    text = rightButtonName,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
-                )
             }
-        )
+        }
+//        TwoRowButtonsWithIcon(
+//            onClickLeft = onLeftButtonClick,
+//            onClickRight = onRightButtonClick,
+//            leftIcon = Icons.Default.ArrowDownward,
+//            rightIcon = Icons.Default.ArrowOutward,
+//            leftContent = {
+//                Text(
+//                    text = leftButtonName,
+//                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+//                )
+//            },
+//            rightContent = {
+//                Text(
+//                    text = rightButtonName,
+//                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+//                )
+//            }
+//        )
     }
 }
 
@@ -596,11 +609,11 @@ private val borrowerActionItems = listOf(
         actionName = ActionButtonTypes.LOANS.toString().lowercase().capitalized(),
         type = ActionButtonTypes.LOANS,
     ),
-    ActionItem(
-        icon = Icons.Outlined.Dataset,
-        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
-        type = ActionButtonTypes.TRANSACTIONS,
-    ),
+//    ActionItem(
+//        icon = Icons.Outlined.Dataset,
+//        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
+//        type = ActionButtonTypes.TRANSACTIONS,
+//    ),
 )
 
 private val lenderActionItems = listOf(
@@ -609,11 +622,11 @@ private val lenderActionItems = listOf(
         actionName = ActionButtonTypes.LOANS.toString().lowercase().capitalized(),
         type = ActionButtonTypes.LOANS,
     ),
-    ActionItem(
-        icon = Icons.Outlined.Dataset,
-        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
-        type = ActionButtonTypes.TRANSACTIONS,
-    ),
+//    ActionItem(
+//        icon = Icons.Outlined.Dataset,
+//        actionName = ActionButtonTypes.TRANSACTIONS.toString().lowercase().capitalized(),
+//        type = ActionButtonTypes.TRANSACTIONS,
+//    ),
     ActionItem(
         icon = Icons.Outlined.AccountBox,
         actionName = ActionButtonTypes.PROFILES.toString().lowercase().capitalized(),
